@@ -309,121 +309,114 @@ export default function ClientesPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {clients.map((client) => (
-            <div key={client.id} className="bg-white rounded-lg shadow">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    {/* Show company name if different from contact_name (meaning it's a company) */}
-                    {client.contact_name && client.company_name !== client.contact_name ? (
-                      <>
-                        <h3 className="text-xl font-semibold text-gray-900">{client.company_name}</h3>
-                        <p className="text-sm text-gray-600 mt-1">👤 {client.contact_name}</p>
-                      </>
-                    ) : (
-                      <h3 className="text-xl font-semibold text-gray-900">👤 {client.company_name}</h3>
-                    )}
-                    <div className="mt-2 space-y-1">
-                      {client.contact_email && (
-                        <p className="text-sm text-gray-600">📧 {client.contact_email}</p>
-                      )}
-                      {client.contact_phone && (
-                        <p className="text-sm text-gray-600">📱 {client.contact_phone}</p>
-                      )}
-                      <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Cliente
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contacto
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Gastos Anuales
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ingresos Anuales
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Beneficio Anual
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {clients.map((client) => (
+                  <tr key={client.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col">
+                        {client.contact_name && client.company_name !== client.contact_name ? (
+                          <>
+                            <div className="text-sm font-semibold text-gray-900">{client.company_name}</div>
+                            <div className="text-xs text-gray-500">Empresa</div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-sm font-semibold text-gray-900">{client.company_name}</div>
+                            <div className="text-xs text-gray-500">Particular</div>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col space-y-1">
+                        {client.contact_name && client.company_name !== client.contact_name && (
+                          <div className="text-sm text-gray-900">{client.contact_name}</div>
+                        )}
+                        {client.contact_email && (
+                          <div className="text-xs text-gray-500">{client.contact_email}</div>
+                        )}
+                        {client.contact_phone && (
+                          <div className="text-xs text-gray-500">{client.contact_phone}</div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         client.status === 'active' ? 'bg-green-100 text-green-800' :
                         client.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
                         'bg-red-100 text-red-800'
                       }`}>
                         {client.status === 'active' ? t.clients.active : client.status === 'inactive' ? t.clients.inactive : t.clients.suspended}
                       </span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => openEditModal(client)}
-                      className="text-syntalys-blue hover:text-blue-700 px-3 py-1 text-sm font-medium"
-                    >
-                      {t.common.edit}
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClient(client.id, client.company_name)}
-                      className="text-red-600 hover:text-red-700 px-3 py-1 text-sm font-medium"
-                    >
-                      {t.common.delete}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">{t.clients.annualExpenses}</p>
-                    <p className="text-lg font-bold text-red-600">
-                      {(client.total_expenses_annual || 0).toFixed(2)} CHF
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">{t.clients.annualIncome}</p>
-                    <p className="text-lg font-bold text-green-600">
-                      {(client.total_income_annual || 0).toFixed(2)} CHF
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">{t.clients.annualProfit}</p>
-                    <p className={`text-lg font-bold ${(client.profit_annual || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {(client.profit_annual || 0).toFixed(2)} CHF
-                    </p>
-                  </div>
-                </div>
-
-                {(client.expenses && client.expenses.length > 0) || (client.income && client.income.length > 0) ? (
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-                    <div>
-                      <p className="text-xs font-semibold text-gray-700 mb-2">{t.nav.expenses} ({client.expenses?.length || 0})</p>
-                      {client.expenses && client.expenses.length > 0 ? (
-                        <div className="space-y-1">
-                          {client.expenses.slice(0, 3).map((expense) => (
-                            <p key={expense.id} className="text-xs text-gray-600">
-                              • {expense.service_name}: {Number(expense.amount).toFixed(2)} {expense.currency}
-                            </p>
-                          ))}
-                          {client.expenses.length > 3 && (
-                            <p className="text-xs text-gray-400">+ {client.expenses.length - 3} {t.common.more}...</p>
-                          )}
-                        </div>
-                      ) : (
-                        <p className="text-xs text-gray-400">{t.common.none} {t.nav.expenses.toLowerCase()}</p>
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-gray-700 mb-2">{t.nav.income} ({client.income?.length || 0})</p>
-                      {client.income && client.income.length > 0 ? (
-                        <div className="space-y-1">
-                          {client.income.slice(0, 3).map((income) => (
-                            <p key={income.id} className="text-xs text-gray-600">
-                              • {income.service_name}: {Number(income.amount).toFixed(2)} {income.currency}
-                            </p>
-                          ))}
-                          {client.income.length > 3 && (
-                            <p className="text-xs text-gray-400">+ {client.income.length - 3} {t.common.more}...</p>
-                          )}
-                        </div>
-                      ) : (
-                        <p className="text-xs text-gray-400">{t.common.none} {t.nav.income.toLowerCase()}</p>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-400 text-center pt-4 border-t border-gray-200">
-                    {t.common.none} {t.nav.expenses.toLowerCase()} ni {t.nav.income.toLowerCase()} registrados
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <div className="text-sm font-medium text-red-600">
+                        {(client.total_expenses_annual || 0).toFixed(2)} CHF
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {client.expenses?.length || 0} gastos
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <div className="text-sm font-medium text-green-600">
+                        {(client.total_income_annual || 0).toFixed(2)} CHF
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {client.income?.length || 0} ingresos
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <div className={`text-sm font-bold ${(client.profit_annual || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {(client.profit_annual || 0).toFixed(2)} CHF
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() => openEditModal(client)}
+                        className="text-syntalys-blue hover:text-blue-700 mr-3"
+                      >
+                        {t.common.edit}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClient(client.id, client.company_name)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        {t.common.delete}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
