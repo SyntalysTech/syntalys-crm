@@ -11,6 +11,7 @@ export interface Translations {
     projects: string;
     expenses: string;
     income: string;
+    stats: string;
     users: string;
     reports: string;
     logout: string;
@@ -61,11 +62,18 @@ export interface Translations {
     expensesSummarySubtitle: string;
     recurringExpenses: string;
     monthly: string;
+    annual: string;
     annualProjection: string;
     estimatedYearTotal: string;
     viewAllExpenses: string;
+    viewAllIncome: string;
     noExpenses: string;
     noExpensesSubtitle: string;
+    noIncome: string;
+    projectedAnnualProfit: string;
+    annualIncome: string;
+    annualExpense: string;
+    netProfit: string;
     // Roles
     superAdmin: string;
     admin: string;
@@ -267,6 +275,10 @@ export interface Translations {
     notesPlaceholder: string;
     value: string;
     dates: string;
+    name: string;
+    email: string;
+    phone: string;
+    companyName: string;
   };
 
   // Messages
@@ -329,6 +341,7 @@ export const translations: Record<Language, Translations> = {
       projects: 'Proyectos',
       expenses: 'Gastos',
       income: 'Ingresos',
+      stats: 'Estadísticas',
       users: 'Usuarios',
       reports: 'Reportes',
       logout: 'Cerrar Sesión',
@@ -375,11 +388,18 @@ export const translations: Record<Language, Translations> = {
       expensesSummarySubtitle: 'Gestiona y visualiza todos los gastos de Syntalys Tech',
       recurringExpenses: 'Gastos Recurrentes',
       monthly: 'Mensuales',
+      annual: 'anual',
       annualProjection: 'Proyección Anual',
       estimatedYearTotal: 'Total estimado del año',
       viewAllExpenses: 'Ver todos los gastos',
+      viewAllIncome: 'Ver todos los ingresos',
       noExpenses: 'No hay gastos registrados aún',
       noExpensesSubtitle: 'Ve a la sección de Gastos para agregar uno nuevo',
+      noIncome: 'No hay ingresos registrados aún',
+      projectedAnnualProfit: 'Beneficio Proyectado Anual',
+      annualIncome: 'Ingresos Anuales',
+      annualExpense: 'Gastos Anuales',
+      netProfit: 'Beneficio Neto',
       superAdmin: 'Super Administrador',
       admin: 'Administrador',
       manager: 'Gestor',
@@ -563,6 +583,10 @@ export const translations: Record<Language, Translations> = {
       notesPlaceholder: 'Notas adicionales...',
       value: 'Valor',
       dates: 'Fechas',
+      name: 'Nombre',
+      email: 'Email',
+      phone: 'Teléfono',
+      companyName: 'Nombre de la Empresa',
     },
     messages: {
       deleteConfirm: '¿Estás seguro de que quieres eliminar',
@@ -619,6 +643,7 @@ export const translations: Record<Language, Translations> = {
       projects: 'Projets',
       expenses: 'Dépenses',
       income: 'Revenus',
+      stats: 'Statistiques',
       users: 'Utilisateurs',
       reports: 'Rapports',
       logout: 'Déconnexion',
@@ -665,11 +690,18 @@ export const translations: Record<Language, Translations> = {
       expensesSummarySubtitle: 'Gérez et visualisez toutes les dépenses de Syntalys Tech',
       recurringExpenses: 'Dépenses Récurrentes',
       monthly: 'Mensuelles',
+      annual: 'annuel',
       annualProjection: 'Projection Annuelle',
       estimatedYearTotal: 'Total estimé de l\'année',
       viewAllExpenses: 'Voir toutes les dépenses',
+      viewAllIncome: 'Voir tous les revenus',
       noExpenses: 'Aucune dépense enregistrée pour le moment',
       noExpensesSubtitle: 'Allez dans la section Dépenses pour en ajouter une nouvelle',
+      noIncome: 'Aucun revenu enregistré pour le moment',
+      projectedAnnualProfit: 'Bénéfice Annuel Projeté',
+      annualIncome: 'Revenus Annuels',
+      annualExpense: 'Dépenses Annuelles',
+      netProfit: 'Bénéfice Net',
       superAdmin: 'Super Administrateur',
       admin: 'Administrateur',
       manager: 'Gestionnaire',
@@ -853,6 +885,10 @@ export const translations: Record<Language, Translations> = {
       notesPlaceholder: 'Notes supplémentaires...',
       value: 'Valeur',
       dates: 'Dates',
+      name: 'Nom',
+      email: 'Email',
+      phone: 'Téléphone',
+      companyName: 'Nom de l\'Entreprise',
     },
     messages: {
       deleteConfirm: 'Êtes-vous sûr de vouloir supprimer',

@@ -47,6 +47,12 @@ const menuItems: MenuItem[] = [
     roles: ['super_admin', 'admin', 'gestor'],
   },
   {
+    key: 'stats',
+    path: '/dashboard/estadisticas',
+    icon: '',
+    roles: ['super_admin', 'admin', 'gestor'],
+  },
+  {
     key: 'users',
     path: '/dashboard/usuarios',
     icon: '',
@@ -129,6 +135,7 @@ export default function Sidebar() {
             'projects': t.nav.projects,
             'expenses': t.nav.expenses,
             'income': t.nav.income,
+            'stats': t.nav.stats,
             'users': t.nav.users,
           };
 
