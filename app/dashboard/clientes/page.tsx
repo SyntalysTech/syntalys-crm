@@ -15,8 +15,9 @@ export default function ClientesPage() {
 
   // Form states
   const [formData, setFormData] = useState({
-    company_name: '',
     contact_name: '',
+    is_company: false,
+    company_name: '',
     contact_email: '',
     contact_phone: '',
     notes: '',
@@ -113,7 +114,7 @@ export default function ClientesPage() {
         .from('clients')
         .insert([{
           user_id: user.id,
-          company_name: formData.company_name,
+          company_name: formData.is_company ? formData.company_name : formData.contact_name,
           contact_name: formData.contact_name || null,
           contact_email: formData.contact_email || null,
           contact_phone: formData.contact_phone || null,
@@ -129,8 +130,9 @@ export default function ClientesPage() {
 
       // Resetear formulario y recargar
       setFormData({
-        company_name: '',
         contact_name: '',
+        is_company: false,
+        company_name: '',
         contact_email: '',
         contact_phone: '',
         notes: '',
@@ -151,7 +153,7 @@ export default function ClientesPage() {
       const { error } = await supabase
         .from('clients')
         .update({
-          company_name: formData.company_name,
+          company_name: formData.is_company ? formData.company_name : formData.contact_name,
           contact_name: formData.contact_name || null,
           contact_email: formData.contact_email || null,
           contact_phone: formData.contact_phone || null,
@@ -168,8 +170,9 @@ export default function ClientesPage() {
 
       // Resetear formulario y recargar
       setFormData({
-        company_name: '',
         contact_name: '',
+        is_company: false,
+        company_name: '',
         contact_email: '',
         contact_phone: '',
         notes: '',
@@ -210,8 +213,9 @@ export default function ClientesPage() {
 
   function openAddModal() {
     setFormData({
-      company_name: '',
       contact_name: '',
+      is_company: false,
+      company_name: '',
       contact_email: '',
       contact_phone: '',
       notes: '',
@@ -222,9 +226,12 @@ export default function ClientesPage() {
 
   function openEditModal(client: Client) {
     setSelectedClient(client);
+    // Determine if this is a company by checking if contact_name and company_name are different
+    const isCompany = client.contact_name !== null && client.company_name !== client.contact_name;
     setFormData({
-      company_name: client.company_name,
-      contact_name: client.contact_name || '',
+      contact_name: client.contact_name || client.company_name,
+      is_company: isCompany,
+      company_name: isCompany ? client.company_name : '',
       contact_email: client.contact_email || '',
       contact_phone: client.contact_phone || '',
       notes: client.notes || '',
@@ -308,11 +315,16 @@ export default function ClientesPage() {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900">{client.company_name}</h3>
+                    {/* Show company name if different from contact_name (meaning it's a company) */}
+                    {client.contact_name && client.company_name !== client.contact_name ? (
+                      <>
+                        <h3 className="text-xl font-semibold text-gray-900">{client.company_name}</h3>
+                        <p className="text-sm text-gray-600 mt-1">👤 {client.contact_name}</p>
+                      </>
+                    ) : (
+                      <h3 className="text-xl font-semibold text-gray-900">👤 {client.company_name}</h3>
+                    )}
                     <div className="mt-2 space-y-1">
-                      {client.contact_name && (
-                        <p className="text-sm text-gray-600">👤 {client.contact_name}</p>
-                      )}
                       {client.contact_email && (
                         <p className="text-sm text-gray-600">📧 {client.contact_email}</p>
                       )}
@@ -425,30 +437,44 @@ export default function ClientesPage() {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.clients.companyName} <span className="text-red-500">*</span>
+                  {t.clients.contactName} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.company_name}
-                  onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                  value={formData.contact_name}
+                  onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                  placeholder="Ej: Acme Corp"
+                  placeholder="Ej: Juan Pérez"
                   required
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_company}
+                    onChange={(e) => setFormData({ ...formData, is_company: e.target.checked, company_name: e.target.checked ? formData.company_name : '' })}
+                    className="w-4 h-4 text-syntalys-blue border-gray-300 rounded focus:ring-syntalys-blue"
+                  />
+                  <span className="text-sm font-medium text-gray-700">¿Es una empresa?</span>
+                </label>
+              </div>
+              {formData.is_company && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.contactName}
+                    {t.clients.companyName} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    value={formData.contact_name}
-                    onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                    value={formData.company_name}
+                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                    placeholder="Ej: Juan Pérez"
+                    placeholder="Ej: Acme Corp"
+                    required
                   />
                 </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t.clients.contactEmail}
@@ -461,18 +487,18 @@ export default function ClientesPage() {
                     placeholder="email@ejemplo.com"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.clients.contactPhone}
-                </label>
-                <input
-                  type="tel"
-                  value={formData.contact_phone}
-                  onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                  placeholder="+41 xx xxx xx xx"
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.clients.contactPhone}
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.contact_phone}
+                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    placeholder="+41 xx xxx xx xx"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -510,7 +536,7 @@ export default function ClientesPage() {
               </button>
               <button
                 onClick={handleAddClient}
-                disabled={!formData.company_name.trim()}
+                disabled={!formData.contact_name.trim() || (formData.is_company && !formData.company_name.trim())}
                 className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {t.clients.addClient}
@@ -530,30 +556,44 @@ export default function ClientesPage() {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.clients.companyName} <span className="text-red-500">*</span>
+                  {t.clients.contactName} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.company_name}
-                  onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                  value={formData.contact_name}
+                  onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                  placeholder="Ej: Acme Corp"
+                  placeholder="Ej: Juan Pérez"
                   required
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_company}
+                    onChange={(e) => setFormData({ ...formData, is_company: e.target.checked, company_name: e.target.checked ? formData.company_name : '' })}
+                    className="w-4 h-4 text-syntalys-blue border-gray-300 rounded focus:ring-syntalys-blue"
+                  />
+                  <span className="text-sm font-medium text-gray-700">¿Es una empresa?</span>
+                </label>
+              </div>
+              {formData.is_company && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.contactName}
+                    {t.clients.companyName} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    value={formData.contact_name}
-                    onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                    value={formData.company_name}
+                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                    placeholder="Ej: Juan Pérez"
+                    placeholder="Ej: Acme Corp"
+                    required
                   />
                 </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t.clients.contactEmail}
@@ -566,18 +606,18 @@ export default function ClientesPage() {
                     placeholder="email@ejemplo.com"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.clients.contactPhone}
-                </label>
-                <input
-                  type="tel"
-                  value={formData.contact_phone}
-                  onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                  placeholder="+41 xx xxx xx xx"
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.clients.contactPhone}
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.contact_phone}
+                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    placeholder="+41 xx xxx xx xx"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -618,7 +658,7 @@ export default function ClientesPage() {
               </button>
               <button
                 onClick={handleEditClient}
-                disabled={!formData.company_name.trim()}
+                disabled={!formData.contact_name.trim() || (formData.is_company && !formData.company_name.trim())}
                 className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {t.common.saveChanges}
