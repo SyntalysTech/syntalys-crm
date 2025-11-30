@@ -19,7 +19,6 @@ export default function ClientesPage() {
     contact_name: '',
     contact_email: '',
     contact_phone: '',
-    address: '',
     notes: '',
     status: 'active' as 'active' | 'inactive' | 'suspended',
   });
@@ -134,7 +133,6 @@ export default function ClientesPage() {
         contact_name: '',
         contact_email: '',
         contact_phone: '',
-        address: '',
         notes: '',
         status: 'active'
       });
@@ -174,7 +172,6 @@ export default function ClientesPage() {
         contact_name: '',
         contact_email: '',
         contact_phone: '',
-        address: '',
         notes: '',
         status: 'active'
       });
@@ -217,7 +214,6 @@ export default function ClientesPage() {
       contact_name: '',
       contact_email: '',
       contact_phone: '',
-      address: '',
       notes: '',
       status: 'active'
     });
@@ -231,7 +227,6 @@ export default function ClientesPage() {
       contact_name: client.contact_name || '',
       contact_email: client.contact_email || '',
       contact_phone: client.contact_phone || '',
-      address: client.address || '',
       notes: client.notes || '',
       status: client.status,
     });
