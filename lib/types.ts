@@ -30,6 +30,7 @@ export type PaymentType = 'one_time' | 'monthly' | 'annual' | 'milestone';
 
 export interface Client {
   id: string;
+  user_id: string;
   company_name: string;
   contact_name: string | null;
   contact_email: string | null;

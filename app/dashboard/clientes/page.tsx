@@ -101,9 +101,19 @@ export default function ClientesPage() {
 
   async function handleAddClient() {
     try {
+      // Get the current authenticated user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        console.error('Error getting user:', userError);
+        alert(t.messages.saveError + ': Usuario no autenticado');
+        return;
+      }
+
       const { error } = await supabase
         .from('clients')
         .insert([{
+          user_id: user.id,
           company_name: formData.company_name,
           contact_name: formData.contact_name || null,
           contact_email: formData.contact_email || null,
@@ -115,7 +125,7 @@ export default function ClientesPage() {
 
       if (error) {
         console.error('Error adding client:', error);
-        alert(t.messages.saveError);
+        alert(t.messages.saveError + ': ' + error.message);
         return;
       }
 
