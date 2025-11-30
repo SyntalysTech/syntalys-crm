@@ -118,7 +118,6 @@ export default function ClientesPage() {
           contact_name: formData.contact_name || null,
           contact_email: formData.contact_email || null,
           contact_phone: formData.contact_phone || null,
-          address: formData.address || null,
           notes: formData.notes || null,
           status: formData.status,
         }]);
@@ -158,7 +157,6 @@ export default function ClientesPage() {
           contact_name: formData.contact_name || null,
           contact_email: formData.contact_email || null,
           contact_phone: formData.contact_phone || null,
-          address: formData.address || null,
           notes: formData.notes || null,
           status: formData.status,
         })
