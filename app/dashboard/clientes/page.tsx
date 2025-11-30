@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Client, ClientWithDetails, ClientExpense, ClientIncome } from '@/lib/types';
+import type { Client, ClientWithDetails, ClientExpense, ClientIncome, Project } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ClientesPage() {
@@ -15,11 +15,9 @@ export default function ClientesPage() {
 
   // Form states
   const [formData, setFormData] = useState({
-    contact_name: '',
-    is_company: false,
-    company_name: '',
-    contact_email: '',
-    contact_phone: '',
+    name: '',
+    email: '',
+    phone: '',
     notes: '',
     status: 'active' as 'active' | 'inactive' | 'suspended',
   });
@@ -35,7 +33,7 @@ export default function ClientesPage() {
       const { data: clientsData, error: clientsError } = await supabase
         .from('clients')
         .select('*')
-        .order('company_name', { ascending: true });
+        .order('name', { ascending: true });
 
       if (clientsError) {
         console.error('Error loading clients:', clientsError);
@@ -52,8 +50,13 @@ export default function ClientesPage() {
         .from('client_income')
         .select('*');
 
-      if (expensesError || incomeError) {
-        console.error('Error loading client data:', expensesError || incomeError);
+      // Cargar proyectos
+      const { data: projectsData, error: projectsError } = await supabase
+        .from('projects')
+        .select('*');
+
+      if (expensesError || incomeError || projectsError) {
+        console.error('Error loading client data:', expensesError || incomeError || projectsError);
         return;
       }
 
@@ -61,7 +64,9 @@ export default function ClientesPage() {
       const clientsWithDetails: ClientWithDetails[] = (clientsData || []).map(client => {
         const clientExpenses = (expensesData || []).filter(e => e.client_id === client.id);
         const clientIncome = (incomeData || []).filter(i => i.client_id === client.id);
+        const clientProjects = (projectsData || []).filter(p => p.client_id === client.id && p.total_amount);
 
+        // Gastos mensuales y anuales
         const totalExpensesMonthly = clientExpenses
           .filter(e => e.frequency === 'monthly')
           .reduce((sum, e) => sum + Number(e.amount), 0);
@@ -70,24 +75,51 @@ export default function ClientesPage() {
           .filter(e => e.frequency === 'annual')
           .reduce((sum, e) => sum + Number(e.amount), 0);
 
-        const totalIncomeMonthly = clientIncome
+        // Ingresos de client_income (monthly, annual, one_time)
+        const incomeMonthly = clientIncome
           .filter(i => i.frequency === 'monthly')
           .reduce((sum, i) => sum + Number(i.amount), 0);
 
-        const totalIncomeAnnual = clientIncome
+        const incomeAnnual = clientIncome
           .filter(i => i.frequency === 'annual')
           .reduce((sum, i) => sum + Number(i.amount), 0);
+
+        const incomeOneTime = clientIncome
+          .filter(i => i.frequency === 'one_time')
+          .reduce((sum, i) => sum + Number(i.amount), 0);
+
+        // Ingresos de proyectos (monthly, annual, one_time)
+        const projectMonthly = clientProjects
+          .filter(p => p.payment_type === 'monthly')
+          .reduce((sum, p) => sum + Number(p.total_amount), 0);
+
+        const projectAnnual = clientProjects
+          .filter(p => p.payment_type === 'annual')
+          .reduce((sum, p) => sum + Number(p.total_amount), 0);
+
+        const projectOneTime = clientProjects
+          .filter(p => p.payment_type === 'one_time')
+          .reduce((sum, p) => sum + Number(p.total_amount), 0);
+
+        // Totales combinados
+        const totalIncomeMonthly = incomeMonthly + projectMonthly;
+        const totalIncomeAnnual = incomeAnnual + projectAnnual;
+        const totalIncomeOneTime = incomeOneTime + projectOneTime;
+
+        // Calcular proyección anual: (mensual * 12) + anual + one-time
+        const yearlyIncomeProjected = (totalIncomeMonthly * 12) + totalIncomeAnnual + totalIncomeOneTime;
+        const yearlyExpensesProjected = (totalExpensesMonthly * 12) + totalExpensesAnnual;
 
         return {
           ...client,
           expenses: clientExpenses,
           income: clientIncome,
           total_expenses_monthly: totalExpensesMonthly,
-          total_expenses_annual: totalExpensesAnnual,
+          total_expenses_annual: yearlyExpensesProjected,
           total_income_monthly: totalIncomeMonthly,
-          total_income_annual: totalIncomeAnnual,
+          total_income_annual: yearlyIncomeProjected,
           profit_monthly: totalIncomeMonthly - totalExpensesMonthly,
-          profit_annual: totalIncomeAnnual - totalExpensesAnnual,
+          profit_annual: yearlyIncomeProjected - yearlyExpensesProjected,
         };
       });
 
@@ -114,10 +146,9 @@ export default function ClientesPage() {
         .from('clients')
         .insert([{
           user_id: user.id,
-          company_name: formData.is_company ? formData.company_name : formData.contact_name,
-          contact_name: formData.contact_name || null,
-          contact_email: formData.contact_email || null,
-          contact_phone: formData.contact_phone || null,
+          name: formData.name,
+          email: formData.email || null,
+          phone: formData.phone || null,
           notes: formData.notes || null,
           status: formData.status,
         }]);
@@ -130,11 +161,9 @@ export default function ClientesPage() {
 
       // Resetear formulario y recargar
       setFormData({
-        contact_name: '',
-        is_company: false,
-        company_name: '',
-        contact_email: '',
-        contact_phone: '',
+        name: '',
+        email: '',
+        phone: '',
         notes: '',
         status: 'active'
       });
@@ -153,10 +182,9 @@ export default function ClientesPage() {
       const { error } = await supabase
         .from('clients')
         .update({
-          company_name: formData.is_company ? formData.company_name : formData.contact_name,
-          contact_name: formData.contact_name || null,
-          contact_email: formData.contact_email || null,
-          contact_phone: formData.contact_phone || null,
+          name: formData.name,
+          email: formData.email || null,
+          phone: formData.phone || null,
           notes: formData.notes || null,
           status: formData.status,
         })
@@ -170,11 +198,9 @@ export default function ClientesPage() {
 
       // Resetear formulario y recargar
       setFormData({
-        contact_name: '',
-        is_company: false,
-        company_name: '',
-        contact_email: '',
-        contact_phone: '',
+        name: '',
+        email: '',
+        phone: '',
         notes: '',
         status: 'active'
       });
@@ -213,11 +239,9 @@ export default function ClientesPage() {
 
   function openAddModal() {
     setFormData({
-      contact_name: '',
-      is_company: false,
-      company_name: '',
-      contact_email: '',
-      contact_phone: '',
+      name: '',
+      email: '',
+      phone: '',
       notes: '',
       status: 'active'
     });
@@ -226,14 +250,10 @@ export default function ClientesPage() {
 
   function openEditModal(client: Client) {
     setSelectedClient(client);
-    // Determine if this is a company by checking if contact_name and company_name are different
-    const isCompany = client.contact_name !== null && client.company_name !== client.contact_name;
     setFormData({
-      contact_name: client.contact_name || client.company_name,
-      is_company: isCompany,
-      company_name: isCompany ? client.company_name : '',
-      contact_email: client.contact_email || '',
-      contact_phone: client.contact_phone || '',
+      name: client.name,
+      email: client.email || '',
+      phone: client.phone || '',
       notes: client.notes || '',
       status: client.status,
     });
@@ -315,10 +335,13 @@ export default function ClientesPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Cliente
+                    {t.forms.name}
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contacto
+                    {t.forms.email}
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t.forms.phone}
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
@@ -341,32 +364,13 @@ export default function ClientesPage() {
                 {clients.map((client) => (
                   <tr key={client.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-col">
-                        {client.contact_name && client.company_name !== client.contact_name ? (
-                          <>
-                            <div className="text-sm font-semibold text-gray-900">{client.company_name}</div>
-                            <div className="text-xs text-gray-500">Empresa</div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="text-sm font-semibold text-gray-900">{client.company_name}</div>
-                            <div className="text-xs text-gray-500">Particular</div>
-                          </>
-                        )}
-                      </div>
+                      <div className="text-sm font-semibold text-gray-900">{client.name}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col space-y-1">
-                        {client.contact_name && client.company_name !== client.contact_name && (
-                          <div className="text-sm text-gray-900">{client.contact_name}</div>
-                        )}
-                        {client.contact_email && (
-                          <div className="text-xs text-gray-500">{client.contact_email}</div>
-                        )}
-                        {client.contact_phone && (
-                          <div className="text-xs text-gray-500">{client.contact_phone}</div>
-                        )}
-                      </div>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-600">{client.email || '-'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-600">{client.phone || '-'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -406,7 +410,7 @@ export default function ClientesPage() {
                         {t.common.edit}
                       </button>
                       <button
-                        onClick={() => handleDeleteClient(client.id, client.company_name)}
+                        onClick={() => handleDeleteClient(client.id, client.name)}
                         className="text-red-600 hover:text-red-700"
                       >
                         {t.common.delete}
@@ -430,64 +434,38 @@ export default function ClientesPage() {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.clients.contactName} <span className="text-red-500">*</span>
+                  {t.forms.name} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.contact_name}
-                  onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
                   placeholder="Ej: Juan Pérez"
                   required
                 />
               </div>
-              <div>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.is_company}
-                    onChange={(e) => setFormData({ ...formData, is_company: e.target.checked, company_name: e.target.checked ? formData.company_name : '' })}
-                    className="w-4 h-4 text-syntalys-blue border-gray-300 rounded focus:ring-syntalys-blue"
-                  />
-                  <span className="text-sm font-medium text-gray-700">¿Es una empresa?</span>
-                </label>
-              </div>
-              {formData.is_company && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.companyName} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.company_name}
-                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                    placeholder="Ej: Acme Corp"
-                    required
-                  />
-                </div>
-              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.contactEmail}
+                    {t.forms.email}
                   </label>
                   <input
                     type="email"
-                    value={formData.contact_email}
-                    onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="email@ejemplo.com"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.contactPhone}
+                    {t.forms.phone}
                   </label>
                   <input
                     type="tel"
-                    value={formData.contact_phone}
-                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="+41 xx xxx xx xx"
                   />
@@ -529,7 +507,7 @@ export default function ClientesPage() {
               </button>
               <button
                 onClick={handleAddClient}
-                disabled={!formData.contact_name.trim() || (formData.is_company && !formData.company_name.trim())}
+                disabled={!formData.name.trim()}
                 className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {t.clients.addClient}
@@ -549,64 +527,38 @@ export default function ClientesPage() {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.clients.contactName} <span className="text-red-500">*</span>
+                  {t.forms.name} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.contact_name}
-                  onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
                   placeholder="Ej: Juan Pérez"
                   required
                 />
               </div>
-              <div>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.is_company}
-                    onChange={(e) => setFormData({ ...formData, is_company: e.target.checked, company_name: e.target.checked ? formData.company_name : '' })}
-                    className="w-4 h-4 text-syntalys-blue border-gray-300 rounded focus:ring-syntalys-blue"
-                  />
-                  <span className="text-sm font-medium text-gray-700">¿Es una empresa?</span>
-                </label>
-              </div>
-              {formData.is_company && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.companyName} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.company_name}
-                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                    placeholder="Ej: Acme Corp"
-                    required
-                  />
-                </div>
-              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.contactEmail}
+                    {t.forms.email}
                   </label>
                   <input
                     type="email"
-                    value={formData.contact_email}
-                    onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="email@ejemplo.com"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.clients.contactPhone}
+                    {t.forms.phone}
                   </label>
                   <input
                     type="tel"
-                    value={formData.contact_phone}
-                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="+41 xx xxx xx xx"
                   />
@@ -651,7 +603,7 @@ export default function ClientesPage() {
               </button>
               <button
                 onClick={handleEditClient}
-                disabled={!formData.contact_name.trim() || (formData.is_company && !formData.company_name.trim())}
+                disabled={!formData.name.trim()}
                 className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {t.common.saveChanges}
