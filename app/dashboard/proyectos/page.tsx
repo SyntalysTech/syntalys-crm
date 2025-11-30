@@ -15,6 +15,7 @@ export default function ProyectosPage() {
 
   const [formData, setFormData] = useState({
     client_id: '',
+    company_name: '',
     project_name: '',
     description: '',
     project_type: '' as ProjectType | '',
@@ -74,7 +75,7 @@ export default function ProyectosPage() {
     const { data, error } = await supabase
       .from('clients')
       .select('*')
-      .order('company_name', { ascending: true });
+      .order('name', { ascending: true });
 
     if (error) {
       console.error('Error loading clients:', error);
@@ -93,6 +94,7 @@ export default function ProyectosPage() {
     try {
       const projectData = {
         client_id: formData.client_id,
+        company_name: formData.company_name,
         project_name: formData.project_name,
         description: formData.description || null,
         project_type: formData.project_type || null,
@@ -106,6 +108,12 @@ export default function ProyectosPage() {
       };
 
       if (editingProject) {
+        // Verificar si el proyecto pasó de otro estado a "completed"
+        const wasCompleted = editingProject.status === 'completed';
+        const isNowCompleted = formData.status === 'completed';
+        const hasAmount = formData.total_amount && parseFloat(formData.total_amount) > 0;
+        const hasPaymentType = formData.payment_type && formData.payment_type !== '';
+
         const { error } = await supabase
           .from('projects')
           .update(projectData)
@@ -115,6 +123,18 @@ export default function ProyectosPage() {
           console.error('Error updating project:', error);
           alert(t.messages.saveError);
           return;
+        }
+
+        // Si el proyecto se marcó como completado y tiene monto y tipo de pago, crear ingreso
+        if (!wasCompleted && isNowCompleted && hasAmount && hasPaymentType) {
+          await createIncomeFromProject(
+            formData.client_id,
+            formData.project_name,
+            parseFloat(formData.total_amount),
+            formData.currency,
+            formData.payment_type as 'one_time' | 'monthly' | 'annual',
+            formData.end_date || new Date().toISOString().split('T')[0]
+          );
         }
       } else {
         const { error } = await supabase
@@ -126,6 +146,22 @@ export default function ProyectosPage() {
           alert(t.messages.saveError);
           return;
         }
+
+        // Si se crea un proyecto ya completado con monto y tipo de pago, crear ingreso
+        const isCompleted = formData.status === 'completed';
+        const hasAmount = formData.total_amount && parseFloat(formData.total_amount) > 0;
+        const hasPaymentType = formData.payment_type && formData.payment_type !== '';
+
+        if (isCompleted && hasAmount && hasPaymentType) {
+          await createIncomeFromProject(
+            formData.client_id,
+            formData.project_name,
+            parseFloat(formData.total_amount),
+            formData.currency,
+            formData.payment_type as 'one_time' | 'monthly' | 'annual',
+            formData.end_date || new Date().toISOString().split('T')[0]
+          );
+        }
       }
 
       resetForm();
@@ -135,6 +171,49 @@ export default function ProyectosPage() {
       console.error('Error in handleSubmit:', error);
       alert(t.messages.saveError);
     }
+  }
+
+  async function createIncomeFromProject(
+    clientId: string,
+    projectName: string,
+    amount: number,
+    currency: 'CHF' | 'EUR' | 'USD',
+    paymentType: 'one_time' | 'monthly' | 'annual',
+    paymentDate: string
+  ) {
+    try {
+      const { error } = await supabase
+        .from('client_income')
+        .insert([{
+          client_id: clientId,
+          service_name: projectName,
+          description: `Ingreso automático generado del proyecto: ${projectName}`,
+          amount: amount,
+          currency: currency,
+          frequency: paymentType,
+          category: 'web_development',
+          status: 'paid',
+          payment_date: paymentDate,
+          renewal_date: paymentType === 'one_time' ? null : getNextRenewalDate(paymentDate, paymentType),
+        }]);
+
+      if (error) {
+        console.error('Error creating income from project:', error);
+        // No bloquear el flujo principal si falla la creación del ingreso
+      }
+    } catch (error) {
+      console.error('Error in createIncomeFromProject:', error);
+    }
+  }
+
+  function getNextRenewalDate(currentDate: string, frequency: 'monthly' | 'annual'): string {
+    const date = new Date(currentDate);
+    if (frequency === 'monthly') {
+      date.setMonth(date.getMonth() + 1);
+    } else if (frequency === 'annual') {
+      date.setFullYear(date.getFullYear() + 1);
+    }
+    return date.toISOString().split('T')[0];
   }
 
   async function handleDelete(projectId: string, projectName: string) {
@@ -171,6 +250,7 @@ export default function ProyectosPage() {
     setEditingProject(project);
     setFormData({
       client_id: project.client_id,
+      company_name: project.company_name,
       project_name: project.project_name,
       description: project.description || '',
       project_type: (project.project_type as ProjectType) || '',
@@ -188,6 +268,7 @@ export default function ProyectosPage() {
   function resetForm() {
     setFormData({
       client_id: '',
+      company_name: '',
       project_name: '',
       description: '',
       project_type: '',
@@ -287,6 +368,7 @@ export default function ProyectosPage() {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.projects.projectName}</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.projects.client}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.forms.companyName}</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.projects.type}</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.status}</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.forms.value}</th>
@@ -306,7 +388,10 @@ export default function ProyectosPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">{project.client?.company_name || 'N/A'}</span>
+                      <span className="text-sm text-gray-900">{project.client?.name || 'N/A'}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-gray-600">{project.company_name || '-'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-600">
@@ -376,9 +461,22 @@ export default function ProyectosPage() {
                   >
                     <option value="">{t.forms.selectClient}</option>
                     {clients.map((client) => (
-                      <option key={client.id} value={client.id}>{client.company_name}</option>
+                      <option key={client.id} value={client.id}>{client.name}</option>
                     ))}
                   </select>
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.forms.companyName}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.company_name}
+                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    placeholder="Empresa del cliente para este proyecto"
+                  />
                 </div>
 
                 <div className="col-span-2">

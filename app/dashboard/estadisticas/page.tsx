@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
-import type { CompanyExpense, ClientExpense, ClientIncome } from '@/lib/types';
+import type { CompanyExpense, ClientExpense, ClientIncome, Project } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-type DataType = 'company_expenses' | 'client_expenses' | 'client_income';
-type Period = 'monthly' | 'annual';
+type DataType = 'company_expenses' | 'client_expenses' | 'client_income' | 'projects';
+type Period = 'monthly' | 'annual' | 'one_time';
 type ChartType = 'bar' | 'line' | 'pie';
 
 interface MonthlyData {
@@ -26,6 +26,7 @@ export default function EstadisticasPage() {
   const [companyExpenses, setCompanyExpenses] = useState<CompanyExpense[]>([]);
   const [clientExpenses, setClientExpenses] = useState<ClientExpense[]>([]);
   const [clientIncome, setClientIncome] = useState<ClientIncome[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     loadData();
@@ -33,15 +34,17 @@ export default function EstadisticasPage() {
 
   async function loadData() {
     try {
-      const [expensesRes, clientExpensesRes, incomeRes] = await Promise.all([
+      const [expensesRes, clientExpensesRes, incomeRes, projectsRes] = await Promise.all([
         supabase.from('company_expenses').select('*'),
         supabase.from('client_expenses').select('*'),
         supabase.from('client_income').select('*'),
+        supabase.from('projects').select('*'),
       ]);
 
       setCompanyExpenses(expensesRes.data || []);
       setClientExpenses(clientExpensesRes.data || []);
       setClientIncome(incomeRes.data || []);
+      setProjects(projectsRes.data || []);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -55,9 +58,19 @@ export default function EstadisticasPage() {
       return companyExpenses.filter(e => e.frequency === period);
     } else if (dataType === 'client_expenses') {
       return clientExpenses.filter(e => e.frequency === period);
-    } else {
+    } else if (dataType === 'client_income') {
       return clientIncome.filter(i => i.frequency === period);
+    } else if (dataType === 'projects') {
+      // Para proyectos, filtrar por payment_type
+      if (period === 'one_time') {
+        return projects.filter(p => p.payment_type === 'one_time' && p.total_amount);
+      } else if (period === 'monthly') {
+        return projects.filter(p => p.payment_type === 'monthly' && p.total_amount);
+      } else if (period === 'annual') {
+        return projects.filter(p => p.payment_type === 'annual' && p.total_amount);
+      }
     }
+    return [];
   }
 
   // Agrupar datos por mes
@@ -66,12 +79,24 @@ export default function EstadisticasPage() {
     const monthlyMap = new Map<string, number>();
 
     data.forEach(item => {
-      const date = new Date(item.payment_date || item.created_at);
+      let date: Date;
+      let amount: number;
+
+      // Manejar proyectos de manera diferente
+      if (dataType === 'projects') {
+        const project = item as Project;
+        date = new Date(project.end_date || project.start_date || project.created_at);
+        amount = project.total_amount || 0;
+      } else {
+        const record = item as CompanyExpense | ClientExpense | ClientIncome;
+        date = new Date(record.payment_date || record.created_at);
+        amount = record.amount;
+      }
+
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      const monthName = date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
 
       const current = monthlyMap.get(monthKey) || 0;
-      monthlyMap.set(monthKey, current + Number(item.amount));
+      monthlyMap.set(monthKey, current + Number(amount));
     });
 
     // Ordenar por fecha y tomar últimos 12 meses
@@ -91,9 +116,21 @@ export default function EstadisticasPage() {
     const categoryMap = new Map<string, number>();
 
     data.forEach(item => {
-      const category = item.category || 'other';
+      let category: string;
+      let amount: number;
+
+      if (dataType === 'projects') {
+        const project = item as Project;
+        category = project.project_type || 'other';
+        amount = project.total_amount || 0;
+      } else {
+        const record = item as CompanyExpense | ClientExpense | ClientIncome;
+        category = record.category || 'other';
+        amount = record.amount;
+      }
+
       const current = categoryMap.get(category) || 0;
-      categoryMap.set(category, current + Number(item.amount));
+      categoryMap.set(category, current + Number(amount));
     });
 
     return Array.from(categoryMap.entries()).map(([category, amount]) => ({
@@ -112,11 +149,13 @@ export default function EstadisticasPage() {
     company_expenses: 'Gastos de Syntalys',
     client_expenses: 'Gastos de Clientes',
     client_income: 'Ingresos de Clientes',
+    projects: 'Proyectos',
   };
 
   const periodLabels: Record<Period, string> = {
     monthly: 'Mensuales',
     annual: 'Anuales',
+    one_time: 'Pago Único',
   };
 
   return (
@@ -138,10 +177,18 @@ export default function EstadisticasPage() {
             </label>
             <select
               value={dataType}
-              onChange={(e) => setDataType(e.target.value as DataType)}
+              onChange={(e) => {
+                const newType = e.target.value as DataType;
+                setDataType(newType);
+                // Si es proyectos, cambiar a one_time por defecto
+                if (newType === 'projects' && period !== 'one_time' && period !== 'monthly' && period !== 'annual') {
+                  setPeriod('one_time');
+                }
+              }}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
             >
               <option value="client_income">Ingresos de Clientes</option>
+              <option value="projects">Proyectos</option>
               <option value="company_expenses">Gastos de Syntalys</option>
               <option value="client_expenses">Gastos de Clientes</option>
             </select>
@@ -157,8 +204,18 @@ export default function EstadisticasPage() {
               onChange={(e) => setPeriod(e.target.value as Period)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
             >
-              <option value="monthly">Mensuales</option>
-              <option value="annual">Anuales</option>
+              {dataType === 'projects' ? (
+                <>
+                  <option value="one_time">Pago Único</option>
+                  <option value="monthly">Mensuales</option>
+                  <option value="annual">Anuales</option>
+                </>
+              ) : (
+                <>
+                  <option value="monthly">Mensuales</option>
+                  <option value="annual">Anuales</option>
+                </>
+              )}
             </select>
           </div>
 
@@ -479,6 +536,7 @@ function PieChart({ data }: { data: { category: string; amount: number }[] }) {
   ];
 
   const categoryLabels: Record<string, string> = {
+    // Categorías de gastos/ingresos
     software: 'Software',
     hosting: 'Hosting',
     domain: 'Dominio',
@@ -486,9 +544,13 @@ function PieChart({ data }: { data: { category: string; amount: number }[] }) {
     development: 'Desarrollo',
     ssl: 'SSL',
     maintenance: 'Mantenimiento',
-    web_development: 'Desarrollo Web',
     crm: 'CRM',
     subscription: 'Suscripción',
+    // Tipos de proyectos
+    web_development: 'Desarrollo Web',
+    app_development: 'Desarrollo de Apps',
+    consulting: 'Consultoría',
+    design: 'Diseño',
     other: 'Otro',
   };
 
