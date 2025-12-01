@@ -110,7 +110,7 @@ export default function DashboardPage() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
-          {t.dashboard.welcome}, {profile?.full_name || profile?.email || 'Usuario'}
+          {t.dashboard.welcome}, {profile?.full_name || profile?.email || '-'}
         </h1>
         <p className="text-gray-600 mt-2">
           {t.dashboard.connectedAs}{' '}

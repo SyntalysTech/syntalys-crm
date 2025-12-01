@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import Sidebar from '@/components/sidebar/Sidebar';
 
 export default function DashboardLayout({
@@ -12,6 +13,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -24,7 +26,7 @@ export default function DashboardLayout({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-syntalys-blue"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
+          <p className="mt-4 text-gray-600">{t.common.loading}...</p>
         </div>
       </div>
     );

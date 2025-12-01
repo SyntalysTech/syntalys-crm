@@ -20,6 +20,7 @@ export default function ClientesPage() {
     phone: '',
     notes: '',
     status: 'active' as 'active' | 'inactive' | 'suspended',
+    is_potential: false,
   });
 
   useEffect(() => {
@@ -63,10 +64,12 @@ export default function ClientesPage() {
         .insert([{
           user_id: user.id,
           name: formData.name,
+          company_name: formData.name,
           email: formData.email || null,
           phone: formData.phone || null,
           notes: formData.notes || null,
           status: formData.status,
+          is_potential: formData.is_potential,
         }]);
 
       if (error) {
@@ -81,7 +84,8 @@ export default function ClientesPage() {
         email: '',
         phone: '',
         notes: '',
-        status: 'active'
+        status: 'active',
+        is_potential: false,
       });
       setShowAddModal(false);
       loadClients();
@@ -103,6 +107,7 @@ export default function ClientesPage() {
           phone: formData.phone || null,
           notes: formData.notes || null,
           status: formData.status,
+          is_potential: formData.is_potential,
         })
         .eq('id', selectedClient.id);
 
@@ -118,7 +123,8 @@ export default function ClientesPage() {
         email: '',
         phone: '',
         notes: '',
-        status: 'active'
+        status: 'active',
+        is_potential: false,
       });
       setShowEditModal(false);
       setSelectedClient(null);
@@ -159,7 +165,8 @@ export default function ClientesPage() {
       email: '',
       phone: '',
       notes: '',
-      status: 'active'
+      status: 'active',
+      is_potential: false,
     });
     setShowAddModal(true);
   }
@@ -172,6 +179,7 @@ export default function ClientesPage() {
       phone: client.phone || '',
       notes: client.notes || '',
       status: client.status,
+      is_potential: client.is_potential || false,
     });
     setShowEditModal(true);
   }
@@ -230,10 +238,13 @@ export default function ClientesPage() {
                     {t.forms.phone}
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
+                    {t.common.type}
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t.common.status}
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
+                    {t.common.actions}
                   </th>
                 </tr>
               </thead>
@@ -248,6 +259,17 @@ export default function ClientesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-600">{client.phone || '-'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {client.is_potential ? (
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                          {t.clients.potential}
+                        </span>
+                      ) : (
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                          {t.common.client}
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -339,19 +361,32 @@ export default function ClientesPage() {
                   placeholder="Notas adicionales sobre el cliente"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.common.status}
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'suspended' })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                >
-                  <option value="active">{t.clients.active}</option>
-                  <option value="inactive">{t.clients.inactive}</option>
-                  <option value="suspended">{t.clients.suspended}</option>
-                </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.common.status}
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'suspended' })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                  >
+                    <option value="active">{t.clients.active}</option>
+                    <option value="inactive">{t.clients.inactive}</option>
+                    <option value="suspended">{t.clients.suspended}</option>
+                  </select>
+                </div>
+                <div className="flex items-center pt-7">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_potential}
+                      onChange={(e) => setFormData({ ...formData, is_potential: e.target.checked })}
+                      className="w-5 h-5 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
+                    />
+                    <span className="ml-2 text-sm font-medium text-gray-700">{t.clients.isPotential}</span>
+                  </label>
+                </div>
               </div>
             </div>
             <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
@@ -432,19 +467,32 @@ export default function ClientesPage() {
                   placeholder="Notas adicionales sobre el cliente"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.common.status}
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'suspended' })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
-                >
-                  <option value="active">{t.clients.active}</option>
-                  <option value="inactive">{t.clients.inactive}</option>
-                  <option value="suspended">{t.clients.suspended}</option>
-                </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.common.status}
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'suspended' })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                  >
+                    <option value="active">{t.clients.active}</option>
+                    <option value="inactive">{t.clients.inactive}</option>
+                    <option value="suspended">{t.clients.suspended}</option>
+                  </select>
+                </div>
+                <div className="flex items-center pt-7">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_potential}
+                      onChange={(e) => setFormData({ ...formData, is_potential: e.target.checked })}
+                      className="w-5 h-5 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
+                    />
+                    <span className="ml-2 text-sm font-medium text-gray-700">{t.clients.isPotential}</span>
+                  </label>
+                </div>
               </div>
             </div>
             <div className="p-6 border-t border-gray-200 flex justify-end gap-3">

@@ -31,11 +31,11 @@ export type PaymentType = 'one_time' | 'monthly' | 'annual' | 'milestone';
 export interface Client {
   id: string;
   user_id: string;
-  company_name: string;
-  contact_name: string | null;
-  contact_email: string | null;
-  contact_phone: string | null;
+  name: string;
+  email: string | null;
+  phone: string | null;
   status: ClientStatus;
+  is_potential: boolean;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -91,6 +91,7 @@ export interface ClientIncome {
 export interface Project {
   id: string;
   client_id: string;
+  company_name: string;
   project_name: string;
   description: string | null;
   project_type: ProjectType | null;

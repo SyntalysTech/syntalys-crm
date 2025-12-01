@@ -78,7 +78,7 @@ export default function Sidebar() {
   if (loading) {
     return (
       <div className="w-64 bg-syntalys-blue text-white h-screen flex items-center justify-center">
-        <p>Cargando...</p>
+        <p>{t.common.loading}...</p>
       </div>
     );
   }
@@ -116,10 +116,10 @@ export default function Sidebar() {
               {profile?.full_name || profile?.email || 'Usuario'}
             </p>
             <p className="text-xs text-white/60 truncate">
-              {profile?.role === 'super_admin' && 'Super Admin'}
-              {profile?.role === 'admin' && 'Admin'}
-              {profile?.role === 'gestor' && 'Gestor'}
-              {profile?.role === 'empleado' && 'Empleado'}
+              {profile?.role === 'super_admin' && t.dashboard.superAdmin}
+              {profile?.role === 'admin' && t.dashboard.admin}
+              {profile?.role === 'gestor' && t.dashboard.manager}
+              {profile?.role === 'empleado' && t.dashboard.employee}
             </p>
           </div>
         </div>

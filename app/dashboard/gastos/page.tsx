@@ -462,7 +462,7 @@ export default function GastosPage() {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{client.name}</h3>
-                        <p className="text-sm text-gray-500">{client.email || 'Sin email'}</p>
+                        <p className="text-sm text-gray-500">{client.email || '-'}</p>
                       </div>
                     </div>
 

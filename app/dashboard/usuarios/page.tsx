@@ -89,12 +89,12 @@ export default function UsuariosPage() {
     }
 
     if (!editingUser && !formData.password) {
-      alert('La contraseña es obligatoria para nuevos usuarios');
+      alert(t.messages.fillRequired);
       return;
     }
 
     if (formData.password && formData.password.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres');
+      alert(t.messages.fillRequired);
       return;
     }
 
@@ -180,7 +180,7 @@ export default function UsuariosPage() {
 
       if (error) throw error;
 
-      alert('Usuario desactivado correctamente');
+      alert(t.messages.deleteSuccess);
       loadUsers();
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -288,7 +288,7 @@ export default function UsuariosPage() {
                         {user.full_name?.charAt(0).toUpperCase() || user.email.charAt(0).toUpperCase()}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.full_name || 'Sin nombre'}</div>
+                        <div className="text-sm font-medium text-gray-900">{user.full_name || '-'}</div>
                         {user.phone && (
                           <div className="text-sm text-gray-500">{user.phone}</div>
                         )}

@@ -41,6 +41,8 @@ export interface Translations {
     more: string;
     none: string;
     saveChanges: string;
+    type: string;
+    client: string;
   };
 
   // Dashboard
@@ -103,6 +105,8 @@ export interface Translations {
     active: string;
     inactive: string;
     suspended: string;
+    potential: string;
+    isPotential: string;
     noClients: string;
     createFirst: string;
     monthlyExpenses: string;
@@ -331,6 +335,30 @@ export interface Translations {
     namePlaceholder: string;
     phonePlaceholder: string;
   };
+
+  // Stats page
+  stats: {
+    title: string;
+    subtitle: string;
+    dataType: string;
+    period: string;
+    chartType: string;
+    syntalysExpenses: string;
+    clientExpenses: string;
+    clientIncome: string;
+    monthly: string;
+    annual: string;
+    oneTime: string;
+    bars: string;
+    lines: string;
+    pie: string;
+    average: string;
+    perPeriod: string;
+    records: string;
+    totalOf: string;
+    noDataAvailable: string;
+    selectFilters: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -369,6 +397,8 @@ export const translations: Record<Language, Translations> = {
       more: 'más',
       none: 'Sin',
       saveChanges: 'Guardar Cambios',
+      type: 'Tipo',
+      client: 'Cliente',
     },
     dashboard: {
       title: 'Dashboard',
@@ -426,6 +456,8 @@ export const translations: Record<Language, Translations> = {
       active: 'Activo',
       inactive: 'Inactivo',
       suspended: 'Suspendido',
+      potential: 'Potencial',
+      isPotential: 'Cliente Potencial',
       noClients: 'No hay clientes registrados aún',
       createFirst: 'Crear primer cliente',
       monthlyExpenses: 'Gastos Mensuales',
@@ -635,6 +667,28 @@ export const translations: Record<Language, Translations> = {
       namePlaceholder: 'Juan Pérez',
       phonePlaceholder: '+41 xx xxx xx xx',
     },
+    stats: {
+      title: 'Estadísticas',
+      subtitle: 'Visualiza y analiza tus datos financieros con gráficos interactivos',
+      dataType: 'Tipo de Datos',
+      period: 'Período',
+      chartType: 'Tipo de Gráfico',
+      syntalysExpenses: 'Gastos de Syntalys',
+      clientExpenses: 'Gastos de Clientes',
+      clientIncome: 'Ingresos de Clientes',
+      monthly: 'Mensuales',
+      annual: 'Anuales',
+      oneTime: 'Pago Único',
+      bars: 'Barras',
+      lines: 'Líneas',
+      pie: 'Torta',
+      average: 'Promedio',
+      perPeriod: 'Por período',
+      records: 'Registros',
+      totalOf: 'Total de',
+      noDataAvailable: 'No hay datos disponibles',
+      selectFilters: 'Selecciona diferentes filtros o agrega datos en las secciones correspondientes',
+    },
   },
   fr: {
     nav: {
@@ -671,6 +725,8 @@ export const translations: Record<Language, Translations> = {
       more: 'de plus',
       none: 'Sans',
       saveChanges: 'Enregistrer les Modifications',
+      type: 'Type',
+      client: 'Client',
     },
     dashboard: {
       title: 'Tableau de bord',
@@ -728,6 +784,8 @@ export const translations: Record<Language, Translations> = {
       active: 'Actif',
       inactive: 'Inactif',
       suspended: 'Suspendu',
+      potential: 'Potentiel',
+      isPotential: 'Client Potentiel',
       noClients: 'Aucun client enregistré pour le moment',
       createFirst: 'Créer le premier client',
       monthlyExpenses: 'Dépenses Mensuelles',
@@ -936,6 +994,28 @@ export const translations: Record<Language, Translations> = {
       emailPlaceholder: 'email@exemple.com',
       namePlaceholder: 'Jean Dupont',
       phonePlaceholder: '+41 xx xxx xx xx',
+    },
+    stats: {
+      title: 'Statistiques',
+      subtitle: 'Visualisez et analysez vos données financières avec des graphiques interactifs',
+      dataType: 'Type de Données',
+      period: 'Période',
+      chartType: 'Type de Graphique',
+      syntalysExpenses: 'Dépenses Syntalys',
+      clientExpenses: 'Dépenses Clients',
+      clientIncome: 'Revenus Clients',
+      monthly: 'Mensuels',
+      annual: 'Annuels',
+      oneTime: 'Paiement Unique',
+      bars: 'Barres',
+      lines: 'Lignes',
+      pie: 'Camembert',
+      average: 'Moyenne',
+      perPeriod: 'Par période',
+      records: 'Enregistrements',
+      totalOf: 'Total de',
+      noDataAvailable: 'Aucune donnée disponible',
+      selectFilters: 'Sélectionnez différents filtres ou ajoutez des données dans les sections correspondantes',
     },
   },
 };

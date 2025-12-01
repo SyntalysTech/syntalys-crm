@@ -94,7 +94,7 @@ export default function IngresosPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!formData.client_id || !formData.service_name || !formData.amount) {
-      alert('Por favor completa los campos obligatorios');
+      alert(t.messages.fillRequired);
       return;
     }
 
@@ -128,7 +128,7 @@ export default function IngresosPage() {
 
       if (error) {
         console.error('Error saving income:', error);
-        alert('Error al guardar el ingreso');
+        alert(t.messages.saveError);
         return;
       }
 
@@ -136,12 +136,12 @@ export default function IngresosPage() {
       loadData();
     } catch (error) {
       console.error('Error in handleSubmit:', error);
-      alert('Error al guardar el ingreso');
+      alert(t.messages.saveError);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('¿Estás seguro de eliminar este ingreso?')) return;
+    if (!confirm(t.messages.deleteConfirm + '?')) return;
 
     const { error } = await supabase
       .from('client_income')
@@ -150,7 +150,7 @@ export default function IngresosPage() {
 
     if (error) {
       console.error('Error deleting income:', error);
-      alert('Error al eliminar el ingreso');
+      alert(t.messages.deleteError);
     } else {
       loadData();
     }
@@ -158,7 +158,7 @@ export default function IngresosPage() {
 
   function getClientName(clientId: string) {
     const client = clients.find(c => c.id === clientId);
-    return client ? client.name : 'Cliente no encontrado';
+    return client ? client.name : 'N/A';
   }
 
   if (loading) {

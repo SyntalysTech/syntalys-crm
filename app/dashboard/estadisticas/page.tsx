@@ -146,24 +146,24 @@ export default function EstadisticasPage() {
 
   // Configuración de títulos
   const dataTypeLabels: Record<DataType, string> = {
-    company_expenses: 'Gastos de Syntalys',
-    client_expenses: 'Gastos de Clientes',
-    client_income: 'Ingresos de Clientes',
-    projects: 'Proyectos',
+    company_expenses: t.stats.syntalysExpenses,
+    client_expenses: t.stats.clientExpenses,
+    client_income: t.stats.clientIncome,
+    projects: t.nav.projects,
   };
 
   const periodLabels: Record<Period, string> = {
-    monthly: 'Mensuales',
-    annual: 'Anuales',
-    one_time: 'Pago Único',
+    monthly: t.stats.monthly,
+    annual: t.stats.annual,
+    one_time: t.stats.oneTime,
   };
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Estadísticas</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t.stats.title}</h1>
         <p className="text-gray-600 mt-2">
-          Visualiza y analiza tus datos financieros con gráficos interactivos
+          {t.stats.subtitle}
         </p>
       </div>
 
@@ -173,7 +173,7 @@ export default function EstadisticasPage() {
           {/* Selector de tipo de datos */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de Datos
+              {t.stats.dataType}
             </label>
             <select
               value={dataType}
@@ -187,17 +187,17 @@ export default function EstadisticasPage() {
               }}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
             >
-              <option value="client_income">Ingresos de Clientes</option>
-              <option value="projects">Proyectos</option>
-              <option value="company_expenses">Gastos de Syntalys</option>
-              <option value="client_expenses">Gastos de Clientes</option>
+              <option value="client_income">{t.stats.clientIncome}</option>
+              <option value="projects">{t.nav.projects}</option>
+              <option value="company_expenses">{t.stats.syntalysExpenses}</option>
+              <option value="client_expenses">{t.stats.clientExpenses}</option>
             </select>
           </div>
 
           {/* Selector de período */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Período
+              {t.stats.period}
             </label>
             <select
               value={period}
@@ -206,14 +206,14 @@ export default function EstadisticasPage() {
             >
               {dataType === 'projects' ? (
                 <>
-                  <option value="one_time">Pago Único</option>
-                  <option value="monthly">Mensuales</option>
-                  <option value="annual">Anuales</option>
+                  <option value="one_time">{t.stats.oneTime}</option>
+                  <option value="monthly">{t.stats.monthly}</option>
+                  <option value="annual">{t.stats.annual}</option>
                 </>
               ) : (
                 <>
-                  <option value="monthly">Mensuales</option>
-                  <option value="annual">Anuales</option>
+                  <option value="monthly">{t.stats.monthly}</option>
+                  <option value="annual">{t.stats.annual}</option>
                 </>
               )}
             </select>
@@ -222,16 +222,16 @@ export default function EstadisticasPage() {
           {/* Selector de tipo de gráfico */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de Gráfico
+              {t.stats.chartType}
             </label>
             <select
               value={chartType}
               onChange={(e) => setChartType(e.target.value as ChartType)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
             >
-              <option value="bar">Barras</option>
-              <option value="line">Líneas</option>
-              <option value="pie">Torta</option>
+              <option value="bar">{t.stats.bars}</option>
+              <option value="line">{t.stats.lines}</option>
+              <option value="pie">{t.stats.pie}</option>
             </select>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function EstadisticasPage() {
       {/* Resumen rápido */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Total</h3>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">{t.common.total}</h3>
           <p className="text-3xl font-bold text-syntalys-blue">
             {totalAmount.toFixed(2)} CHF
           </p>
@@ -250,19 +250,19 @@ export default function EstadisticasPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Promedio</h3>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">{t.stats.average}</h3>
           <p className="text-3xl font-bold text-green-600">
             {monthlyData.length > 0 ? (totalAmount / monthlyData.length).toFixed(2) : '0.00'} CHF
           </p>
-          <p className="text-xs text-gray-500 mt-1">Por período</p>
+          <p className="text-xs text-gray-500 mt-1">{t.stats.perPeriod}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Registros</h3>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">{t.stats.records}</h3>
           <p className="text-3xl font-bold text-purple-600">
             {getCurrentData().length}
           </p>
-          <p className="text-xs text-gray-500 mt-1">Total de {period === 'monthly' ? 'mensuales' : 'anuales'}</p>
+          <p className="text-xs text-gray-500 mt-1">{t.stats.totalOf} {periodLabels[period]}</p>
         </div>
       </div>
 
@@ -274,14 +274,14 @@ export default function EstadisticasPage() {
 
         {loading ? (
           <div className="flex items-center justify-center h-96">
-            <p className="text-gray-500">Cargando datos...</p>
+            <p className="text-gray-500">{t.common.loading}...</p>
           </div>
         ) : monthlyData.length === 0 ? (
           <div className="flex items-center justify-center h-96 border-2 border-dashed border-gray-200 rounded-lg">
             <div className="text-center">
-              <p className="text-gray-500 text-lg mb-2">No hay datos disponibles</p>
+              <p className="text-gray-500 text-lg mb-2">{t.stats.noDataAvailable}</p>
               <p className="text-gray-400 text-sm">
-                Selecciona diferentes filtros o agrega datos en las secciones correspondientes
+                {t.stats.selectFilters}
               </p>
             </div>
           </div>
