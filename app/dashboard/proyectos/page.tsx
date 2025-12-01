@@ -282,16 +282,6 @@ export default function ProyectosPage() {
     });
   }
 
-  const activeProjects = projects.filter(p => p.status === 'active');
-  const completedProjects = projects.filter(p => p.status === 'completed');
-  const pausedProjects = projects.filter(p => p.status === 'paused');
-  const totalValueActive = projects
-    .filter(p => p.status === 'active')
-    .reduce((sum, p) => sum + (p.total_amount || 0), 0);
-  const totalValuePending = projects
-    .filter(p => p.status === 'paused')
-    .reduce((sum, p) => sum + (p.total_amount || 0), 0);
-
   if (loading) {
     return (
       <div className="p-8">
@@ -317,36 +307,6 @@ export default function ProyectosPage() {
         >
           + {t.projects.addProject}
         </button>
-      </div>
-
-      {/* Estadísticas */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.projects.totalProjects}</h3>
-          <p className="text-3xl font-bold text-syntalys-blue">{projects.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.projects.active}</h3>
-          <p className="text-3xl font-bold text-green-600">{activeProjects.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.projects.onHold}</h3>
-          <p className="text-3xl font-bold text-orange-600">{pausedProjects.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.projects.completed}</h3>
-          <p className="text-3xl font-bold text-gray-600">{completedProjects.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.projects.activeValue}</h3>
-          <p className="text-2xl font-bold text-green-600">{totalValueActive.toFixed(2)} CHF</p>
-          <p className="text-xs text-gray-400 mt-1">{t.projects.activeValueSubtitle}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.projects.pendingIncome}</h3>
-          <p className="text-2xl font-bold text-orange-600">{totalValuePending.toFixed(2)} CHF</p>
-          <p className="text-xs text-gray-400 mt-1">{t.projects.pendingIncomeSubtitle}</p>
-        </div>
       </div>
 
       {/* Lista de proyectos */}

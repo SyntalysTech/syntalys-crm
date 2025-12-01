@@ -38,7 +38,7 @@ export default function IngresosPage() {
     try {
       const [incomesRes, clientsRes] = await Promise.all([
         supabase.from('client_income').select('*').order('created_at', { ascending: false }),
-        supabase.from('clients').select('*').order('company_name', { ascending: true }),
+        supabase.from('clients').select('*').order('name', { ascending: true }),
       ]);
 
       if (incomesRes.error) throw incomesRes.error;
@@ -158,13 +158,8 @@ export default function IngresosPage() {
 
   function getClientName(clientId: string) {
     const client = clients.find(c => c.id === clientId);
-    return client ? client.company_name : 'Cliente no encontrado';
+    return client ? client.name : 'Cliente no encontrado';
   }
-
-  const totalOneTime = oneTimeIncomes.reduce((sum, i) => sum + i.amount, 0);
-  const totalMonthly = monthlyIncomes.reduce((sum, i) => sum + i.amount, 0);
-  const totalAnnual = annualIncomes.reduce((sum, i) => sum + i.amount, 0);
-  const totalYearly = (totalMonthly * 12) + totalAnnual;
 
   if (loading) {
     return (
@@ -189,30 +184,6 @@ export default function IngresosPage() {
         >
           + {t.income.addIncome}
         </button>
-      </div>
-
-      {/* Resumen */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">{t.income.oneTimePayments}</p>
-          <p className="text-3xl font-bold text-blue-600">CHF {totalOneTime.toFixed(2)}</p>
-          <p className="text-xs text-gray-500 mt-1">{oneTimeIncomes.length} {t.income.payments}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">{t.income.monthlyIncome}</p>
-          <p className="text-3xl font-bold text-green-600">CHF {totalMonthly.toFixed(2)}</p>
-          <p className="text-xs text-gray-500 mt-1">{monthlyIncomes.length} {t.income.services}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">{t.income.annualIncome}</p>
-          <p className="text-3xl font-bold text-green-600">CHF {totalAnnual.toFixed(2)}</p>
-          <p className="text-xs text-gray-500 mt-1">{annualIncomes.length} {t.income.services}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">{t.income.projectedAnnual}</p>
-          <p className="text-3xl font-bold text-purple-600">CHF {totalYearly.toFixed(2)}</p>
-          <p className="text-xs text-gray-500 mt-1">{t.income.projectedAnnualSubtitle}</p>
-        </div>
       </div>
 
       {/* Pagos Únicos */}
@@ -484,7 +455,7 @@ export default function IngresosPage() {
                     <option value="">{t.forms.selectClient}</option>
                     {clients.map((client) => (
                       <option key={client.id} value={client.id}>
-                        {client.company_name}
+                        {client.name}
                       </option>
                     ))}
                   </select>

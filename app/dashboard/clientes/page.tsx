@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Client, ClientWithDetails, ClientExpense, ClientIncome, Project } from '@/lib/types';
+import type { Client } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ClientesPage() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
-  const [clients, setClients] = useState<ClientWithDetails[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
@@ -29,101 +29,17 @@ export default function ClientesPage() {
   async function loadClients() {
     setLoading(true);
     try {
-      // Cargar clientes
-      const { data: clientsData, error: clientsError } = await supabase
+      const { data, error } = await supabase
         .from('clients')
         .select('*')
         .order('name', { ascending: true });
 
-      if (clientsError) {
-        console.error('Error loading clients:', clientsError);
+      if (error) {
+        console.error('Error loading clients:', error);
         return;
       }
 
-      // Cargar gastos de clientes
-      const { data: expensesData, error: expensesError } = await supabase
-        .from('client_expenses')
-        .select('*');
-
-      // Cargar ingresos de clientes
-      const { data: incomeData, error: incomeError } = await supabase
-        .from('client_income')
-        .select('*');
-
-      // Cargar proyectos
-      const { data: projectsData, error: projectsError } = await supabase
-        .from('projects')
-        .select('*');
-
-      if (expensesError || incomeError || projectsError) {
-        console.error('Error loading client data:', expensesError || incomeError || projectsError);
-        return;
-      }
-
-      // Combinar datos
-      const clientsWithDetails: ClientWithDetails[] = (clientsData || []).map(client => {
-        const clientExpenses = (expensesData || []).filter(e => e.client_id === client.id);
-        const clientIncome = (incomeData || []).filter(i => i.client_id === client.id);
-        const clientProjects = (projectsData || []).filter(p => p.client_id === client.id && p.total_amount);
-
-        // Gastos mensuales y anuales
-        const totalExpensesMonthly = clientExpenses
-          .filter(e => e.frequency === 'monthly')
-          .reduce((sum, e) => sum + Number(e.amount), 0);
-
-        const totalExpensesAnnual = clientExpenses
-          .filter(e => e.frequency === 'annual')
-          .reduce((sum, e) => sum + Number(e.amount), 0);
-
-        // Ingresos de client_income (monthly, annual, one_time)
-        const incomeMonthly = clientIncome
-          .filter(i => i.frequency === 'monthly')
-          .reduce((sum, i) => sum + Number(i.amount), 0);
-
-        const incomeAnnual = clientIncome
-          .filter(i => i.frequency === 'annual')
-          .reduce((sum, i) => sum + Number(i.amount), 0);
-
-        const incomeOneTime = clientIncome
-          .filter(i => i.frequency === 'one_time')
-          .reduce((sum, i) => sum + Number(i.amount), 0);
-
-        // Ingresos de proyectos (monthly, annual, one_time)
-        const projectMonthly = clientProjects
-          .filter(p => p.payment_type === 'monthly')
-          .reduce((sum, p) => sum + Number(p.total_amount), 0);
-
-        const projectAnnual = clientProjects
-          .filter(p => p.payment_type === 'annual')
-          .reduce((sum, p) => sum + Number(p.total_amount), 0);
-
-        const projectOneTime = clientProjects
-          .filter(p => p.payment_type === 'one_time')
-          .reduce((sum, p) => sum + Number(p.total_amount), 0);
-
-        // Totales combinados
-        const totalIncomeMonthly = incomeMonthly + projectMonthly;
-        const totalIncomeAnnual = incomeAnnual + projectAnnual;
-        const totalIncomeOneTime = incomeOneTime + projectOneTime;
-
-        // Calcular proyección anual: (mensual * 12) + anual + one-time
-        const yearlyIncomeProjected = (totalIncomeMonthly * 12) + totalIncomeAnnual + totalIncomeOneTime;
-        const yearlyExpensesProjected = (totalExpensesMonthly * 12) + totalExpensesAnnual;
-
-        return {
-          ...client,
-          expenses: clientExpenses,
-          income: clientIncome,
-          total_expenses_monthly: totalExpensesMonthly,
-          total_expenses_annual: yearlyExpensesProjected,
-          total_income_monthly: totalIncomeMonthly,
-          total_income_annual: yearlyIncomeProjected,
-          profit_monthly: totalIncomeMonthly - totalExpensesMonthly,
-          profit_annual: yearlyIncomeProjected - yearlyExpensesProjected,
-        };
-      });
-
-      setClients(clientsWithDetails);
+      setClients(data || []);
     } catch (error) {
       console.error('Error in loadClients:', error);
     } finally {
@@ -260,11 +176,6 @@ export default function ClientesPage() {
     setShowEditModal(true);
   }
 
-  // Calcular totales generales
-  const totalClientsExpensesAnnual = clients.reduce((sum, c) => sum + (c.total_expenses_annual || 0), 0);
-  const totalClientsIncomeAnnual = clients.reduce((sum, c) => sum + (c.total_income_annual || 0), 0);
-  const totalClientsProfitAnnual = totalClientsIncomeAnnual - totalClientsExpensesAnnual;
-
   if (loading) {
     return (
       <div className="p-8">
@@ -290,31 +201,6 @@ export default function ClientesPage() {
         >
           + {t.clients.addClient}
         </button>
-      </div>
-
-      {/* Resumen general */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.clients.totalClients}</h3>
-          <p className="text-3xl font-bold text-syntalys-blue">{clients.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.clients.clientExpenses}</h3>
-          <p className="text-3xl font-bold text-orange-600">{totalClientsExpensesAnnual.toFixed(2)} CHF</p>
-          <p className="text-xs text-gray-400 mt-1">{t.clients.clientExpensesSubtitle}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.clients.totalIncome}</h3>
-          <p className="text-3xl font-bold text-green-600">{totalClientsIncomeAnnual.toFixed(2)} CHF</p>
-          <p className="text-xs text-gray-400 mt-1">{t.clients.totalIncomeSubtitle}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.clients.totalProfit}</h3>
-          <p className={`text-3xl font-bold ${totalClientsProfitAnnual >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            {totalClientsProfitAnnual.toFixed(2)} CHF
-          </p>
-          <p className="text-xs text-gray-400 mt-1">{t.clients.totalProfitSubtitle}</p>
-        </div>
       </div>
 
       {/* Lista de clientes */}
@@ -347,15 +233,6 @@ export default function ClientesPage() {
                     Estado
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Gastos Anuales
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ingresos Anuales
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Beneficio Anual
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
                   </th>
                 </tr>
@@ -380,27 +257,6 @@ export default function ClientesPage() {
                       }`}>
                         {client.status === 'active' ? t.clients.active : client.status === 'inactive' ? t.clients.inactive : t.clients.suspended}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-sm font-medium text-red-600">
-                        {(client.total_expenses_annual || 0).toFixed(2)} CHF
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {client.expenses?.length || 0} gastos
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-sm font-medium text-green-600">
-                        {(client.total_income_annual || 0).toFixed(2)} CHF
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {client.income?.length || 0} ingresos
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className={`text-sm font-bold ${(client.profit_annual || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {(client.profit_annual || 0).toFixed(2)} CHF
-                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button

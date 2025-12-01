@@ -70,7 +70,7 @@ export default function GastosPage() {
     const { data, error } = await supabase
       .from('clients')
       .select('*')
-      .order('company_name', { ascending: true });
+      .order('name', { ascending: true });
 
     if (error) {
       console.error('Error loading all clients:', error);
@@ -100,7 +100,7 @@ export default function GastosPage() {
     const { data: clientsData, error: clientsError } = await supabase
       .from('clients')
       .select('*')
-      .order('company_name', { ascending: true });
+      .order('name', { ascending: true });
 
     if (clientsError) {
       console.error('Error loading clients:', clientsError);
@@ -242,14 +242,6 @@ export default function GastosPage() {
     }
   }
 
-  const totalMonthlyExpenses = monthlyExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
-  const totalAnnualExpenses = annualExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
-  const totalYearlyCompanyCost = (totalMonthlyExpenses * 12) + totalAnnualExpenses;
-
-  const totalClientExpensesMonthly = clients.reduce((sum, c) => sum + (c.total_expenses_monthly || 0), 0);
-  const totalClientExpensesAnnual = clients.reduce((sum, c) => sum + (c.total_expenses_annual || 0), 0);
-  const totalClientExpensesYearly = (totalClientExpensesMonthly * 12) + totalClientExpensesAnnual;
-
   if (loading) {
     return (
       <div className="p-8">
@@ -317,25 +309,6 @@ export default function GastosPage() {
       {/* Contenido según tab */}
       {activeTab === 'empresa' ? (
         <div>
-          {/* Resumen de gastos de empresa */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">{t.expenses.monthlyExpenses}</p>
-              <p className="text-3xl font-bold text-blue-600">CHF {totalMonthlyExpenses.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">{monthlyExpenses.length} {t.expenses.services}</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">{t.expenses.annualExpenses}</p>
-              <p className="text-3xl font-bold text-blue-600">CHF {totalAnnualExpenses.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">{annualExpenses.length} {t.expenses.services}</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">{t.expenses.totalAnnualProjected}</p>
-              <p className="text-3xl font-bold text-red-600">CHF {totalYearlyCompanyCost.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">{t.expenses.monthlyTimesTwelvePlusAnnual}</p>
-            </div>
-          </div>
-
           {/* Gastos Mensuales */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
             <div className="p-6 border-b border-gray-200">
@@ -472,25 +445,6 @@ export default function GastosPage() {
         </div>
       ) : (
         <div>
-          {/* Resumen de gastos de clientes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">{t.expenses.totalMonthlyExpensesClients}</p>
-              <p className="text-3xl font-bold text-orange-600">CHF {totalClientExpensesMonthly.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">{t.expenses.totalMonthlyCombined}</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">{t.expenses.totalAnnualExpensesClients}</p>
-              <p className="text-3xl font-bold text-orange-600">CHF {totalClientExpensesAnnual.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">{t.expenses.totalAnnualCombined}</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">{t.expenses.totalAnnualProjected}</p>
-              <p className="text-3xl font-bold text-orange-600">CHF {totalClientExpensesYearly.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">{t.expenses.monthlyTimesTwelvePlusAnnual}</p>
-            </div>
-          </div>
-
           {/* Lista de clientes */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             <div className="p-6 border-b border-gray-200">
@@ -507,14 +461,8 @@ export default function GastosPage() {
                   <div key={client.id} className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{client.company_name}</h3>
-                        <p className="text-sm text-gray-500">{client.contact_email || 'Sin email'}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500">{t.expenses.totalAnnualProjected}</p>
-                        <p className="text-2xl font-bold text-orange-600">
-                          CHF {(((client.total_expenses_monthly || 0) * 12) + (client.total_expenses_annual || 0)).toFixed(2)}
-                        </p>
+                        <h3 className="text-lg font-semibold text-gray-900">{client.name}</h3>
+                        <p className="text-sm text-gray-500">{client.email || 'Sin email'}</p>
                       </div>
                     </div>
 
@@ -702,7 +650,7 @@ export default function GastosPage() {
                   >
                     <option value="">{t.expenses.selectClient}</option>
                     {allClients.map((client) => (
-                      <option key={client.id} value={client.id}>{client.company_name}</option>
+                      <option key={client.id} value={client.id}>{client.name}</option>
                     ))}
                   </select>
                 </div>
