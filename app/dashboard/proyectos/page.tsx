@@ -112,7 +112,7 @@ export default function ProyectosPage() {
         const wasCompleted = editingProject.status === 'completed';
         const isNowCompleted = formData.status === 'completed';
         const hasAmount = formData.total_amount && parseFloat(formData.total_amount) > 0;
-        const hasPaymentType = formData.payment_type && formData.payment_type !== '';
+        const hasPaymentType = !!formData.payment_type;
 
         const { error } = await supabase
           .from('projects')
@@ -150,7 +150,7 @@ export default function ProyectosPage() {
         // Si se crea un proyecto ya completado con monto y tipo de pago, crear ingreso
         const isCompleted = formData.status === 'completed';
         const hasAmount = formData.total_amount && parseFloat(formData.total_amount) > 0;
-        const hasPaymentType = formData.payment_type && formData.payment_type !== '';
+        const hasPaymentType = !!formData.payment_type;
 
         if (isCompleted && hasAmount && hasPaymentType) {
           await createIncomeFromProject(
