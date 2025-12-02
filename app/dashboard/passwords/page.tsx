@@ -2,13 +2,16 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Password, PasswordCategory } from '@/lib/types';
+import type { Password, PasswordCategory, UserRole } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { FaEye, FaEyeSlash, FaCopy, FaCheck, FaLink, FaLock, FaPlus } from 'react-icons/fa';
 
 export default function PasswordsPage() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [passwords, setPasswords] = useState<Password[]>([]);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -31,29 +34,94 @@ export default function PasswordsPage() {
 
   const categories: PasswordCategory[] = ['work', 'personal', 'social', 'banking', 'email', 'hosting', 'development', 'other'];
 
-  const loadPasswords = useCallback(async () => {
+  const loadUserRole = useCallback(async () => {
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) return null;
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile) return null;
+
+      setUserRole(profile.role as UserRole);
+      const superAdmin = profile.role === 'super_admin';
+      setIsSuperAdmin(superAdmin);
+      return { userId: user.id, role: profile.role as UserRole, isSuperAdmin: superAdmin };
+    } catch (error) {
+      console.error('Error loading user role:', error);
+      return null;
+    }
+  }, []);
+
+  const loadPasswords = useCallback(async (userInfo?: { userId: string; role: UserRole; isSuperAdmin: boolean } | null) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('passwords')
-        .select('*')
-        .order('service_name', { ascending: true });
+      // Get user info if not provided
+      const info = userInfo ?? await loadUserRole();
 
-      if (error) {
-        console.error('Error loading passwords:', error);
+      if (!info) {
+        console.error('Could not get user info');
+        setPasswords([]);
         return;
       }
 
-      setPasswords(data || []);
+      // If super_admin, load all passwords from all super_admins
+      // Otherwise, load only the user's own passwords
+      if (info.isSuperAdmin) {
+        // Get all super_admin user IDs
+        const { data: superAdmins, error: adminsError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('role', 'super_admin');
+
+        if (adminsError) {
+          console.error('Error loading super admins:', adminsError);
+          return;
+        }
+
+        const superAdminIds = superAdmins?.map(admin => admin.id) || [];
+
+        // Load all passwords from super_admins
+        const { data, error } = await supabase
+          .from('passwords')
+          .select('*')
+          .in('user_id', superAdminIds)
+          .order('service_name', { ascending: true });
+
+        if (error) {
+          console.error('Error loading passwords:', error);
+          return;
+        }
+
+        setPasswords(data || []);
+      } else {
+        // Non-super_admins see only their own passwords
+        const { data, error } = await supabase
+          .from('passwords')
+          .select('*')
+          .eq('user_id', info.userId)
+          .order('service_name', { ascending: true });
+
+        if (error) {
+          console.error('Error loading passwords:', error);
+          return;
+        }
+
+        setPasswords(data || []);
+      }
     } catch (error) {
       console.error('Error in loadPasswords:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [loadUserRole]);
 
   useEffect(() => {
-    loadPasswords();
+    loadPasswords(null);
   }, [loadPasswords]);
 
   async function handleAddPassword() {
@@ -87,7 +155,7 @@ export default function PasswordsPage() {
 
       resetForm();
       setShowAddModal(false);
-      loadPasswords();
+      loadPasswords(null);
     } catch (error) {
       console.error('Error in handleAddPassword:', error);
       alert(t.messages.saveError);
@@ -120,7 +188,7 @@ export default function PasswordsPage() {
       resetForm();
       setShowEditModal(false);
       setSelectedPassword(null);
-      loadPasswords();
+      loadPasswords(null);
     } catch (error) {
       console.error('Error in handleEditPassword:', error);
       alert(t.messages.saveError);
@@ -144,7 +212,7 @@ export default function PasswordsPage() {
         return;
       }
 
-      loadPasswords();
+      loadPasswords(null);
     } catch (error) {
       console.error('Error in handleDeletePassword:', error);
       alert(t.messages.deleteError);
@@ -272,9 +340,9 @@ export default function PasswordsPage() {
         </div>
         <button
           onClick={openAddModal}
-          className="bg-syntalys-blue text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium"
+          className="bg-syntalys-blue text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium flex items-center gap-2"
         >
-          + {t.passwords.addPassword}
+          <FaPlus className="w-4 h-4" /> {t.passwords.addPassword}
         </button>
       </div>
 
@@ -334,7 +402,7 @@ export default function PasswordsPage() {
       {/* Passwords List */}
       {filteredPasswords.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
-          <div className="text-6xl mb-4">&#128274;</div>
+          <FaLock className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">{t.passwords.noPasswords}</p>
           <button
             onClick={openAddModal}
@@ -368,7 +436,7 @@ export default function PasswordsPage() {
                         className="ml-2 text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                         title={t.passwords.copy}
                       >
-                        {copiedField === `email-${password.id}` ? '✓' : '📋'}
+                        {copiedField === `email-${password.id}` ? <FaCheck className="w-4 h-4 text-green-500" /> : <FaCopy className="w-4 h-4" />}
                       </button>
                     </div>
                   )}
@@ -381,7 +449,7 @@ export default function PasswordsPage() {
                         className="ml-2 text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                         title={t.passwords.copy}
                       >
-                        {copiedField === `user-${password.id}` ? '✓' : '📋'}
+                        {copiedField === `user-${password.id}` ? <FaCheck className="w-4 h-4 text-green-500" /> : <FaCopy className="w-4 h-4" />}
                       </button>
                     </div>
                   )}
@@ -395,14 +463,14 @@ export default function PasswordsPage() {
                       className="ml-2 text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                       title={visiblePasswords[password.id] ? t.passwords.hide : t.passwords.show}
                     >
-                      {visiblePasswords[password.id] ? '👁️' : '👁️‍🗨️'}
+                      {visiblePasswords[password.id] ? <FaEye className="w-4 h-4" /> : <FaEyeSlash className="w-4 h-4" />}
                     </button>
                     <button
                       onClick={() => copyToClipboard(password.password, `pwd-${password.id}`)}
                       className="ml-2 text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                       title={t.passwords.copy}
                     >
-                      {copiedField === `pwd-${password.id}` ? '✓' : '📋'}
+                      {copiedField === `pwd-${password.id}` ? <FaCheck className="w-4 h-4 text-green-500" /> : <FaCopy className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -412,9 +480,9 @@ export default function PasswordsPage() {
                     href={password.url.startsWith('http') ? password.url : `https://${password.url}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-syntalys-blue dark:text-blue-400 hover:underline block truncate mb-4"
+                    className="text-sm text-syntalys-blue dark:text-blue-400 hover:underline flex items-center gap-2 truncate mb-4"
                   >
-                    🔗 {password.url}
+                    <FaLink className="w-3 h-3 flex-shrink-0" /> <span className="truncate">{password.url}</span>
                   </a>
                 )}
 
@@ -509,9 +577,9 @@ export default function PasswordsPage() {
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('form')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
-                      {visiblePasswords['form'] ? '👁️' : '👁️‍🗨️'}
+                      {visiblePasswords['form'] ? <FaEye className="w-4 h-4" /> : <FaEyeSlash className="w-4 h-4" />}
                     </button>
                   </div>
                   <button
@@ -641,9 +709,9 @@ export default function PasswordsPage() {
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('form-edit')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
-                      {visiblePasswords['form-edit'] ? '👁️' : '👁️‍🗨️'}
+                      {visiblePasswords['form-edit'] ? <FaEye className="w-4 h-4" /> : <FaEyeSlash className="w-4 h-4" />}
                     </button>
                   </div>
                   <button
@@ -734,7 +802,7 @@ export default function PasswordsPage() {
                       onClick={() => copyToClipboard(selectedPassword.username!, 'view-user')}
                       className="text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                     >
-                      {copiedField === 'view-user' ? '✓' : '📋'}
+                      {copiedField === 'view-user' ? <FaCheck className="w-4 h-4 text-green-500" /> : <FaCopy className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -748,7 +816,7 @@ export default function PasswordsPage() {
                       onClick={() => copyToClipboard(selectedPassword.email!, 'view-email')}
                       className="text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                     >
-                      {copiedField === 'view-email' ? '✓' : '📋'}
+                      {copiedField === 'view-email' ? <FaCheck className="w-4 h-4 text-green-500" /> : <FaCopy className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -763,13 +831,13 @@ export default function PasswordsPage() {
                     onClick={() => togglePasswordVisibility('view')}
                     className="text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                   >
-                    {visiblePasswords['view'] ? '👁️' : '👁️‍🗨️'}
+                    {visiblePasswords['view'] ? <FaEye className="w-4 h-4" /> : <FaEyeSlash className="w-4 h-4" />}
                   </button>
                   <button
                     onClick={() => copyToClipboard(selectedPassword.password, 'view-pwd')}
                     className="text-gray-400 hover:text-syntalys-blue dark:hover:text-blue-400"
                   >
-                    {copiedField === 'view-pwd' ? '✓' : '📋'}
+                    {copiedField === 'view-pwd' ? <FaCheck className="w-4 h-4 text-green-500" /> : <FaCopy className="w-4 h-4" />}
                   </button>
                 </div>
               </div>

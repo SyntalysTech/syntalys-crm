@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType } from '@/lib/types';
+import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import Image from 'next/image';
+import { FaGithub, FaExternalLinkAlt, FaLightbulb, FaCode, FaCheckCircle, FaPause, FaTimes } from 'react-icons/fa';
 
 export default function ProyectosPage() {
   const { t } = useLanguage();
@@ -12,6 +14,24 @@ export default function ProyectosPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+
+  // Syntalys Lab state
+  const [internalProjects, setInternalProjects] = useState<InternalProject[]>([]);
+  const [showInternalModal, setShowInternalModal] = useState(false);
+  const [editingInternalProject, setEditingInternalProject] = useState<InternalProject | null>(null);
+  const [activeTab, setActiveTab] = useState<'clients' | 'lab'>('clients');
+
+  const [internalFormData, setInternalFormData] = useState({
+    name: '',
+    description: '',
+    status: 'idea' as InternalProjectStatus,
+    project_type: '' as ProjectType | '',
+    start_date: '',
+    target_date: '',
+    repository_url: '',
+    demo_url: '',
+    notes: '',
+  });
 
   const [formData, setFormData] = useState({
     client_id: '',
@@ -35,12 +55,26 @@ export default function ProyectosPage() {
   async function loadData() {
     setLoading(true);
     try {
-      await Promise.all([loadProjects(), loadClients()]);
+      await Promise.all([loadProjects(), loadClients(), loadInternalProjects()]);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
       setLoading(false);
     }
+  }
+
+  async function loadInternalProjects() {
+    const { data, error } = await supabase
+      .from('internal_projects')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error loading internal projects:', error);
+      return;
+    }
+
+    setInternalProjects(data || []);
   }
 
   async function loadProjects() {
@@ -282,6 +316,163 @@ export default function ProyectosPage() {
     });
   }
 
+  // Syntalys Lab CRUD functions
+  async function handleInternalSubmit() {
+    if (!internalFormData.name) {
+      alert(t.messages.fillRequired);
+      return;
+    }
+
+    try {
+      const projectData = {
+        name: internalFormData.name,
+        description: internalFormData.description || null,
+        status: internalFormData.status,
+        project_type: internalFormData.project_type || null,
+        start_date: internalFormData.start_date || null,
+        target_date: internalFormData.target_date || null,
+        repository_url: internalFormData.repository_url || null,
+        demo_url: internalFormData.demo_url || null,
+        notes: internalFormData.notes || null,
+      };
+
+      if (editingInternalProject) {
+        const { error } = await supabase
+          .from('internal_projects')
+          .update(projectData)
+          .eq('id', editingInternalProject.id);
+
+        if (error) {
+          console.error('Error updating internal project:', error);
+          alert(t.messages.saveError);
+          return;
+        }
+      } else {
+        const { error } = await supabase
+          .from('internal_projects')
+          .insert([projectData]);
+
+        if (error) {
+          console.error('Error adding internal project:', error);
+          alert(t.messages.saveError);
+          return;
+        }
+      }
+
+      resetInternalForm();
+      setShowInternalModal(false);
+      loadInternalProjects();
+    } catch (error) {
+      console.error('Error in handleInternalSubmit:', error);
+      alert(t.messages.saveError);
+    }
+  }
+
+  async function handleDeleteInternal(projectId: string, projectName: string) {
+    if (!confirm(`${t.messages.deleteConfirm} "${projectName}"?`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('internal_projects')
+        .delete()
+        .eq('id', projectId);
+
+      if (error) {
+        console.error('Error deleting internal project:', error);
+        alert(t.messages.deleteError);
+        return;
+      }
+
+      loadInternalProjects();
+    } catch (error) {
+      console.error('Error in handleDeleteInternal:', error);
+      alert(t.messages.deleteError);
+    }
+  }
+
+  function openAddInternalModal() {
+    resetInternalForm();
+    setEditingInternalProject(null);
+    setShowInternalModal(true);
+  }
+
+  function openEditInternalModal(project: InternalProject) {
+    setEditingInternalProject(project);
+    setInternalFormData({
+      name: project.name,
+      description: project.description || '',
+      status: project.status,
+      project_type: (project.project_type as ProjectType) || '',
+      start_date: project.start_date || '',
+      target_date: project.target_date || '',
+      repository_url: project.repository_url || '',
+      demo_url: project.demo_url || '',
+      notes: project.notes || '',
+    });
+    setShowInternalModal(true);
+  }
+
+  function resetInternalForm() {
+    setInternalFormData({
+      name: '',
+      description: '',
+      status: 'idea',
+      project_type: '',
+      start_date: '',
+      target_date: '',
+      repository_url: '',
+      demo_url: '',
+      notes: '',
+    });
+  }
+
+  function getInternalStatusIcon(status: InternalProjectStatus) {
+    switch (status) {
+      case 'idea':
+        return <FaLightbulb className="w-4 h-4" />;
+      case 'in_progress':
+        return <FaCode className="w-4 h-4" />;
+      case 'completed':
+        return <FaCheckCircle className="w-4 h-4" />;
+      case 'on_hold':
+        return <FaPause className="w-4 h-4" />;
+      case 'cancelled':
+        return <FaTimes className="w-4 h-4" />;
+      default:
+        return null;
+    }
+  }
+
+  function getInternalStatusLabel(status: InternalProjectStatus): string {
+    const labels: Record<InternalProjectStatus, string> = {
+      idea: t.projects.statusIdea,
+      in_progress: t.projects.statusInProgress,
+      completed: t.projects.statusCompleted,
+      on_hold: t.projects.statusOnHold,
+      cancelled: t.projects.statusCancelled,
+    };
+    return labels[status] || status;
+  }
+
+  function getInternalStatusColor(status: InternalProjectStatus): string {
+    switch (status) {
+      case 'idea':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      case 'completed':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      case 'on_hold':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
+  }
+
   if (loading) {
     return (
       <div className="p-8">
@@ -301,16 +492,61 @@ export default function ProyectosPage() {
             {t.projects.subtitle}
           </p>
         </div>
+        {activeTab === 'clients' ? (
+          <button
+            onClick={openAddModal}
+            className="bg-syntalys-blue text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium"
+          >
+            + {t.projects.addProject}
+          </button>
+        ) : (
+          <button
+            onClick={openAddInternalModal}
+            className="bg-syntalys-blue text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium"
+          >
+            + {t.projects.addInternalProject}
+          </button>
+        )}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-4 mb-6 border-b border-gray-200 dark:border-gray-700">
         <button
-          onClick={openAddModal}
-          className="bg-syntalys-blue text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium"
+          onClick={() => setActiveTab('clients')}
+          className={`pb-3 px-1 font-medium transition-colors ${
+            activeTab === 'clients'
+              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+          }`}
         >
-          + {t.projects.addProject}
+          {t.projects.clientProjects}
+        </button>
+        <button
+          onClick={() => setActiveTab('lab')}
+          className={`pb-3 px-1 font-medium transition-colors flex items-center gap-2 ${
+            activeTab === 'lab'
+              ? 'border-b-2 border-blue-600 dark:border-blue-400'
+              : ''
+          }`}
+        >
+          <Image
+            src="/logos/logo-syntalys-lab-horizontal-blue.png"
+            alt="Syntalys Lab"
+            width={140}
+            height={35}
+            className={`h-7 w-auto transition-all ${
+              activeTab === 'lab'
+                ? 'dark:brightness-0 dark:invert opacity-100'
+                : 'opacity-60 hover:opacity-80 dark:brightness-0 dark:invert dark:opacity-50 dark:hover:opacity-70'
+            }`}
+          />
         </button>
       </div>
 
-      {/* Lista de proyectos */}
-      {projects.length === 0 ? (
+      {/* Client Projects Tab */}
+      {activeTab === 'clients' && (
+        <>
+          {projects.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">{t.projects.noProjects}</p>
           <button
@@ -397,6 +633,111 @@ export default function ProyectosPage() {
             </table>
           </div>
         </div>
+          )}
+        </>
+      )}
+
+      {/* Syntalys Lab Tab */}
+      {activeTab === 'lab' && (
+        <>
+          {internalProjects.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+              <FaLightbulb className="w-16 h-16 mx-auto mb-4 text-blue-300" />
+              <p className="text-gray-500 dark:text-gray-400 mb-4">{t.projects.noInternalProjects}</p>
+              <button
+                onClick={openAddInternalModal}
+                className="bg-syntalys-blue text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                {t.projects.createFirstInternal}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {internalProjects.map((project) => (
+                <div
+                  key={project.id}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow"
+                >
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{project.name}</h3>
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1 ${getInternalStatusColor(project.status)}`}>
+                        {getInternalStatusIcon(project.status)}
+                        {getInternalStatusLabel(project.status)}
+                      </span>
+                    </div>
+
+                    {project.description && (
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+                        {project.description}
+                      </p>
+                    )}
+
+                    {project.project_type && (
+                      <div className="mb-4">
+                        <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
+                          {getProjectTypeLabel(project.project_type, t)}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.repository_url && (
+                        <a
+                          href={project.repository_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                        >
+                          <FaGithub className="w-4 h-4" />
+                          <span>Repo</span>
+                        </a>
+                      )}
+                      {project.demo_url && (
+                        <a
+                          href={project.demo_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                        >
+                          <FaExternalLinkAlt className="w-3 h-3" />
+                          <span>Demo</span>
+                        </a>
+                      )}
+                    </div>
+
+                    {(project.start_date || project.target_date) && (
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                        {project.start_date && (
+                          <span>{t.projects.startDate}: {new Date(project.start_date).toLocaleDateString('es-ES')}</span>
+                        )}
+                        {project.start_date && project.target_date && <span className="mx-2">•</span>}
+                        {project.target_date && (
+                          <span>{t.projects.targetDate}: {new Date(project.target_date).toLocaleDateString('es-ES')}</span>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex justify-end gap-2 pt-4 border-t border-gray-100 dark:border-gray-700">
+                      <button
+                        onClick={() => openEditInternalModal(project)}
+                        className="px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                      >
+                        {t.common.edit}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteInternal(project.id, project.name)}
+                        className="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                      >
+                        {t.common.delete}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Modal Agregar/Editar Proyecto */}
@@ -583,6 +924,159 @@ export default function ProyectosPage() {
                 className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {editingProject ? t.common.saveChanges : t.projects.addProject}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Agregar/Editar Proyecto Interno */}
+      {showInternalModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-syntalys-blue to-blue-700">
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/logos/logo-syntalys-lab-horizontal-blue.png"
+                  alt="Syntalys Lab"
+                  width={120}
+                  height={30}
+                  className="h-7 w-auto brightness-0 invert"
+                />
+                <h2 className="text-xl font-bold text-white">
+                  {editingInternalProject ? t.projects.editInternalProject : t.projects.addInternalProject}
+                </h2>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.projects.projectName} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={internalFormData.name}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Ej: CRM Syntalys, App Interna..."
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.description}</label>
+                  <textarea
+                    value={internalFormData.description}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    rows={3}
+                    placeholder={t.forms.descriptionPlaceholder}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.status}</label>
+                  <select
+                    value={internalFormData.status}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, status: e.target.value as InternalProjectStatus })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="idea">{t.projects.statusIdea}</option>
+                    <option value="in_progress">{t.projects.statusInProgress}</option>
+                    <option value="completed">{t.projects.statusCompleted}</option>
+                    <option value="on_hold">{t.projects.statusOnHold}</option>
+                    <option value="cancelled">{t.projects.statusCancelled}</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.type}</label>
+                  <select
+                    value={internalFormData.project_type}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, project_type: e.target.value as ProjectType | '' })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="">{t.forms.notSpecified}</option>
+                    <option value="web_development">{t.projects.webDevelopment}</option>
+                    <option value="app_development">{t.projects.appDevelopment}</option>
+                    <option value="maintenance">{t.projects.maintenance}</option>
+                    <option value="consulting">{t.projects.consulting}</option>
+                    <option value="design">{t.projects.design}</option>
+                    <option value="hosting">{t.projects.hosting}</option>
+                    <option value="other">{t.projects.other}</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.startDate}</label>
+                  <input
+                    type="date"
+                    value={internalFormData.start_date}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, start_date: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.targetDate}</label>
+                  <input
+                    type="date"
+                    value={internalFormData.target_date}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, target_date: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.repositoryUrl}</label>
+                  <input
+                    type="url"
+                    value={internalFormData.repository_url}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, repository_url: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="https://github.com/..."
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.demoUrl}</label>
+                  <input
+                    type="url"
+                    value={internalFormData.demo_url}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, demo_url: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="https://demo.syntalys.ch/..."
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.notes}</label>
+                  <textarea
+                    value={internalFormData.notes}
+                    onChange={(e) => setInternalFormData({ ...internalFormData, notes: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    rows={2}
+                    placeholder={t.forms.notesPlaceholder}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowInternalModal(false);
+                  setEditingInternalProject(null);
+                }}
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                {t.common.cancel}
+              </button>
+              <button
+                onClick={handleInternalSubmit}
+                disabled={!internalFormData.name}
+                className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                {editingInternalProject ? t.common.saveChanges : t.projects.addInternalProject}
               </button>
             </div>
           </div>

@@ -129,6 +129,24 @@ export interface ProjectWithClient extends Project {
   client?: Client;
 }
 
+// Internal Projects (Syntalys Lab)
+export type InternalProjectStatus = 'idea' | 'in_progress' | 'completed' | 'on_hold' | 'cancelled';
+
+export interface InternalProject {
+  id: string;
+  name: string;
+  description: string | null;
+  status: InternalProjectStatus;
+  project_type: ProjectType | null;
+  start_date: string | null;
+  target_date: string | null;
+  repository_url: string | null;
+  demo_url: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // Password Manager Types
 export type PasswordCategory = 'work' | 'personal' | 'social' | 'banking' | 'email' | 'hosting' | 'development' | 'other';
 

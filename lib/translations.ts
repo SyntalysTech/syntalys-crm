@@ -13,6 +13,7 @@ export interface Translations {
     income: string;
     stats: string;
     passwords: string;
+    chatAI: string;
     settings: string;
     users: string;
     reports: string;
@@ -169,6 +170,20 @@ export interface Translations {
     monthly: string;
     annual: string;
     milestone: string;
+    // Syntalys Lab
+    syntalysLab: string;
+    syntalysLabSubtitle: string;
+    addInternalProject: string;
+    editInternalProject: string;
+    noInternalProjects: string;
+    createFirstInternal: string;
+    statusIdea: string;
+    statusInProgress: string;
+    statusOnHold: string;
+    targetDate: string;
+    repositoryUrl: string;
+    demoUrl: string;
+    clientProjects: string;
   };
 
   // Expenses
@@ -231,6 +246,9 @@ export interface Translations {
     optionalDescription: string;
     monthly: string;
     annual: string;
+    oneTime: string;
+    oneTimeExpenses: string;
+    noOneTimeExpenses: string;
     client: string;
     editExpense: string;
     editCompanyExpenseTitle: string;
@@ -414,6 +432,27 @@ export interface Translations {
     categoryOther: string;
   };
 
+  // Chat AI
+  chatAI: {
+    title: string;
+    subtitle: string;
+    placeholder: string;
+    send: string;
+    thinking: string;
+    welcome: string;
+    welcomeMessage: string;
+    suggestions: string;
+    suggestion1: string;
+    suggestion2: string;
+    suggestion3: string;
+    suggestion4: string;
+    clearChat: string;
+    newChat: string;
+    errorMessage: string;
+    copyMessage: string;
+    copied: string;
+  };
+
   // Settings
   settings: {
     description: string;
@@ -440,6 +479,7 @@ export const translations: Record<Language, Translations> = {
       income: 'Ingresos',
       stats: 'Estadísticas',
       passwords: 'Contraseñas',
+      chatAI: 'Chat IA',
       settings: 'Ajustes',
       users: 'Usuarios',
       reports: 'Reportes',
@@ -582,6 +622,20 @@ export const translations: Record<Language, Translations> = {
       monthly: 'Mensual',
       annual: 'Anual',
       milestone: 'Por Hito',
+      // Syntalys Lab
+      syntalysLab: 'Syntalys Lab',
+      syntalysLabSubtitle: 'Proyectos internos e ideas de Syntalys',
+      addInternalProject: 'Nuevo Proyecto Interno',
+      editInternalProject: 'Editar Proyecto Interno',
+      noInternalProjects: 'No hay proyectos internos registrados',
+      createFirstInternal: 'Crear primer proyecto interno',
+      statusIdea: 'Idea',
+      statusInProgress: 'En Progreso',
+      statusOnHold: 'En Espera',
+      targetDate: 'Fecha Objetivo',
+      repositoryUrl: 'URL del Repositorio',
+      demoUrl: 'URL Demo',
+      clientProjects: 'Proyectos de Clientes',
     },
     expenses: {
       title: 'Gestión de Gastos',
@@ -639,6 +693,9 @@ export const translations: Record<Language, Translations> = {
       optionalDescription: 'Descripción opcional',
       monthly: 'Mensual',
       annual: 'Anual',
+      oneTime: 'Pago Único',
+      oneTimeExpenses: 'Gastos Únicos',
+      noOneTimeExpenses: 'No hay gastos únicos registrados',
       client: 'Cliente',
       editExpense: 'Editar Gasto',
       editCompanyExpenseTitle: 'Editar Gasto de Syntalys',
@@ -807,6 +864,25 @@ export const translations: Record<Language, Translations> = {
       categoryDevelopment: 'Desarrollo',
       categoryOther: 'Otro',
     },
+    chatAI: {
+      title: 'Chat IA',
+      subtitle: 'Asistente inteligente para tu negocio',
+      placeholder: 'Escribe tu mensaje aquí...',
+      send: 'Enviar',
+      thinking: 'Pensando...',
+      welcome: '¡Hola! Soy tu asistente IA',
+      welcomeMessage: 'Estoy aquí para ayudarte con cualquier pregunta sobre tu negocio, clientes, finanzas o cualquier cosa que necesites. ¿En qué puedo ayudarte hoy?',
+      suggestions: 'Sugerencias rápidas',
+      suggestion1: '¿Cuál es el estado de mis finanzas?',
+      suggestion2: '¿Cómo puedo mejorar mis ingresos?',
+      suggestion3: 'Genera un resumen de mis clientes',
+      suggestion4: '¿Qué gastos puedo optimizar?',
+      clearChat: 'Limpiar chat',
+      newChat: 'Nuevo chat',
+      errorMessage: 'Lo siento, ha ocurrido un error. Por favor, intenta de nuevo.',
+      copyMessage: 'Copiar mensaje',
+      copied: 'Copiado',
+    },
     settings: {
       description: 'Configura las preferencias de tu cuenta',
       appearance: 'Apariencia',
@@ -830,6 +906,7 @@ export const translations: Record<Language, Translations> = {
       income: 'Revenus',
       stats: 'Statistiques',
       passwords: 'Mots de passe',
+      chatAI: 'Chat IA',
       settings: 'Paramètres',
       users: 'Utilisateurs',
       reports: 'Rapports',
@@ -972,6 +1049,20 @@ export const translations: Record<Language, Translations> = {
       monthly: 'Mensuel',
       annual: 'Annuel',
       milestone: 'Par Jalon',
+      // Syntalys Lab
+      syntalysLab: 'Syntalys Lab',
+      syntalysLabSubtitle: 'Projets internes et idées de Syntalys',
+      addInternalProject: 'Nouveau Projet Interne',
+      editInternalProject: 'Modifier le Projet Interne',
+      noInternalProjects: 'Aucun projet interne enregistré',
+      createFirstInternal: 'Créer le premier projet interne',
+      statusIdea: 'Idée',
+      statusInProgress: 'En Cours',
+      statusOnHold: 'En Attente',
+      targetDate: 'Date Cible',
+      repositoryUrl: 'URL du Dépôt',
+      demoUrl: 'URL Démo',
+      clientProjects: 'Projets Clients',
     },
     expenses: {
       title: 'Gestion des Dépenses',
@@ -1029,6 +1120,9 @@ export const translations: Record<Language, Translations> = {
       optionalDescription: 'Description optionnelle',
       monthly: 'Mensuel',
       annual: 'Annuel',
+      oneTime: 'Paiement Unique',
+      oneTimeExpenses: 'Dépenses Uniques',
+      noOneTimeExpenses: 'Aucune dépense unique enregistrée',
       client: 'Client',
       editExpense: 'Modifier la Dépense',
       editCompanyExpenseTitle: 'Modifier la Dépense de Syntalys',
@@ -1196,6 +1290,25 @@ export const translations: Record<Language, Translations> = {
       categoryHosting: 'Hébergement',
       categoryDevelopment: 'Développement',
       categoryOther: 'Autre',
+    },
+    chatAI: {
+      title: 'Chat IA',
+      subtitle: 'Assistant intelligent pour votre entreprise',
+      placeholder: 'Écrivez votre message ici...',
+      send: 'Envoyer',
+      thinking: 'Réflexion...',
+      welcome: 'Bonjour! Je suis votre assistant IA',
+      welcomeMessage: 'Je suis là pour vous aider avec toutes vos questions concernant votre entreprise, clients, finances ou tout ce dont vous avez besoin. Comment puis-je vous aider aujourd\'hui?',
+      suggestions: 'Suggestions rapides',
+      suggestion1: 'Quel est l\'état de mes finances?',
+      suggestion2: 'Comment puis-je améliorer mes revenus?',
+      suggestion3: 'Génère un résumé de mes clients',
+      suggestion4: 'Quelles dépenses puis-je optimiser?',
+      clearChat: 'Effacer le chat',
+      newChat: 'Nouveau chat',
+      errorMessage: 'Désolé, une erreur s\'est produite. Veuillez réessayer.',
+      copyMessage: 'Copier le message',
+      copied: 'Copié',
     },
     settings: {
       description: 'Configurez les préférences de votre compte',
