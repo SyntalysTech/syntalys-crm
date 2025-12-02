@@ -405,7 +405,7 @@ export default function ClientesPage() {
         const filePath = `${user.id}/${selectedClient.id}/${Date.now()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('invoices')
+          .from('facturas')
           .upload(filePath, selectedFile);
 
         if (uploadError) {
@@ -416,7 +416,7 @@ export default function ClientesPage() {
         }
 
         const { data: urlData } = supabase.storage
-          .from('invoices')
+          .from('facturas')
           .getPublicUrl(filePath);
 
         fileUrl = urlData.publicUrl;
@@ -476,9 +476,9 @@ export default function ClientesPage() {
     try {
       // Delete file from storage if exists
       if (invoice.file_url) {
-        const filePath = invoice.file_url.split('/invoices/')[1];
+        const filePath = invoice.file_url.split('/facturas/')[1];
         if (filePath) {
-          await supabase.storage.from('invoices').remove([filePath]);
+          await supabase.storage.from('facturas').remove([filePath]);
         }
       }
 
