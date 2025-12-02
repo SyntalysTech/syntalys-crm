@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { CompanyExpense, ClientExpense, Client, ClientWithExpenses, ExpenseCategory, ClientExpenseCategory, Frequency } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { FaEllipsisV, FaTimes } from 'react-icons/fa';
 
 type ModalType = 'company' | 'client-expense' | 'edit-company' | 'edit-client-expense' | null;
 
@@ -14,6 +15,29 @@ export default function GastosPage() {
   const [showModal, setShowModal] = useState<ModalType>(null);
   const [editingCompanyExpense, setEditingCompanyExpense] = useState<CompanyExpense | null>(null);
   const [editingClientExpense, setEditingClientExpense] = useState<ClientExpense | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
+  const [dropdownType, setDropdownType] = useState<'company' | 'client' | null>(null);
+  const [expandedText, setExpandedText] = useState<{ text: string; title: string } | null>(null);
+
+  const handleDropdownClick = (e: React.MouseEvent<HTMLButtonElement>, id: string, type: 'company' | 'client') => {
+    if (openDropdown === id) {
+      setOpenDropdown(null);
+      setDropdownPosition(null);
+      setDropdownType(null);
+    } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUp = spaceBelow < 120;
+      setDropdownPosition({
+        top: openUp ? rect.top - 8 : rect.bottom + 8,
+        left: rect.right - 144,
+        openUp
+      });
+      setOpenDropdown(id);
+      setDropdownType(type);
+    }
+  };
 
   // Datos de la empresa
   const [companyExpenses, setCompanyExpenses] = useState<CompanyExpense[]>([]);
@@ -499,13 +523,25 @@ export default function GastosPage() {
                       </td>
                     </tr>
                   ) : (
-                    monthlyExpenses.map((expense) => (
+                    monthlyExpenses.map((expense, index) => (
                       <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                             {expense.description && (
-                              <div className="text-sm text-gray-500 dark:text-gray-400">{expense.description}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                {expense.description.length > 40 ? (
+                                  <span>
+                                    {expense.description.substring(0, 40)}...
+                                    <button
+                                      onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
+                                      className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                    >
+                                      {t.common.seeMore}
+                                    </button>
+                                  </span>
+                                ) : expense.description}
+                              </div>
                             )}
                           </div>
                         </td>
@@ -533,20 +569,12 @@ export default function GastosPage() {
                           </select>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleEditCompanyExpense(expense)}
-                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
-                            >
-                              {t.common.edit}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteCompanyExpense(expense.id)}
-                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-                            >
-                              {t.common.delete}
-                            </button>
-                          </div>
+                          <button
+                            onClick={(e) => handleDropdownClick(e, `monthly-${expense.id}`, 'company')}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                          >
+                            <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -581,13 +609,25 @@ export default function GastosPage() {
                       </td>
                     </tr>
                   ) : (
-                    annualExpenses.map((expense) => (
+                    annualExpenses.map((expense, index) => (
                       <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                             {expense.description && (
-                              <div className="text-sm text-gray-500 dark:text-gray-400">{expense.description}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                {expense.description.length > 40 ? (
+                                  <span>
+                                    {expense.description.substring(0, 40)}...
+                                    <button
+                                      onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
+                                      className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                    >
+                                      {t.common.seeMore}
+                                    </button>
+                                  </span>
+                                ) : expense.description}
+                              </div>
                             )}
                           </div>
                         </td>
@@ -620,20 +660,12 @@ export default function GastosPage() {
                           </select>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleEditCompanyExpense(expense)}
-                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
-                            >
-                              {t.common.edit}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteCompanyExpense(expense.id)}
-                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-                            >
-                              {t.common.delete}
-                            </button>
-                          </div>
+                          <button
+                            onClick={(e) => handleDropdownClick(e, `annual-${expense.id}`, 'company')}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                          >
+                            <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -667,13 +699,25 @@ export default function GastosPage() {
                       </td>
                     </tr>
                   ) : (
-                    oneTimeExpenses.map((expense) => (
+                    oneTimeExpenses.map((expense, index) => (
                       <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                             {expense.description && (
-                              <div className="text-sm text-gray-500 dark:text-gray-400">{expense.description}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                {expense.description.length > 40 ? (
+                                  <span>
+                                    {expense.description.substring(0, 40)}...
+                                    <button
+                                      onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
+                                      className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                    >
+                                      {t.common.seeMore}
+                                    </button>
+                                  </span>
+                                ) : expense.description}
+                              </div>
                             )}
                           </div>
                         </td>
@@ -701,20 +745,12 @@ export default function GastosPage() {
                           </select>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleEditCompanyExpense(expense)}
-                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
-                            >
-                              {t.common.edit}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteCompanyExpense(expense.id)}
-                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-                            >
-                              {t.common.delete}
-                            </button>
-                          </div>
+                          <button
+                            onClick={(e) => handleDropdownClick(e, `onetime-${expense.id}`, 'company')}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                          >
+                            <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -752,7 +788,7 @@ export default function GastosPage() {
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{t.expenses.theirExpensesSubtitle}</p>
                       {client.expenses && client.expenses.length > 0 ? (
                         <div className="space-y-2">
-                          {client.expenses.map((expense) => (
+                          {client.expenses.map((expense, expIndex) => (
                             <div key={expense.id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-orange-400">
                               <div>
                                 <p className="font-medium text-gray-900 dark:text-white">{expense.service_name}</p>
@@ -767,20 +803,12 @@ export default function GastosPage() {
                                 <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
                                   {expense.currency} {Number(expense.amount).toFixed(2)}
                                 </p>
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() => handleEditClientExpense(expense)}
-                                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
-                                  >
-                                    {t.common.edit}
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteClientExpense(expense.id)}
-                                    className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-                                  >
-                                    {t.common.delete}
-                                  </button>
-                                </div>
+                                <button
+                                  onClick={(e) => handleDropdownClick(e, `client-${expense.id}`, 'client')}
+                                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
+                                >
+                                  <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                                </button>
                               </div>
                             </div>
                           ))}
@@ -816,7 +844,7 @@ export default function GastosPage() {
                     value={companyFormData.service_name}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, service_name: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="Ej: Claude Max, Vercel Pro..."
+                    placeholder={t.forms.serviceNamePlaceholder}
                     required
                   />
                 </div>
@@ -964,7 +992,7 @@ export default function GastosPage() {
                     value={clientExpenseFormData.service_name}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, service_name: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="Ej: Dominio, Hosting, SSL..."
+                    placeholder={t.forms.serviceNamePlaceholder}
                     required
                   />
                 </div>
@@ -1351,6 +1379,77 @@ export default function GastosPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Modal para ver texto completo */}
+      {expandedText && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{expandedText.title}</h3>
+              <button
+                onClick={() => setExpandedText(null)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{expandedText.text}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dropdown fijo para gastos */}
+      {openDropdown && dropdownPosition && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => { setOpenDropdown(null); setDropdownPosition(null); setDropdownType(null); }} />
+          <div
+            className="fixed w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            style={{
+              top: dropdownPosition.openUp ? 'auto' : dropdownPosition.top,
+              bottom: dropdownPosition.openUp ? window.innerHeight - dropdownPosition.top : 'auto',
+              left: dropdownPosition.left
+            }}
+          >
+            <button
+              onClick={() => {
+                const expenseId = openDropdown.replace(/^(monthly-|annual-|onetime-|client-)/, '');
+                if (dropdownType === 'company') {
+                  const expense = companyExpenses.find(e => e.id === expenseId);
+                  if (expense) handleEditCompanyExpense(expense);
+                } else {
+                  const allClientExpenses = clients.flatMap(c => c.expenses || []);
+                  const expense = allClientExpenses.find(e => e.id === expenseId);
+                  if (expense) handleEditClientExpense(expense);
+                }
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+                setDropdownType(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
+            >
+              {t.common.edit}
+            </button>
+            <button
+              onClick={() => {
+                const expenseId = openDropdown.replace(/^(monthly-|annual-|onetime-|client-)/, '');
+                if (dropdownType === 'company') {
+                  handleDeleteCompanyExpense(expenseId);
+                } else {
+                  handleDeleteClientExpense(expenseId);
+                }
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+                setDropdownType(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg"
+            >
+              {t.common.delete}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

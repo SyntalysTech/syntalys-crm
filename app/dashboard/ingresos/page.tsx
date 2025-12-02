@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ClientIncome, Client, Currency, IncomeCategory } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { FaEllipsisV, FaTimes } from 'react-icons/fa';
 
 export default function IngresosPage() {
   const { t } = useLanguage();
@@ -15,6 +16,26 @@ export default function IngresosPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingIncome, setEditingIncome] = useState<ClientIncome | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
+  const [expandedText, setExpandedText] = useState<{ text: string; title: string } | null>(null);
+
+  const handleDropdownClick = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
+    if (openDropdown === id) {
+      setOpenDropdown(null);
+      setDropdownPosition(null);
+    } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUp = spaceBelow < 120;
+      setDropdownPosition({
+        top: openUp ? rect.top - 8 : rect.bottom + 8,
+        left: rect.right - 144,
+        openUp
+      });
+      setOpenDropdown(id);
+    }
+  };
 
   const [formData, setFormData] = useState({
     client_id: '',
@@ -212,7 +233,7 @@ export default function IngresosPage() {
                   </td>
                 </tr>
               ) : (
-                oneTimeIncomes.map((income) => (
+                oneTimeIncomes.map((income, index) => (
                   <tr key={income.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <p className="font-medium text-gray-900 dark:text-white">{getClientName(income.client_id)}</p>
@@ -221,7 +242,19 @@ export default function IngresosPage() {
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{income.service_name}</p>
                         {income.description && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{income.description}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {income.description.length > 40 ? (
+                              <span>
+                                {income.description.substring(0, 40)}...
+                                <button
+                                  onClick={() => setExpandedText({ text: income.description!, title: income.service_name })}
+                                  className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                >
+                                  {t.common.seeMore}
+                                </button>
+                              </span>
+                            ) : income.description}
+                          </p>
                         )}
                       </div>
                     </td>
@@ -249,16 +282,10 @@ export default function IngresosPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
-                        onClick={() => openEditModal(income)}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
+                        onClick={(e) => handleDropdownClick(e, `onetime-${income.id}`)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                       >
-                        {t.common.edit}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(income.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        {t.common.delete}
+                        <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       </button>
                     </td>
                   </tr>
@@ -294,7 +321,7 @@ export default function IngresosPage() {
                   </td>
                 </tr>
               ) : (
-                monthlyIncomes.map((income) => (
+                monthlyIncomes.map((income, index) => (
                   <tr key={income.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <p className="font-medium text-gray-900 dark:text-white">{getClientName(income.client_id)}</p>
@@ -303,7 +330,19 @@ export default function IngresosPage() {
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{income.service_name}</p>
                         {income.description && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{income.description}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {income.description.length > 40 ? (
+                              <span>
+                                {income.description.substring(0, 40)}...
+                                <button
+                                  onClick={() => setExpandedText({ text: income.description!, title: income.service_name })}
+                                  className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                >
+                                  {t.common.seeMore}
+                                </button>
+                              </span>
+                            ) : income.description}
+                          </p>
                         )}
                       </div>
                     </td>
@@ -326,16 +365,10 @@ export default function IngresosPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
-                        onClick={() => openEditModal(income)}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
+                        onClick={(e) => handleDropdownClick(e, `monthly-${income.id}`)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                       >
-                        {t.common.edit}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(income.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        {t.common.delete}
+                        <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       </button>
                     </td>
                   </tr>
@@ -372,7 +405,7 @@ export default function IngresosPage() {
                   </td>
                 </tr>
               ) : (
-                annualIncomes.map((income) => (
+                annualIncomes.map((income, index) => (
                   <tr key={income.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <p className="font-medium text-gray-900 dark:text-white">{getClientName(income.client_id)}</p>
@@ -381,7 +414,19 @@ export default function IngresosPage() {
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{income.service_name}</p>
                         {income.description && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{income.description}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {income.description.length > 40 ? (
+                              <span>
+                                {income.description.substring(0, 40)}...
+                                <button
+                                  onClick={() => setExpandedText({ text: income.description!, title: income.service_name })}
+                                  className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                >
+                                  {t.common.seeMore}
+                                </button>
+                              </span>
+                            ) : income.description}
+                          </p>
                         )}
                       </div>
                     </td>
@@ -409,16 +454,10 @@ export default function IngresosPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
-                        onClick={() => openEditModal(income)}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
+                        onClick={(e) => handleDropdownClick(e, `annual-${income.id}`)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                       >
-                        {t.common.edit}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(income.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        {t.common.delete}
+                        <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       </button>
                     </td>
                   </tr>
@@ -470,7 +509,7 @@ export default function IngresosPage() {
                     value={formData.service_name}
                     onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="Ej: Desarrollo web, Mantenimiento mensual..."
+                    placeholder={t.forms.serviceNamePlaceholder}
                     required
                   />
                 </div>
@@ -614,6 +653,65 @@ export default function IngresosPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Modal para ver texto completo */}
+      {expandedText && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{expandedText.title}</h3>
+              <button
+                onClick={() => setExpandedText(null)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{expandedText.text}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dropdown fijo para ingresos */}
+      {openDropdown && dropdownPosition && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => { setOpenDropdown(null); setDropdownPosition(null); }} />
+          <div
+            className="fixed w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            style={{
+              top: dropdownPosition.openUp ? 'auto' : dropdownPosition.top,
+              bottom: dropdownPosition.openUp ? window.innerHeight - dropdownPosition.top : 'auto',
+              left: dropdownPosition.left
+            }}
+          >
+            <button
+              onClick={() => {
+                const incomeId = openDropdown.replace(/^(onetime-|monthly-|annual-)/, '');
+                const income = incomes.find(i => i.id === incomeId);
+                if (income) openEditModal(income);
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
+            >
+              {t.common.edit}
+            </button>
+            <button
+              onClick={() => {
+                const incomeId = openDropdown.replace(/^(onetime-|monthly-|annual-)/, '');
+                handleDelete(incomeId);
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg"
+            >
+              {t.common.delete}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,113 +1,90 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { supabase } from '@/lib/supabase';
-import type { CompanyExpense, Client, Project, ClientIncome } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import Link from 'next/link';
+import { FaUsers, FaProjectDiagram, FaChartLine, FaMoneyBillWave, FaFileInvoice, FaCog, FaCalculator, FaRobot, FaArrowRight } from 'react-icons/fa';
 
 export default function DashboardPage() {
   const { profile } = useAuth();
   const { t } = useLanguage();
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    // Gastos de empresa
-    monthlyExpenses: 0,
-    annualExpenses: 0,
-    yearlyExpensesProjected: 0,
-    totalExpenses: 0,
-    // Clientes
-    totalClients: 0,
-    activeClients: 0,
-    // Proyectos
-    totalProjects: 0,
-    activeProjects: 0,
-    completedProjects: 0,
-    // Ingresos
-    monthlyIncome: 0,
-    annualIncome: 0,
-    yearlyIncomeProjected: 0,
-    totalIncome: 0,
-  });
 
-  useEffect(() => {
-    loadStats();
-  }, []);
+  // Calculator state
+  const [calcDisplay, setCalcDisplay] = useState('0');
+  const [calcPrevValue, setCalcPrevValue] = useState<number | null>(null);
+  const [calcOperation, setCalcOperation] = useState<string | null>(null);
+  const [calcNewNumber, setCalcNewNumber] = useState(true);
 
-  async function loadStats() {
-    try {
-      // Cargar todos los datos en paralelo
-      const [expensesRes, clientsRes, projectsRes, incomeRes] = await Promise.all([
-        supabase.from('company_expenses').select('*'),
-        supabase.from('clients').select('*'),
-        supabase.from('projects').select('*'),
-        supabase.from('client_income').select('*'),
-      ]);
-
-      // Procesar gastos de empresa
-      const expenses = expensesRes.data || [];
-      const monthlyExpenses = expenses.filter(e => e.frequency === 'monthly');
-      const annualExpenses = expenses.filter(e => e.frequency === 'annual');
-      const monthlyExpensesTotal = monthlyExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
-      const annualExpensesTotal = annualExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
-
-      // Procesar clientes
-      const clients = clientsRes.data || [];
-      const activeClients = clients.filter(c => c.status === 'active');
-
-      // Procesar proyectos
-      const projects = projectsRes.data || [];
-      const activeProjects = projects.filter(p => p.status === 'active');
-      const completedProjects = projects.filter(p => p.status === 'completed');
-
-      // Procesar ingresos de client_income
-      const income = incomeRes.data || [];
-      const monthlyIncome = income.filter(i => i.frequency === 'monthly');
-      const annualIncome = income.filter(i => i.frequency === 'annual');
-      const oneTimeIncome = income.filter(i => i.frequency === 'one_time');
-
-      const monthlyIncomeTotal = monthlyIncome.reduce((sum, i) => sum + Number(i.amount), 0);
-      const annualIncomeTotal = annualIncome.reduce((sum, i) => sum + Number(i.amount), 0);
-      const oneTimeIncomeTotal = oneTimeIncome.reduce((sum, i) => sum + Number(i.amount), 0);
-
-      // Procesar ingresos de proyectos (todos los proyectos con monto, independiente del estado)
-      const projectMonthly = projects.filter(p => p.payment_type === 'monthly' && p.total_amount);
-      const projectAnnual = projects.filter(p => p.payment_type === 'annual' && p.total_amount);
-      const projectOneTime = projects.filter(p => p.payment_type === 'one_time' && p.total_amount);
-
-      const projectMonthlyTotal = projectMonthly.reduce((sum, p) => sum + Number(p.total_amount), 0);
-      const projectAnnualTotal = projectAnnual.reduce((sum, p) => sum + Number(p.total_amount), 0);
-      const projectOneTimeTotal = projectOneTime.reduce((sum, p) => sum + Number(p.total_amount), 0);
-
-      // Sumar ingresos de client_income y proyectos
-      const totalMonthly = monthlyIncomeTotal + projectMonthlyTotal;
-      const totalAnnual = annualIncomeTotal + projectAnnualTotal;
-      const totalOneTime = oneTimeIncomeTotal + projectOneTimeTotal;
-
-      setStats({
-        monthlyExpenses: monthlyExpensesTotal,
-        annualExpenses: annualExpensesTotal,
-        yearlyExpensesProjected: (monthlyExpensesTotal * 12) + annualExpensesTotal,
-        totalExpenses: expenses.length,
-        totalClients: clients.length,
-        activeClients: activeClients.length,
-        totalProjects: projects.length,
-        activeProjects: activeProjects.length,
-        completedProjects: completedProjects.length,
-        monthlyIncome: totalMonthly,
-        annualIncome: totalAnnual,
-        yearlyIncomeProjected: (totalMonthly * 12) + totalAnnual + totalOneTime,
-        totalIncome: income.length + projects.filter(p => p.total_amount).length,
-      });
-    } catch (error) {
-      console.error('Error in loadStats:', error);
-    } finally {
-      setLoading(false);
+  const handleCalcNumber = (num: string) => {
+    if (calcNewNumber) {
+      setCalcDisplay(num);
+      setCalcNewNumber(false);
+    } else {
+      setCalcDisplay(calcDisplay === '0' ? num : calcDisplay + num);
     }
-  }
+  };
+
+  const handleCalcOperation = (op: string) => {
+    const current = parseFloat(calcDisplay);
+    if (calcPrevValue !== null && calcOperation && !calcNewNumber) {
+      const result = calculate(calcPrevValue, current, calcOperation);
+      setCalcDisplay(String(result));
+      setCalcPrevValue(result);
+    } else {
+      setCalcPrevValue(current);
+    }
+    setCalcOperation(op);
+    setCalcNewNumber(true);
+  };
+
+  const calculate = (a: number, b: number, op: string): number => {
+    switch (op) {
+      case '+': return a + b;
+      case '-': return a - b;
+      case '*': return a * b;
+      case '/': return b !== 0 ? a / b : 0;
+      default: return b;
+    }
+  };
+
+  const handleCalcEquals = () => {
+    if (calcPrevValue !== null && calcOperation) {
+      const current = parseFloat(calcDisplay);
+      const result = calculate(calcPrevValue, current, calcOperation);
+      setCalcDisplay(String(result));
+      setCalcPrevValue(null);
+      setCalcOperation(null);
+      setCalcNewNumber(true);
+    }
+  };
+
+  const handleCalcClear = () => {
+    setCalcDisplay('0');
+    setCalcPrevValue(null);
+    setCalcOperation(null);
+    setCalcNewNumber(true);
+  };
+
+  const handleCalcDecimal = () => {
+    if (!calcDisplay.includes('.')) {
+      setCalcDisplay(calcDisplay + '.');
+      setCalcNewNumber(false);
+    }
+  };
+
+  const quickLinks = [
+    { href: '/dashboard/clientes', icon: FaUsers, label: t.nav.clients, color: 'bg-blue-500 hover:bg-blue-600', description: t.clients.subtitle },
+    { href: '/dashboard/proyectos', icon: FaProjectDiagram, label: t.nav.projects, color: 'bg-purple-500 hover:bg-purple-600', description: t.projects.subtitle },
+    { href: '/dashboard/ingresos', icon: FaMoneyBillWave, label: t.nav.income, color: 'bg-green-500 hover:bg-green-600', description: t.income.subtitle },
+    { href: '/dashboard/gastos', icon: FaFileInvoice, label: t.nav.expenses, color: 'bg-red-500 hover:bg-red-600', description: t.expenses.subtitle },
+    { href: '/dashboard/estadisticas', icon: FaChartLine, label: t.nav.statistics, color: 'bg-amber-500 hover:bg-amber-600', description: t.stats.subtitle },
+    { href: '/dashboard/ajustes', icon: FaCog, label: t.nav.settings, color: 'bg-gray-500 hover:bg-gray-600', description: t.settings.description },
+  ];
 
   return (
     <div className="p-8">
+      {/* Welcome header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           {t.dashboard.welcome}, {profile?.full_name || profile?.email || '-'}
@@ -123,156 +100,143 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Cards de estadísticas generales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatsCard
-          title={t.dashboard.totalClients}
-          value={loading ? '...' : `${stats.totalClients}`}
-          subtitle={`${stats.activeClients} ${t.clients.active.toLowerCase()}`}
-          color="bg-blue-600"
-        />
-        <StatsCard
-          title={t.dashboard.activeProjects}
-          value={loading ? '...' : `${stats.activeProjects}`}
-          subtitle={`${stats.completedProjects} ${t.projects.completed.toLowerCase()}`}
-          color="bg-green-600"
-        />
-        <StatsCard
-          title={t.dashboard.monthlyIncome}
-          value={loading ? '...' : `${stats.monthlyIncome.toFixed(2)} CHF`}
-          subtitle={`${stats.yearlyIncomeProjected.toFixed(2)} CHF ${t.dashboard.annual.toLowerCase()}`}
-          color="bg-emerald-600"
-        />
-        <StatsCard
-          title={t.dashboard.monthlyExpenses}
-          value={loading ? '...' : `${stats.monthlyExpenses.toFixed(2)} CHF`}
-          subtitle={`${stats.yearlyExpensesProjected.toFixed(2)} CHF ${t.dashboard.annual.toLowerCase()}`}
-          color="bg-red-600"
-        />
-      </div>
-
-      {/* Resumen financiero */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Ingresos */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4 text-green-700 dark:text-green-400">{t.income.title}</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">{t.income.subtitle}</p>
-          {loading ? (
-            <div className="mt-6 text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
-            </div>
-          ) : stats.totalIncome > 0 ? (
-            <div className="mt-6">
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="border-l-4 border-green-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.monthly}</h3>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.monthlyIncome.toFixed(2)} CHF</p>
+      {/* Quick access section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t.dashboard.quickAccess}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {quickLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-start gap-4">
+                <div className={`${link.color} p-3 rounded-lg text-white transition-colors`}>
+                  <link.icon className="w-6 h-6" />
                 </div>
-                <div className="border-l-4 border-emerald-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.annualProjection}</h3>
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.yearlyIncomeProjected.toFixed(2)} CHF</p>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-syntalys-blue dark:group-hover:text-blue-400 transition-colors flex items-center gap-2">
+                    {link.label}
+                    <FaArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{link.description}</p>
                 </div>
               </div>
-              <a
-                href="/dashboard/ingresos"
-                className="inline-block bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors"
-              >
-                {t.dashboard.viewAllIncome}
-              </a>
-            </div>
-          ) : (
-            <div className="mt-6 text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-lg">
-              <p className="text-gray-500 dark:text-gray-400">{t.dashboard.noIncome}</p>
-            </div>
-          )}
+            </Link>
+          ))}
         </div>
+      </div>
 
-        {/* Gastos */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4 text-red-700 dark:text-red-400">{t.dashboard.expensesSummary}</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">{t.dashboard.expensesSummarySubtitle}</p>
-          {loading ? (
-            <div className="mt-6 text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
+      {/* Tools section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Calculator */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-indigo-500 p-2 rounded-lg text-white">
+              <FaCalculator className="w-5 h-5" />
             </div>
-          ) : stats.totalExpenses > 0 ? (
-            <div className="mt-6">
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="border-l-4 border-red-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.monthly}</h3>
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.monthlyExpenses.toFixed(2)} CHF</p>
-                </div>
-                <div className="border-l-4 border-orange-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.annualProjection}</h3>
-                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.yearlyExpensesProjected.toFixed(2)} CHF</p>
-                </div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.dashboard.calculator}</h2>
+          </div>
+
+          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 mb-4">
+            <div className="text-right text-3xl font-mono text-gray-900 dark:text-white overflow-x-auto">
+              {calcDisplay}
+            </div>
+            {calcOperation && (
+              <div className="text-right text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {calcPrevValue} {calcOperation}
               </div>
-              <a
-                href="/dashboard/gastos"
-                className="inline-block bg-red-600 text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
-              >
-                {t.dashboard.viewAllExpenses}
-              </a>
+            )}
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            <button onClick={handleCalcClear} className="col-span-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg font-semibold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+              C
+            </button>
+            <button onClick={() => handleCalcOperation('/')} className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 p-3 rounded-lg font-semibold hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+              /
+            </button>
+            <button onClick={() => handleCalcOperation('*')} className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 p-3 rounded-lg font-semibold hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+              *
+            </button>
+
+            {['7', '8', '9'].map(num => (
+              <button key={num} onClick={() => handleCalcNumber(num)} className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                {num}
+              </button>
+            ))}
+            <button onClick={() => handleCalcOperation('-')} className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 p-3 rounded-lg font-semibold hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+              -
+            </button>
+
+            {['4', '5', '6'].map(num => (
+              <button key={num} onClick={() => handleCalcNumber(num)} className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                {num}
+              </button>
+            ))}
+            <button onClick={() => handleCalcOperation('+')} className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 p-3 rounded-lg font-semibold hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+              +
+            </button>
+
+            {['1', '2', '3'].map(num => (
+              <button key={num} onClick={() => handleCalcNumber(num)} className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                {num}
+              </button>
+            ))}
+            <button onClick={handleCalcEquals} className="row-span-2 bg-syntalys-blue text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+              =
+            </button>
+
+            <button onClick={() => handleCalcNumber('0')} className="col-span-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+              0
+            </button>
+            <button onClick={handleCalcDecimal} className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+              .
+            </button>
+          </div>
+        </div>
+
+        {/* AI Assistant card */}
+        <div className="bg-gradient-to-br from-syntalys-blue to-blue-700 rounded-xl shadow-sm p-6 text-white">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-white/20 p-2 rounded-lg">
+              <FaRobot className="w-5 h-5" />
             </div>
-          ) : (
-            <div className="mt-6 text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-lg">
-              <p className="text-gray-500 dark:text-gray-400">{t.dashboard.noExpenses}</p>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">{t.dashboard.noExpensesSubtitle}</p>
+            <h2 className="text-lg font-semibold">{t.dashboard.aiAssistant}</h2>
+          </div>
+
+          <p className="text-blue-100 mb-6">
+            {t.dashboard.aiAssistantDescription}
+          </p>
+
+          <div className="space-y-3 mb-6">
+            <div className="bg-white/10 rounded-lg p-3 text-sm">
+              "{t.chatAI.suggestion1}"
             </div>
-          )}
+            <div className="bg-white/10 rounded-lg p-3 text-sm">
+              "{t.chatAI.suggestion2}"
+            </div>
+            <div className="bg-white/10 rounded-lg p-3 text-sm">
+              "{t.chatAI.suggestion3}"
+            </div>
+          </div>
+
+          <Link
+            href="/dashboard/chat"
+            className="inline-flex items-center gap-2 bg-white text-syntalys-blue px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+          >
+            {t.dashboard.openChat}
+            <FaArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
 
-      {/* Beneficio / Margen */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{t.dashboard.projectedAnnualProfit}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t.dashboard.annualIncome}</p>
-            <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-              {loading ? '...' : `${stats.yearlyIncomeProjected.toFixed(2)} CHF`}
-            </p>
-          </div>
-          <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t.dashboard.annualExpense}</p>
-            <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-              {loading ? '...' : `${stats.yearlyExpensesProjected.toFixed(2)} CHF`}
-            </p>
-          </div>
-          <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t.dashboard.netProfit}</p>
-            <p className={`text-3xl font-bold ${(stats.yearlyIncomeProjected - stats.yearlyExpensesProjected) >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
-              {loading ? '...' : `${(stats.yearlyIncomeProjected - stats.yearlyExpensesProjected).toFixed(2)} CHF`}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatsCard({
-  title,
-  value,
-  subtitle,
-  color,
-}: {
-  title: string;
-  value: string;
-  subtitle?: string;
-  color: string;
-}) {
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <p className="text-gray-600 dark:text-gray-400 text-sm">{title}</p>
-          <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">{value}</p>
-          {subtitle && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>
-          )}
-        </div>
-        <div className={`${color} w-12 h-12 rounded-full flex-shrink-0`}></div>
+      {/* Info section */}
+      <div className="mt-8 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-750 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{t.dashboard.tip}</h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          {t.dashboard.tipDescription}
+        </p>
       </div>
     </div>
   );

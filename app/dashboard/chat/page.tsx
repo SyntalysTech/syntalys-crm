@@ -287,7 +287,7 @@ export default function ChatAIPage() {
             </button>
           </div>
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-2">
-            Press Enter to send, Shift+Enter for new line
+            {t.chatAI.enterToSend}
           </p>
         </div>
       </div>

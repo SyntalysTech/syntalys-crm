@@ -21,6 +21,12 @@ CREATE INDEX IF NOT EXISTS idx_internal_projects_created_at ON internal_projects
 -- Enable RLS
 ALTER TABLE internal_projects ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Super admins and admins can view internal projects" ON internal_projects;
+DROP POLICY IF EXISTS "Super admins and admins can create internal projects" ON internal_projects;
+DROP POLICY IF EXISTS "Super admins and admins can update internal projects" ON internal_projects;
+DROP POLICY IF EXISTS "Super admins and admins can delete internal projects" ON internal_projects;
+
 -- RLS Policies: Only super_admin and admin can manage internal projects
 CREATE POLICY "Super admins and admins can view internal projects"
     ON internal_projects FOR SELECT

@@ -12,6 +12,7 @@ export interface Translations {
     expenses: string;
     income: string;
     stats: string;
+    statistics: string;
     passwords: string;
     chatAI: string;
     settings: string;
@@ -51,6 +52,7 @@ export interface Translations {
     close: string;
     confirm: string;
     more: string;
+    seeMore: string;
     none: string;
     saveChanges: string;
     type: string;
@@ -93,6 +95,14 @@ export interface Translations {
     admin: string;
     manager: string;
     employee: string;
+    // New dashboard
+    quickAccess: string;
+    calculator: string;
+    aiAssistant: string;
+    aiAssistantDescription: string;
+    openChat: string;
+    tip: string;
+    tipDescription: string;
   };
 
   // Clients
@@ -119,6 +129,20 @@ export interface Translations {
     suspended: string;
     potential: string;
     isPotential: string;
+    // Invoices
+    invoices: string;
+    addInvoice: string;
+    invoiceNumber: string;
+    issueDate: string;
+    dueDate: string;
+    invoiceStatus: string;
+    invoicePaid: string;
+    invoicePending: string;
+    invoiceOverdue: string;
+    invoiceCancelled: string;
+    uploadPdf: string;
+    selectPdf: string;
+    noInvoices: string;
     noClients: string;
     createFirst: string;
     monthlyExpenses: string;
@@ -323,6 +347,12 @@ export interface Translations {
     companyName: string;
     country: string;
     selectCountry: string;
+    // Placeholders
+    clientNamePlaceholder: string;
+    clientNotesPlaceholder: string;
+    serviceNamePlaceholder: string;
+    internalProjectPlaceholder: string;
+    invoiceNumberPlaceholder: string;
   };
 
   // Messages
@@ -458,6 +488,7 @@ export interface Translations {
     errorMessage: string;
     copyMessage: string;
     copied: string;
+    enterToSend: string;
   };
 
   // Settings
@@ -485,6 +516,7 @@ export const translations: Record<Language, Translations> = {
       expenses: 'Gastos',
       income: 'Ingresos',
       stats: 'Estadísticas',
+      statistics: 'Estadísticas',
       passwords: 'Contraseñas',
       chatAI: 'Chat IA',
       settings: 'Ajustes',
@@ -520,6 +552,7 @@ export const translations: Record<Language, Translations> = {
       close: 'Cerrar',
       confirm: 'Confirmar',
       more: 'más',
+      seeMore: 'Ver más',
       none: 'Sin',
       saveChanges: 'Guardar Cambios',
       type: 'Tipo',
@@ -559,6 +592,13 @@ export const translations: Record<Language, Translations> = {
       admin: 'Administrador',
       manager: 'Gestor',
       employee: 'Empleado',
+      quickAccess: 'Acceso Rápido',
+      calculator: 'Calculadora',
+      aiAssistant: 'Asistente IA',
+      aiAssistantDescription: 'Pregúntale cualquier cosa sobre tu negocio, clientes, gastos o ingresos. Tu asistente personal está aquí para ayudarte.',
+      openChat: 'Abrir Chat',
+      tip: 'Consejo del día',
+      tipDescription: 'Utiliza la página de Estadísticas para ver gráficos detallados de tus ingresos, gastos y beneficios. Puedes filtrar por período y tipo de datos.',
     },
     clients: {
       title: 'Gestión de Clientes',
@@ -583,6 +623,19 @@ export const translations: Record<Language, Translations> = {
       suspended: 'Suspendido',
       potential: 'Potencial',
       isPotential: 'Cliente Potencial',
+      invoices: 'Facturas',
+      addInvoice: 'Añadir Factura',
+      invoiceNumber: 'Número de Factura',
+      issueDate: 'Fecha de emisión',
+      dueDate: 'Fecha de vencimiento',
+      invoiceStatus: 'Estado de la factura',
+      invoicePaid: 'Pagada',
+      invoicePending: 'Pendiente',
+      invoiceOverdue: 'Vencida',
+      invoiceCancelled: 'Cancelada',
+      uploadPdf: 'Subir PDF',
+      selectPdf: 'Seleccionar archivo PDF',
+      noInvoices: 'No hay facturas registradas',
       noClients: 'No hay clientes registrados aún',
       createFirst: 'Crear primer cliente',
       monthlyExpenses: 'Gastos Mensuales',
@@ -771,6 +824,11 @@ export const translations: Record<Language, Translations> = {
       companyName: 'Nombre de la Empresa',
       country: 'País',
       selectCountry: 'Selecciona un país',
+      clientNamePlaceholder: 'Ej: Juan Pérez',
+      clientNotesPlaceholder: 'Notas adicionales sobre el cliente',
+      serviceNamePlaceholder: 'Ej: Claude Max, Vercel Pro...',
+      internalProjectPlaceholder: 'Ej: CRM Syntalys, App Interna...',
+      invoiceNumberPlaceholder: 'FAC-001',
     },
     messages: {
       deleteConfirm: '¿Estás seguro de que quieres eliminar',
@@ -895,6 +953,7 @@ export const translations: Record<Language, Translations> = {
       errorMessage: 'Lo siento, ha ocurrido un error. Por favor, intenta de nuevo.',
       copyMessage: 'Copiar mensaje',
       copied: 'Copiado',
+      enterToSend: 'Presiona Enter para enviar, Shift+Enter para nueva línea',
     },
     settings: {
       description: 'Configura las preferencias de tu cuenta',
@@ -918,6 +977,7 @@ export const translations: Record<Language, Translations> = {
       expenses: 'Dépenses',
       income: 'Revenus',
       stats: 'Statistiques',
+      statistics: 'Statistiques',
       passwords: 'Mots de passe',
       chatAI: 'Chat IA',
       settings: 'Paramètres',
@@ -953,6 +1013,7 @@ export const translations: Record<Language, Translations> = {
       close: 'Fermer',
       confirm: 'Confirmer',
       more: 'de plus',
+      seeMore: 'Voir plus',
       none: 'Sans',
       saveChanges: 'Enregistrer les Modifications',
       type: 'Type',
@@ -992,6 +1053,13 @@ export const translations: Record<Language, Translations> = {
       admin: 'Administrateur',
       manager: 'Gestionnaire',
       employee: 'Employé',
+      quickAccess: 'Accès Rapide',
+      calculator: 'Calculatrice',
+      aiAssistant: 'Assistant IA',
+      aiAssistantDescription: 'Posez-lui n\'importe quelle question sur votre entreprise, clients, dépenses ou revenus. Votre assistant personnel est là pour vous aider.',
+      openChat: 'Ouvrir le Chat',
+      tip: 'Conseil du jour',
+      tipDescription: 'Utilisez la page Statistiques pour voir des graphiques détaillés de vos revenus, dépenses et bénéfices. Vous pouvez filtrer par période et type de données.',
     },
     clients: {
       title: 'Gestion des Clients',
@@ -1016,6 +1084,19 @@ export const translations: Record<Language, Translations> = {
       suspended: 'Suspendu',
       potential: 'Potentiel',
       isPotential: 'Client Potentiel',
+      invoices: 'Factures',
+      addInvoice: 'Ajouter une Facture',
+      invoiceNumber: 'Numéro de Facture',
+      issueDate: 'Date d\'émission',
+      dueDate: 'Date d\'échéance',
+      invoiceStatus: 'Statut de la facture',
+      invoicePaid: 'Payée',
+      invoicePending: 'En attente',
+      invoiceOverdue: 'En retard',
+      invoiceCancelled: 'Annulée',
+      uploadPdf: 'Télécharger PDF',
+      selectPdf: 'Sélectionner un fichier PDF',
+      noInvoices: 'Aucune facture enregistrée',
       noClients: 'Aucun client enregistré pour le moment',
       createFirst: 'Créer le premier client',
       monthlyExpenses: 'Dépenses Mensuelles',
@@ -1204,6 +1285,11 @@ export const translations: Record<Language, Translations> = {
       companyName: 'Nom de l\'Entreprise',
       country: 'Pays',
       selectCountry: 'Sélectionnez un pays',
+      clientNamePlaceholder: 'Ex: Jean Dupont',
+      clientNotesPlaceholder: 'Notes supplémentaires sur le client',
+      serviceNamePlaceholder: 'Ex: Claude Max, Vercel Pro...',
+      internalProjectPlaceholder: 'Ex: CRM Syntalys, App Interne...',
+      invoiceNumberPlaceholder: 'FAC-001',
     },
     messages: {
       deleteConfirm: 'Êtes-vous sûr de vouloir supprimer',
@@ -1328,6 +1414,7 @@ export const translations: Record<Language, Translations> = {
       errorMessage: 'Désolé, une erreur s\'est produite. Veuillez réessayer.',
       copyMessage: 'Copier le message',
       copied: 'Copié',
+      enterToSend: 'Appuyez sur Entrée pour envoyer, Shift+Entrée pour nouvelle ligne',
     },
     settings: {
       description: 'Configurez les préférences de votre compte',

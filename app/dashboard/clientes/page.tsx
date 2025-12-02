@@ -533,13 +533,13 @@ export default function ClientesPage() {
   }
 
   function getInvoiceStatusLabel(status: string): string {
-    const labels: Record<string, Record<string, string>> = {
-      paid: { es: 'Pagada', fr: 'Payée' },
-      pending: { es: 'Pendiente', fr: 'En attente' },
-      overdue: { es: 'Vencida', fr: 'En retard' },
-      cancelled: { es: 'Cancelada', fr: 'Annulée' },
+    const labels: Record<string, string> = {
+      paid: t.clients.invoicePaid,
+      pending: t.clients.invoicePending,
+      overdue: t.clients.invoiceOverdue,
+      cancelled: t.clients.invoiceCancelled,
     };
-    return labels[status]?.[language] || status;
+    return labels[status] || status;
   }
 
   if (loading) {
@@ -610,7 +610,7 @@ export default function ClientesPage() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {clients.map((client) => (
+                {clients.map((client, index) => (
                   <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
@@ -664,7 +664,7 @@ export default function ClientesPage() {
                           <FaEllipsisV className="w-4 h-4" />
                         </button>
                         {openDropdownId === client.id && (
-                          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                          <div className={`absolute right-0 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 ${index < 2 ? 'top-full mt-2' : 'bottom-full mb-2'}`}>
                             <button
                               onClick={() => openClientDetail(client)}
                               className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 rounded-t-lg"
@@ -715,7 +715,7 @@ export default function ClientesPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Ej: Juan Pérez"
+                  placeholder={t.forms.clientNamePlaceholder}
                   required
                 />
               </div>
@@ -771,7 +771,7 @@ export default function ClientesPage() {
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   rows={3}
-                  placeholder="Notas adicionales sobre el cliente"
+                  placeholder={t.forms.clientNotesPlaceholder}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -838,7 +838,7 @@ export default function ClientesPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Ej: Juan Pérez"
+                  placeholder={t.forms.clientNamePlaceholder}
                   required
                 />
               </div>
@@ -894,7 +894,7 @@ export default function ClientesPage() {
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   rows={3}
-                  placeholder="Notas adicionales sobre el cliente"
+                  placeholder={t.forms.clientNotesPlaceholder}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1013,7 +1013,7 @@ export default function ClientesPage() {
                   }`}
                 >
                   <FaFileInvoiceDollar className="w-4 h-4" />
-                  {language === 'fr' ? 'Factures' : 'Facturas'} ({clientInvoices.length})
+                  {t.clients.invoices} ({clientInvoices.length})
                 </button>
               </nav>
             </div>
@@ -1200,7 +1200,7 @@ export default function ClientesPage() {
                     value={invoiceFormData.invoice_number}
                     onChange={(e) => setInvoiceFormData({ ...invoiceFormData, invoice_number: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="FAC-001"
+                    placeholder={t.forms.invoiceNumberPlaceholder}
                   />
                 </div>
                 <div>
@@ -1232,7 +1232,7 @@ export default function ClientesPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {language === 'fr' ? 'Date d\'émission' : 'Fecha de emisión'}
+                    {t.clients.issueDate}
                   </label>
                   <input
                     type="date"
@@ -1243,7 +1243,7 @@ export default function ClientesPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {language === 'fr' ? 'Date d\'échéance' : 'Fecha de vencimiento'}
+                    {t.clients.dueDate}
                   </label>
                   <input
                     type="date"

@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Image from 'next/image';
-import { FaGithub, FaExternalLinkAlt, FaLightbulb, FaCode, FaCheckCircle, FaPause, FaTimes } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaLightbulb, FaCode, FaCheckCircle, FaPause, FaTimes, FaEllipsisV } from 'react-icons/fa';
 
 export default function ProyectosPage() {
   const { t } = useLanguage();
@@ -20,6 +20,27 @@ export default function ProyectosPage() {
   const [showInternalModal, setShowInternalModal] = useState(false);
   const [editingInternalProject, setEditingInternalProject] = useState<InternalProject | null>(null);
   const [activeTab, setActiveTab] = useState<'clients' | 'lab'>('clients');
+
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
+  const [expandedText, setExpandedText] = useState<{ text: string; title: string } | null>(null);
+
+  const handleDropdownClick = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
+    if (openDropdown === id) {
+      setOpenDropdown(null);
+      setDropdownPosition(null);
+    } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUp = spaceBelow < 120;
+      setDropdownPosition({
+        top: openUp ? rect.top - 8 : rect.bottom + 8,
+        left: rect.right - 144,
+        openUp
+      });
+      setOpenDropdown(id);
+    }
+  };
 
   const [internalFormData, setInternalFormData] = useState({
     name: '',
@@ -573,7 +594,7 @@ export default function ProyectosPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700">
@@ -589,13 +610,25 @@ export default function ProyectosPage() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {projects.map((project) => (
+                {projects.map((project, index) => (
                   <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4">
                       <div>
                         <div className="text-sm font-medium text-gray-900 dark:text-white">{project.project_name}</div>
                         {project.description && (
-                          <div className="text-sm text-gray-500 dark:text-gray-400">{project.description}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            {project.description.length > 50 ? (
+                              <span>
+                                {project.description.substring(0, 50)}...
+                                <button
+                                  onClick={() => setExpandedText({ text: project.description!, title: project.project_name })}
+                                  className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                >
+                                  {t.common.seeMore}
+                                </button>
+                              </span>
+                            ) : project.description}
+                          </div>
                         )}
                       </div>
                     </td>
@@ -631,16 +664,10 @@ export default function ProyectosPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
-                        onClick={() => openEditModal(project)}
-                        className="text-syntalys-blue dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mr-3"
+                        onClick={(e) => handleDropdownClick(e, project.id)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                       >
-                        {t.common.edit}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(project.id, project.project_name)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        {t.common.delete}
+                        <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       </button>
                     </td>
                   </tr>
@@ -1025,7 +1052,7 @@ export default function ProyectosPage() {
                     value={internalFormData.name}
                     onChange={(e) => setInternalFormData({ ...internalFormData, name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="Ej: CRM Syntalys, App Interna..."
+                    placeholder={t.forms.internalProjectPlaceholder}
                   />
                 </div>
 
@@ -1147,6 +1174,64 @@ export default function ProyectosPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal para ver texto completo */}
+      {expandedText && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{expandedText.title}</h3>
+              <button
+                onClick={() => setExpandedText(null)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{expandedText.text}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dropdown fijo para proyectos */}
+      {openDropdown && dropdownPosition && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => { setOpenDropdown(null); setDropdownPosition(null); }} />
+          <div
+            className="fixed w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            style={{
+              top: dropdownPosition.openUp ? 'auto' : dropdownPosition.top,
+              bottom: dropdownPosition.openUp ? window.innerHeight - dropdownPosition.top : 'auto',
+              left: dropdownPosition.left
+            }}
+          >
+            <button
+              onClick={() => {
+                const project = projects.find(p => p.id === openDropdown);
+                if (project) openEditModal(project);
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
+            >
+              {t.common.edit}
+            </button>
+            <button
+              onClick={() => {
+                const project = projects.find(p => p.id === openDropdown);
+                if (project) handleDelete(project.id, project.project_name);
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg"
+            >
+              {t.common.delete}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

@@ -204,18 +204,9 @@ export default function EstadisticasPage() {
               onChange={(e) => setPeriod(e.target.value as Period)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
-              {dataType === 'projects' ? (
-                <>
-                  <option value="one_time">{t.stats.oneTime}</option>
-                  <option value="monthly">{t.stats.monthly}</option>
-                  <option value="annual">{t.stats.annual}</option>
-                </>
-              ) : (
-                <>
-                  <option value="monthly">{t.stats.monthly}</option>
-                  <option value="annual">{t.stats.annual}</option>
-                </>
-              )}
+                <option value="one_time">{t.stats.oneTime}</option>
+              <option value="monthly">{t.stats.monthly}</option>
+              <option value="annual">{t.stats.annual}</option>
             </select>
           </div>
 
