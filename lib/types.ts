@@ -24,7 +24,7 @@ export type ClientStatus = 'active' | 'inactive' | 'suspended';
 export type ExpenseCategory = 'software' | 'hosting' | 'domain' | 'api' | 'development' | 'other';
 export type ClientExpenseCategory = 'domain' | 'hosting' | 'ssl' | 'api' | 'maintenance' | 'other';
 export type IncomeCategory = 'web_development' | 'maintenance' | 'hosting' | 'domain' | 'crm' | 'subscription' | 'other';
-export type ProjectType = 'web_development' | 'app_development' | 'maintenance' | 'consulting' | 'design' | 'hosting' | 'other';
+export type ProjectType = 'web_development' | 'app_development' | 'game_development' | 'ecommerce' | 'maintenance' | 'consulting' | 'design' | 'marketing' | 'seo' | 'hosting' | 'other';
 export type ProjectStatus = 'active' | 'completed' | 'paused' | 'cancelled';
 export type PaymentType = 'one_time' | 'monthly' | 'annual' | 'milestone';
 
@@ -96,6 +96,7 @@ export interface Project {
   project_name: string;
   description: string | null;
   project_type: ProjectType | null;
+  custom_project_type: string | null;
   status: ProjectStatus;
   start_date: string | null;
   end_date: string | null;
@@ -107,6 +108,24 @@ export interface Project {
   has_website: boolean;
   website_url: string | null;
   notes: string | null;
+  created_at: string;
+  updated_at: string;
+  milestones?: ProjectMilestone[];
+}
+
+export type MilestoneStatus = 'pending' | 'paid' | 'partial';
+
+export interface ProjectMilestone {
+  id: string;
+  project_id: string;
+  name: string;
+  description: string | null;
+  amount: number;
+  currency: Currency;
+  due_date: string | null;
+  paid_date: string | null;
+  status: MilestoneStatus;
+  paid_amount: number;
   created_at: string;
   updated_at: string;
 }

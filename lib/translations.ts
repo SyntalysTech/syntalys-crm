@@ -179,11 +179,32 @@ export interface Translations {
     // Project types
     webDevelopment: string;
     appDevelopment: string;
+    gameDevelopment: string;
+    ecommerce: string;
     maintenance: string;
     consulting: string;
     design: string;
+    marketing: string;
+    seo: string;
     hosting: string;
     other: string;
+    customType: string;
+    // Milestones
+    milestones: string;
+    addMilestone: string;
+    editMilestone: string;
+    milestoneName: string;
+    milestoneAmount: string;
+    milestoneDueDate: string;
+    milestonePaidDate: string;
+    milestoneStatus: string;
+    milestonePaid: string;
+    milestonePending: string;
+    milestonePartial: string;
+    paidAmount: string;
+    totalPaid: string;
+    remainingAmount: string;
+    noMilestones: string;
     // Project status
     statusActive: string;
     statusCompleted: string;
@@ -669,11 +690,31 @@ export const translations: Record<Language, Translations> = {
       createFirst: 'Crear primer proyecto',
       webDevelopment: 'Desarrollo Web',
       appDevelopment: 'Desarrollo de Apps',
+      gameDevelopment: 'Desarrollo de Juegos',
+      ecommerce: 'E-commerce',
       maintenance: 'Mantenimiento',
       consulting: 'Consultoría',
       design: 'Diseño',
+      marketing: 'Marketing Digital',
+      seo: 'SEO / Posicionamiento',
       hosting: 'Hosting',
       other: 'Otro',
+      customType: 'Especificar tipo',
+      milestones: 'Hitos de Pago',
+      addMilestone: 'Añadir Hito',
+      editMilestone: 'Editar Hito',
+      milestoneName: 'Nombre del Hito',
+      milestoneAmount: 'Monto del Hito',
+      milestoneDueDate: 'Fecha de Vencimiento',
+      milestonePaidDate: 'Fecha de Pago',
+      milestoneStatus: 'Estado del Pago',
+      milestonePaid: 'Pagado',
+      milestonePending: 'Pendiente',
+      milestonePartial: 'Pago Parcial',
+      paidAmount: 'Monto Pagado',
+      totalPaid: 'Total Pagado',
+      remainingAmount: 'Monto Restante',
+      noMilestones: 'No hay hitos registrados',
       statusActive: 'Activo',
       statusCompleted: 'Completado',
       statusPaused: 'En Espera',
@@ -1130,11 +1171,31 @@ export const translations: Record<Language, Translations> = {
       createFirst: 'Créer le premier projet',
       webDevelopment: 'Développement Web',
       appDevelopment: 'Développement d\'Apps',
+      gameDevelopment: 'Développement de Jeux',
+      ecommerce: 'E-commerce',
       maintenance: 'Maintenance',
       consulting: 'Conseil',
       design: 'Design',
+      marketing: 'Marketing Digital',
+      seo: 'SEO / Référencement',
       hosting: 'Hébergement',
       other: 'Autre',
+      customType: 'Spécifier le type',
+      milestones: 'Jalons de Paiement',
+      addMilestone: 'Ajouter un Jalon',
+      editMilestone: 'Modifier le Jalon',
+      milestoneName: 'Nom du Jalon',
+      milestoneAmount: 'Montant du Jalon',
+      milestoneDueDate: 'Date d\'Échéance',
+      milestonePaidDate: 'Date de Paiement',
+      milestoneStatus: 'Statut du Paiement',
+      milestonePaid: 'Payé',
+      milestonePending: 'En Attente',
+      milestonePartial: 'Paiement Partiel',
+      paidAmount: 'Montant Payé',
+      totalPaid: 'Total Payé',
+      remainingAmount: 'Montant Restant',
+      noMilestones: 'Aucun jalon enregistré',
       statusActive: 'Actif',
       statusCompleted: 'Terminé',
       statusPaused: 'En Attente',

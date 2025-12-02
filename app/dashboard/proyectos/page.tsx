@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus } from '@/lib/types';
+import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus, ProjectMilestone, MilestoneStatus, Currency } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Image from 'next/image';
-import { FaGithub, FaExternalLinkAlt, FaLightbulb, FaCode, FaCheckCircle, FaPause, FaTimes, FaEllipsisV } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaLightbulb, FaCode, FaCheckCircle, FaPause, FaTimes, FaEllipsisV, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 
 export default function ProyectosPage() {
   const { t } = useLanguage();
@@ -24,6 +24,23 @@ export default function ProyectosPage() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
   const [expandedText, setExpandedText] = useState<{ text: string; title: string } | null>(null);
+
+  // Milestones state
+  const [showMilestonesModal, setShowMilestonesModal] = useState(false);
+  const [selectedProjectForMilestones, setSelectedProjectForMilestones] = useState<Project | null>(null);
+  const [milestones, setMilestones] = useState<ProjectMilestone[]>([]);
+  const [showMilestoneForm, setShowMilestoneForm] = useState(false);
+  const [editingMilestone, setEditingMilestone] = useState<ProjectMilestone | null>(null);
+  const [milestoneFormData, setMilestoneFormData] = useState({
+    name: '',
+    description: '',
+    amount: '',
+    currency: 'CHF' as Currency,
+    due_date: '',
+    paid_date: '',
+    status: 'pending' as MilestoneStatus,
+    paid_amount: '',
+  });
 
   const handleDropdownClick = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     if (openDropdown === id) {
@@ -60,6 +77,7 @@ export default function ProyectosPage() {
     project_name: '',
     description: '',
     project_type: '' as ProjectType | '',
+    custom_project_type: '',
     status: 'active' as ProjectStatus,
     start_date: '',
     end_date: '',
@@ -157,6 +175,7 @@ export default function ProyectosPage() {
         project_name: formData.project_name,
         description: formData.description || null,
         project_type: formData.project_type || null,
+        custom_project_type: formData.project_type === 'other' ? formData.custom_project_type || null : null,
         status: formData.status,
         start_date: formData.start_date || null,
         end_date: formData.end_date || null,
@@ -317,6 +336,7 @@ export default function ProyectosPage() {
       project_name: project.project_name,
       description: project.description || '',
       project_type: (project.project_type as ProjectType) || '',
+      custom_project_type: project.custom_project_type || '',
       status: project.status,
       start_date: project.start_date || '',
       end_date: project.end_date || '',
@@ -339,6 +359,7 @@ export default function ProyectosPage() {
       project_name: '',
       description: '',
       project_type: '',
+      custom_project_type: '',
       status: 'active',
       start_date: '',
       end_date: '',
@@ -351,6 +372,134 @@ export default function ProyectosPage() {
       website_url: '',
       notes: '',
     });
+  }
+
+  // Milestone functions
+  async function openMilestonesModal(project: Project) {
+    setSelectedProjectForMilestones(project);
+    await loadMilestones(project.id);
+    setShowMilestonesModal(true);
+  }
+
+  async function loadMilestones(projectId: string) {
+    const { data, error } = await supabase
+      .from('project_milestones')
+      .select('*')
+      .eq('project_id', projectId)
+      .order('due_date', { ascending: true });
+
+    if (error) {
+      console.error('Error loading milestones:', error);
+      return;
+    }
+    setMilestones(data || []);
+  }
+
+  function openAddMilestoneForm() {
+    setEditingMilestone(null);
+    setMilestoneFormData({
+      name: '',
+      description: '',
+      amount: '',
+      currency: selectedProjectForMilestones?.currency || 'CHF',
+      due_date: '',
+      paid_date: '',
+      status: 'pending',
+      paid_amount: '0',
+    });
+    setShowMilestoneForm(true);
+  }
+
+  function openEditMilestoneForm(milestone: ProjectMilestone) {
+    setEditingMilestone(milestone);
+    setMilestoneFormData({
+      name: milestone.name,
+      description: milestone.description || '',
+      amount: milestone.amount.toString(),
+      currency: milestone.currency,
+      due_date: milestone.due_date || '',
+      paid_date: milestone.paid_date || '',
+      status: milestone.status,
+      paid_amount: milestone.paid_amount.toString(),
+    });
+    setShowMilestoneForm(true);
+  }
+
+  async function handleMilestoneSubmit() {
+    if (!milestoneFormData.name || !milestoneFormData.amount || !selectedProjectForMilestones) {
+      alert(t.messages.fillRequired);
+      return;
+    }
+
+    try {
+      const milestoneData = {
+        project_id: selectedProjectForMilestones.id,
+        name: milestoneFormData.name,
+        description: milestoneFormData.description || null,
+        amount: parseFloat(milestoneFormData.amount),
+        currency: milestoneFormData.currency,
+        due_date: milestoneFormData.due_date || null,
+        paid_date: milestoneFormData.status === 'paid' ? (milestoneFormData.paid_date || new Date().toISOString().split('T')[0]) : null,
+        status: milestoneFormData.status,
+        paid_amount: milestoneFormData.status === 'paid'
+          ? parseFloat(milestoneFormData.amount)
+          : (milestoneFormData.paid_amount ? parseFloat(milestoneFormData.paid_amount) : 0),
+      };
+
+      if (editingMilestone) {
+        const { error } = await supabase
+          .from('project_milestones')
+          .update(milestoneData)
+          .eq('id', editingMilestone.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('project_milestones')
+          .insert([milestoneData]);
+
+        if (error) throw error;
+      }
+
+      setShowMilestoneForm(false);
+      await loadMilestones(selectedProjectForMilestones.id);
+    } catch (error) {
+      console.error('Error saving milestone:', error);
+      alert(t.messages.saveError);
+    }
+  }
+
+  async function handleDeleteMilestone(milestoneId: string) {
+    if (!confirm(t.messages.deleteConfirm + '?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('project_milestones')
+        .delete()
+        .eq('id', milestoneId);
+
+      if (error) throw error;
+
+      if (selectedProjectForMilestones) {
+        await loadMilestones(selectedProjectForMilestones.id);
+      }
+    } catch (error) {
+      console.error('Error deleting milestone:', error);
+      alert(t.messages.deleteError);
+    }
+  }
+
+  function getMilestoneStatusColor(status: MilestoneStatus): string {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'partial':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
   }
 
   // Syntalys Lab CRUD functions
@@ -640,7 +789,7 @@ export default function ProyectosPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-600 dark:text-gray-300">
-                        {project.project_type ? getProjectTypeLabel(project.project_type, t) : '-'}
+                        {project.project_type ? getProjectTypeLabel(project.project_type, t, project.custom_project_type) : '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -857,12 +1006,25 @@ export default function ProyectosPage() {
                     <option value="">{t.forms.notSpecified}</option>
                     <option value="web_development">{t.projects.webDevelopment}</option>
                     <option value="app_development">{t.projects.appDevelopment}</option>
+                    <option value="game_development">{t.projects.gameDevelopment}</option>
+                    <option value="ecommerce">{t.projects.ecommerce}</option>
                     <option value="maintenance">{t.projects.maintenance}</option>
                     <option value="consulting">{t.projects.consulting}</option>
                     <option value="design">{t.projects.design}</option>
+                    <option value="marketing">{t.projects.marketing}</option>
+                    <option value="seo">{t.projects.seo}</option>
                     <option value="hosting">{t.projects.hosting}</option>
                     <option value="other">{t.projects.other}</option>
                   </select>
+                  {formData.project_type === 'other' && (
+                    <input
+                      type="text"
+                      value={formData.custom_project_type}
+                      onChange={(e) => setFormData({ ...formData, custom_project_type: e.target.value })}
+                      className="w-full mt-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder={t.projects.customType}
+                    />
+                  )}
                 </div>
 
                 <div>
@@ -1196,12 +1358,268 @@ export default function ProyectosPage() {
         </div>
       )}
 
+      {/* Modal de Hitos/Milestones */}
+      {showMilestonesModal && selectedProjectForMilestones && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.projects.milestones}</h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{selectedProjectForMilestones.project_name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowMilestonesModal(false);
+                  setSelectedProjectForMilestones(null);
+                  setShowMilestoneForm(false);
+                }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              {/* Summary */}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
+                    {milestones.reduce((sum, m) => sum + m.amount, 0).toFixed(2)} {selectedProjectForMilestones.currency}
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                  <p className="text-sm text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
+                  <p className="text-xl font-bold text-green-700 dark:text-green-300">
+                    {milestones.reduce((sum, m) => sum + m.paid_amount, 0).toFixed(2)} {selectedProjectForMilestones.currency}
+                  </p>
+                </div>
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
+                  <p className="text-sm text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
+                  <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
+                    {milestones.reduce((sum, m) => sum + (m.amount - m.paid_amount), 0).toFixed(2)} {selectedProjectForMilestones.currency}
+                  </p>
+                </div>
+              </div>
+
+              {/* Add milestone button */}
+              {!showMilestoneForm && (
+                <button
+                  onClick={openAddMilestoneForm}
+                  className="mb-4 flex items-center gap-2 text-syntalys-blue hover:text-blue-700 font-medium"
+                >
+                  <FaPlus className="w-4 h-4" />
+                  {t.projects.addMilestone}
+                </button>
+              )}
+
+              {/* Milestone Form */}
+              {showMilestoneForm && (
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    {editingMilestone ? t.common.edit : t.projects.addMilestone}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t.projects.milestoneName} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={milestoneFormData.name}
+                        onChange={(e) => setMilestoneFormData({ ...milestoneFormData, name: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder={t.projects.milestoneName}
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.common.description}</label>
+                      <textarea
+                        value={milestoneFormData.description}
+                        onChange={(e) => setMilestoneFormData({ ...milestoneFormData, description: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        rows={2}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t.common.amount} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={milestoneFormData.amount}
+                        onChange={(e) => setMilestoneFormData({ ...milestoneFormData, amount: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.common.currency}</label>
+                      <select
+                        value={milestoneFormData.currency}
+                        onChange={(e) => setMilestoneFormData({ ...milestoneFormData, currency: e.target.value as Currency })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      >
+                        <option value="CHF">CHF</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.projects.milestoneDueDate}</label>
+                      <input
+                        type="date"
+                        value={milestoneFormData.due_date}
+                        onChange={(e) => setMilestoneFormData({ ...milestoneFormData, due_date: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.common.status}</label>
+                      <select
+                        value={milestoneFormData.status}
+                        onChange={(e) => setMilestoneFormData({ ...milestoneFormData, status: e.target.value as MilestoneStatus })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      >
+                        <option value="pending">{t.projects.milestonePending}</option>
+                        <option value="partial">{t.projects.milestonePartial}</option>
+                        <option value="paid">{t.projects.milestonePaid}</option>
+                      </select>
+                    </div>
+                    {milestoneFormData.status === 'partial' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.projects.paidAmount}</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={milestoneFormData.paid_amount}
+                          onChange={(e) => setMilestoneFormData({ ...milestoneFormData, paid_amount: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    )}
+                    {(milestoneFormData.status === 'paid' || milestoneFormData.status === 'partial') && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.projects.milestonePaidDate}</label>
+                        <input
+                          type="date"
+                          value={milestoneFormData.paid_date}
+                          onChange={(e) => setMilestoneFormData({ ...milestoneFormData, paid_date: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-end gap-3 mt-4">
+                    <button
+                      onClick={() => {
+                        setShowMilestoneForm(false);
+                        setEditingMilestone(null);
+                      }}
+                      className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500"
+                    >
+                      {t.common.cancel}
+                    </button>
+                    <button
+                      onClick={handleMilestoneSubmit}
+                      disabled={!milestoneFormData.name || !milestoneFormData.amount}
+                      className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                      {editingMilestone ? t.common.saveChanges : t.projects.addMilestone}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Milestones list */}
+              {milestones.length === 0 && !showMilestoneForm ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400">{t.projects.noMilestones}</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {milestones.map((milestone) => (
+                    <div
+                      key={milestone.id}
+                      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-center justify-between"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h4 className="font-semibold text-gray-900 dark:text-white">{milestone.name}</h4>
+                          <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getMilestoneStatusColor(milestone.status)}`}>
+                            {milestone.status === 'paid' && t.projects.milestonePaid}
+                            {milestone.status === 'pending' && t.projects.milestonePending}
+                            {milestone.status === 'partial' && t.projects.milestonePartial}
+                          </span>
+                        </div>
+                        {milestone.description && (
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{milestone.description}</p>
+                        )}
+                        <div className="flex items-center gap-4 mt-2 text-sm">
+                          <span className="font-semibold text-gray-900 dark:text-white">
+                            {milestone.amount.toFixed(2)} {milestone.currency}
+                          </span>
+                          {milestone.status === 'partial' && (
+                            <span className="text-green-600 dark:text-green-400">
+                              ({t.projects.milestonePaid}: {milestone.paid_amount.toFixed(2)} {milestone.currency})
+                            </span>
+                          )}
+                          {milestone.due_date && (
+                            <span className="text-gray-500 dark:text-gray-400">
+                              {t.projects.milestoneDueDate}: {new Date(milestone.due_date).toLocaleDateString('es-ES')}
+                            </span>
+                          )}
+                          {milestone.paid_date && (
+                            <span className="text-green-600 dark:text-green-400">
+                              {t.projects.milestonePaidDate}: {new Date(milestone.paid_date).toLocaleDateString('es-ES')}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-4">
+                        <button
+                          onClick={() => openEditMilestoneForm(milestone)}
+                          className="p-2 text-gray-500 hover:text-syntalys-blue hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                        >
+                          <FaEdit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteMilestone(milestone.id)}
+                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                        >
+                          <FaTrash className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+              <button
+                onClick={() => {
+                  setShowMilestonesModal(false);
+                  setSelectedProjectForMilestones(null);
+                  setShowMilestoneForm(false);
+                }}
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                {t.common.close}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Dropdown fijo para proyectos */}
       {openDropdown && dropdownPosition && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => { setOpenDropdown(null); setDropdownPosition(null); }} />
           <div
-            className="fixed w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            className="fixed w-44 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
             style={{
               top: dropdownPosition.openUp ? 'auto' : dropdownPosition.top,
               bottom: dropdownPosition.openUp ? window.innerHeight - dropdownPosition.top : 'auto',
@@ -1222,6 +1640,17 @@ export default function ProyectosPage() {
             <button
               onClick={() => {
                 const project = projects.find(p => p.id === openDropdown);
+                if (project) openMilestonesModal(project);
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              {t.projects.milestones}
+            </button>
+            <button
+              onClick={() => {
+                const project = projects.find(p => p.id === openDropdown);
                 if (project) handleDelete(project.id, project.project_name);
                 setOpenDropdown(null);
                 setDropdownPosition(null);
@@ -1237,13 +1666,20 @@ export default function ProyectosPage() {
   );
 }
 
-function getProjectTypeLabel(type: string, t: any): string {
+function getProjectTypeLabel(type: string, t: any, customType?: string | null): string {
+  if (type === 'other' && customType) {
+    return customType;
+  }
   const labels: Record<string, string> = {
     web_development: t.projects.webDevelopment,
     app_development: t.projects.appDevelopment,
+    game_development: t.projects.gameDevelopment,
+    ecommerce: t.projects.ecommerce,
     maintenance: t.projects.maintenance,
     consulting: t.projects.consulting,
     design: t.projects.design,
+    marketing: t.projects.marketing,
+    seo: t.projects.seo,
     hosting: t.projects.hosting,
     other: t.projects.other,
   };
