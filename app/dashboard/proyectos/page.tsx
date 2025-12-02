@@ -74,6 +74,7 @@ export default function ProyectosPage() {
 
   const [formData, setFormData] = useState({
     client_id: '',
+    is_company: false,
     company_name: '',
     project_name: '',
     description: '',
@@ -182,7 +183,7 @@ export default function ProyectosPage() {
     try {
       const projectData = {
         client_id: formData.client_id,
-        company_name: formData.company_name,
+        company_name: formData.is_company ? formData.company_name : '',
         project_name: formData.project_name,
         description: formData.description || null,
         project_type: formData.project_type || null,
@@ -343,6 +344,7 @@ export default function ProyectosPage() {
     setEditingProject(project);
     setFormData({
       client_id: project.client_id,
+      is_company: !!project.company_name,
       company_name: project.company_name,
       project_name: project.project_name,
       description: project.description || '',
@@ -366,6 +368,7 @@ export default function ProyectosPage() {
   function resetForm() {
     setFormData({
       client_id: '',
+      is_company: false,
       company_name: '',
       project_name: '',
       description: '',
@@ -798,7 +801,9 @@ export default function ProyectosPage() {
                       <span className="text-sm text-gray-900 dark:text-white">{project.client?.name || 'N/A'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">{project.company_name || '-'}</span>
+                      <span className={`text-sm ${project.company_name ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500 italic'}`}>
+                        {project.company_name || t.projects.individual}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -819,17 +824,17 @@ export default function ProyectosPage() {
                       {project.total_amount ? (
                         <div className="flex flex-col">
                           <span className={`text-sm font-semibold ${
-                            (project.total_paid || 0) >= project.total_amount
+                            project.status === 'completed' || (project.total_paid || 0) >= project.total_amount
                               ? 'text-green-600 dark:text-green-400'
                               : (project.total_paid || 0) > 0
                                 ? 'text-orange-500 dark:text-orange-400'
                                 : 'text-gray-900 dark:text-white'
                           }`}>
-                            {project.total_amount.toFixed(2)} {project.currency}
+                            {formatCurrency(project.total_amount, project.currency)} {project.currency}
                           </span>
                           {project.payment_type === 'milestone' && (project.total_paid || 0) > 0 && (project.total_paid || 0) < project.total_amount && (
                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                              ({(project.total_paid || 0).toFixed(2)} {t.projects.milestonePaid.toLowerCase()})
+                              ({formatCurrency(project.total_paid || 0, project.currency)} {t.projects.milestonePaid.toLowerCase()})
                             </span>
                           )}
                         </div>
@@ -989,16 +994,46 @@ export default function ProyectosPage() {
 
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t.forms.companyName}
+                    {t.projects.clientType}
                   </label>
-                  <input
-                    type="text"
-                    value={formData.company_name}
-                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder={t.clients.companyName}
-                  />
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="clientType"
+                        checked={!formData.is_company}
+                        onChange={() => setFormData({ ...formData, is_company: false, company_name: '' })}
+                        className="w-4 h-4 text-syntalys-blue border-gray-300 focus:ring-syntalys-blue"
+                      />
+                      <span className="text-gray-700 dark:text-gray-300">{t.projects.individual}</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="clientType"
+                        checked={formData.is_company}
+                        onChange={() => setFormData({ ...formData, is_company: true })}
+                        className="w-4 h-4 text-syntalys-blue border-gray-300 focus:ring-syntalys-blue"
+                      />
+                      <span className="text-gray-700 dark:text-gray-300">{t.projects.company}</span>
+                    </label>
+                  </div>
                 </div>
+
+                {formData.is_company && (
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {t.forms.companyName}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.company_name}
+                      onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder={t.clients.companyName}
+                    />
+                  </div>
+                )}
 
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -1400,6 +1435,7 @@ export default function ProyectosPage() {
                   setShowMilestonesModal(false);
                   setSelectedProjectForMilestones(null);
                   setShowMilestoneForm(false);
+                  loadProjects(); // Reload to update colors in real-time
                 }}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
@@ -1413,19 +1449,19 @@ export default function ProyectosPage() {
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    {(selectedProjectForMilestones.total_amount || 0).toFixed(2)} {selectedProjectForMilestones.currency}
+                    {formatCurrency(selectedProjectForMilestones.total_amount || 0, selectedProjectForMilestones.currency)} {selectedProjectForMilestones.currency}
                   </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                   <p className="text-sm text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
                   <p className="text-xl font-bold text-green-700 dark:text-green-300">
-                    {milestones.reduce((sum, m) => sum + m.paid_amount, 0).toFixed(2)} {selectedProjectForMilestones.currency}
+                    {formatCurrency(milestones.reduce((sum, m) => sum + m.paid_amount, 0), selectedProjectForMilestones.currency)} {selectedProjectForMilestones.currency}
                   </p>
                 </div>
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
                   <p className="text-sm text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
                   <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
-                    {((selectedProjectForMilestones.total_amount || 0) - milestones.reduce((sum, m) => sum + m.paid_amount, 0)).toFixed(2)} {selectedProjectForMilestones.currency}
+                    {formatCurrency((selectedProjectForMilestones.total_amount || 0) - milestones.reduce((sum, m) => sum + m.paid_amount, 0), selectedProjectForMilestones.currency)} {selectedProjectForMilestones.currency}
                   </p>
                 </div>
               </div>
@@ -1599,11 +1635,11 @@ export default function ProyectosPage() {
                         )}
                         <div className="flex items-center gap-4 mt-2 text-sm">
                           <span className="font-semibold text-gray-900 dark:text-white">
-                            {milestone.amount.toFixed(2)} {milestone.currency}
+                            {formatCurrency(milestone.amount, milestone.currency)} {milestone.currency}
                           </span>
                           {milestone.status === 'partial' && (
                             <span className="text-green-600 dark:text-green-400">
-                              ({t.projects.milestonePaid}: {milestone.paid_amount.toFixed(2)} {milestone.currency})
+                              ({t.projects.milestonePaid}: {formatCurrency(milestone.paid_amount, milestone.currency)} {milestone.currency})
                             </span>
                           )}
                           {milestone.due_date && (
@@ -1644,6 +1680,7 @@ export default function ProyectosPage() {
                   setShowMilestonesModal(false);
                   setSelectedProjectForMilestones(null);
                   setShowMilestoneForm(false);
+                  loadProjects(); // Reload to update colors in real-time
                 }}
                 className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
               >
@@ -1734,4 +1771,17 @@ function getStatusLabel(status: string, t: any): string {
     cancelled: t.projects.statusCancelled,
   };
   return labels[status] || status;
+}
+
+function formatCurrency(amount: number, currency: string): string {
+  // CHF uses Swiss format: 1'234.56
+  // EUR uses European format: 1.234,56
+  // USD uses US format: 1,234.56
+  const locales: Record<string, string> = {
+    CHF: 'de-CH',
+    EUR: 'de-DE',
+    USD: 'en-US',
+  };
+  const locale = locales[currency] || 'de-CH';
+  return amount.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }

@@ -235,6 +235,10 @@ export interface Translations {
     professionalEmail: string;
     hasWebsite: string;
     websiteUrl: string;
+    // Client type
+    clientType: string;
+    individual: string;
+    company: string;
   };
 
   // Expenses
@@ -743,6 +747,9 @@ export const translations: Record<Language, Translations> = {
       professionalEmail: 'Email Profesional',
       hasWebsite: 'Tiene página web',
       websiteUrl: 'URL de la Web',
+      clientType: 'Tipo de Cliente',
+      individual: 'Particular',
+      company: 'Empresa',
     },
     expenses: {
       title: 'Gestión de Gastos',
@@ -1225,6 +1232,9 @@ export const translations: Record<Language, Translations> = {
       professionalEmail: 'Email Professionnel',
       hasWebsite: 'A un site web',
       websiteUrl: 'URL du Site Web',
+      clientType: 'Type de Client',
+      individual: 'Particulier',
+      company: 'Entreprise',
     },
     expenses: {
       title: 'Gestion des Dépenses',
