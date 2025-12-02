@@ -566,6 +566,36 @@ export interface Translations {
     spanish: string;
     french: string;
   };
+
+  // Profile
+  profile: {
+    title: string;
+    description: string;
+    personalInfo: string;
+    fullName: string;
+    fullNamePlaceholder: string;
+    email: string;
+    emailNote: string;
+    role: string;
+    security: string;
+    changePassword: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+    passwordRequirements: string;
+    passwordMinLength: string;
+    profilePicture: string;
+    profilePictureDesc: string;
+    uploadPhoto: string;
+    removePhoto: string;
+    saveProfile: string;
+    savePassword: string;
+    profileUpdated: string;
+    passwordUpdated: string;
+    passwordMismatch: string;
+    currentPasswordRequired: string;
+    incorrectPassword: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -1086,6 +1116,34 @@ export const translations: Record<Language, Translations> = {
       spanish: 'Español',
       french: 'Français',
     },
+    profile: {
+      title: 'Mi Perfil',
+      description: 'Gestiona tu información personal y seguridad',
+      personalInfo: 'Información Personal',
+      fullName: 'Nombre Completo',
+      fullNamePlaceholder: 'Tu nombre completo',
+      email: 'Correo Electrónico',
+      emailNote: 'El correo no se puede cambiar',
+      role: 'Rol',
+      security: 'Seguridad',
+      changePassword: 'Cambiar Contraseña',
+      currentPassword: 'Contraseña Actual',
+      newPassword: 'Nueva Contraseña',
+      confirmPassword: 'Confirmar Contraseña',
+      passwordRequirements: 'Requisitos de contraseña',
+      passwordMinLength: 'Mínimo 6 caracteres',
+      profilePicture: 'Foto de Perfil',
+      profilePictureDesc: 'Sube una foto para personalizar tu perfil',
+      uploadPhoto: 'Subir Foto',
+      removePhoto: 'Eliminar Foto',
+      saveProfile: 'Guardar Perfil',
+      savePassword: 'Cambiar Contraseña',
+      profileUpdated: 'Perfil actualizado correctamente',
+      passwordUpdated: 'Contraseña actualizada correctamente',
+      passwordMismatch: 'Las contraseñas no coinciden',
+      currentPasswordRequired: 'Debes ingresar tu contraseña actual',
+      incorrectPassword: 'La contraseña actual es incorrecta',
+    },
   },
   fr: {
     nav: {
@@ -1603,6 +1661,34 @@ export const translations: Record<Language, Translations> = {
       languageDesc: 'Sélectionnez la langue de l\'interface',
       spanish: 'Español',
       french: 'Français',
+    },
+    profile: {
+      title: 'Mon Profil',
+      description: 'Gérez vos informations personnelles et sécurité',
+      personalInfo: 'Informations Personnelles',
+      fullName: 'Nom Complet',
+      fullNamePlaceholder: 'Votre nom complet',
+      email: 'Adresse Email',
+      emailNote: 'L\'email ne peut pas être modifié',
+      role: 'Rôle',
+      security: 'Sécurité',
+      changePassword: 'Changer le Mot de Passe',
+      currentPassword: 'Mot de Passe Actuel',
+      newPassword: 'Nouveau Mot de Passe',
+      confirmPassword: 'Confirmer le Mot de Passe',
+      passwordRequirements: 'Exigences du mot de passe',
+      passwordMinLength: 'Minimum 6 caractères',
+      profilePicture: 'Photo de Profil',
+      profilePictureDesc: 'Téléchargez une photo pour personnaliser votre profil',
+      uploadPhoto: 'Télécharger Photo',
+      removePhoto: 'Supprimer Photo',
+      saveProfile: 'Enregistrer Profil',
+      savePassword: 'Changer Mot de Passe',
+      profileUpdated: 'Profil mis à jour avec succès',
+      passwordUpdated: 'Mot de passe mis à jour avec succès',
+      passwordMismatch: 'Les mots de passe ne correspondent pas',
+      currentPasswordRequired: 'Vous devez entrer votre mot de passe actuel',
+      incorrectPassword: 'Le mot de passe actuel est incorrect',
     },
   },
 };

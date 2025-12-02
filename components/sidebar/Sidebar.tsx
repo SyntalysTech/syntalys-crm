@@ -307,13 +307,15 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Usuario info */}
-      <div
-        className="border-b border-white/10"
+      {/* Usuario info - clickable to go to profile */}
+      <Link
+        href="/dashboard/perfil"
+        className="block border-b border-white/10 hover:bg-white/5 transition-colors"
         style={{
           padding: isCollapsed ? '0.75rem 0' : '1rem',
           transition: 'padding 400ms cubic-bezier(0.4, 0, 0.2, 1)',
         }}
+        title={isCollapsed ? (t.profile?.title || 'Perfil') : undefined}
       >
         <div
           className="flex items-center"
@@ -348,7 +350,7 @@ export default function Sidebar() {
             </p>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Menú de navegación - sin scroll */}
       <nav className="flex-1 py-1">

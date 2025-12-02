@@ -60,6 +60,12 @@ export function useAuth() {
     }
   }
 
+  async function refreshProfile() {
+    if (user?.id) {
+      await loadProfile(user.id);
+    }
+  }
+
   return {
     user,
     profile,
@@ -69,5 +75,6 @@ export function useAuth() {
     isAdmin: profile?.role === 'admin',
     isGestor: profile?.role === 'gestor',
     isEmpleado: profile?.role === 'empleado',
+    refreshProfile,
   };
 }
