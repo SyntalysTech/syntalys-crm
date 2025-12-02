@@ -211,13 +211,13 @@ export default function DashboardPage() {
 
           <div className="space-y-3 mb-6">
             <div className="bg-white/10 rounded-lg p-3 text-sm">
-              "{t.chatAI.suggestion1}"
+              &ldquo;{t.chatAI.suggestion1}&rdquo;
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-sm">
-              "{t.chatAI.suggestion2}"
+              &ldquo;{t.chatAI.suggestion2}&rdquo;
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-sm">
-              "{t.chatAI.suggestion3}"
+              &ldquo;{t.chatAI.suggestion3}&rdquo;
             </div>
           </div>
 
