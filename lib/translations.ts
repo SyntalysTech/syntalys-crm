@@ -103,6 +103,15 @@ export interface Translations {
     openChat: string;
     tip: string;
     tipDescription: string;
+    // Motivational section
+    dailyMotivation: string;
+    bibleProverb: string;
+    bibleRadio: string;
+    spanish: string;
+    french: string;
+    playRadio: string;
+    stopRadio: string;
+    radioLoading: string;
   };
 
   // Clients
@@ -690,6 +699,14 @@ export const translations: Record<Language, Translations> = {
       openChat: 'Abrir Chat',
       tip: 'Consejo del día',
       tipDescription: 'Utiliza la página de Estadísticas para ver gráficos detallados de tus ingresos, gastos y beneficios. Puedes filtrar por período y tipo de datos.',
+      dailyMotivation: 'Frase del día',
+      bibleProverb: 'Proverbio Bíblico',
+      bibleRadio: 'Radio Bíblica',
+      spanish: 'Español',
+      french: 'Francés',
+      playRadio: 'Reproducir',
+      stopRadio: 'Detener',
+      radioLoading: 'Cargando...',
     },
     clients: {
       title: 'Gestión de Clientes',
@@ -1236,6 +1253,14 @@ export const translations: Record<Language, Translations> = {
       openChat: 'Ouvrir le Chat',
       tip: 'Conseil du jour',
       tipDescription: 'Utilisez la page Statistiques pour voir des graphiques détaillés de vos revenus, dépenses et bénéfices. Vous pouvez filtrer par période et type de données.',
+      dailyMotivation: 'Phrase du jour',
+      bibleProverb: 'Proverbe Biblique',
+      bibleRadio: 'Radio Biblique',
+      spanish: 'Espagnol',
+      french: 'Français',
+      playRadio: 'Lecture',
+      stopRadio: 'Arrêter',
+      radioLoading: 'Chargement...',
     },
     clients: {
       title: 'Gestion des Clients',

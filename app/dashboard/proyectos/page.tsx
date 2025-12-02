@@ -507,16 +507,18 @@ export default function ProyectosPage() {
     // Calculate totals
     let totalAmount = 0;
     let totalPaid = 0;
-    let totalAdditions = 0;
+    let totalAdditionsPaid = 0;
+    let totalAdditionsAll = 0;
 
     projects.forEach(p => {
       totalAmount += p.total_amount || 0;
       totalPaid += p.total_paid || 0;
-      totalAdditions += p.additions_paid || 0;
+      totalAdditionsPaid += p.additions_paid || 0;
+      totalAdditionsAll += p.additions_total || 0;
     });
 
-    const totalPending = totalAmount - totalPaid;
-    const totalWithAdditions = totalAmount + totalAdditions;
+    const totalPending = (totalAmount + totalAdditionsAll) - (totalPaid + totalAdditionsPaid);
+    const totalWithAdditions = totalAmount + totalAdditionsAll;
 
     return {
       total: projects.length,
@@ -526,7 +528,7 @@ export default function ProyectosPage() {
       totalAmount,
       totalPaid,
       totalPending,
-      totalAdditions,
+      totalAdditionsPaid,
       totalWithAdditions,
     };
   }, [projects]);
@@ -1236,7 +1238,7 @@ export default function ProyectosPage() {
                 </div>
                 {/* Paid */}
                 <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.totalPaid + projectStats.totalAdditions, 'CHF')}</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.totalPaid + projectStats.totalAdditionsPaid, 'CHF')}</p>
                   <p className="text-xs text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
                 </div>
                 {/* Pending */}
