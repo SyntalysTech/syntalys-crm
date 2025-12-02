@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { CompanyExpense, ClientExpense, Client, ClientWithExpenses, ExpenseCategory, ClientExpenseCategory } from '@/lib/types';
+import type { CompanyExpense, ClientExpense, Client, ClientWithExpenses, ExpenseCategory, ClientExpenseCategory, Frequency } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type ModalType = 'company' | 'client-expense' | 'edit-company' | 'edit-client-expense' | null;
@@ -30,7 +30,7 @@ export default function GastosPage() {
     description: '',
     amount: '',
     currency: 'CHF' as 'CHF' | 'EUR' | 'USD',
-    frequency: 'monthly' as 'monthly' | 'annual',
+    frequency: 'monthly' as Frequency,
     category: '' as ExpenseCategory | '',
     status: 'pending' as 'paid' | 'pending' | 'upcoming',
     renewal_date: '',
@@ -43,7 +43,7 @@ export default function GastosPage() {
     description: '',
     amount: '',
     currency: 'CHF' as 'CHF' | 'EUR' | 'USD',
-    frequency: 'monthly' as 'monthly' | 'annual',
+    frequency: 'monthly' as Frequency,
     category: '' as ClientExpenseCategory | '',
     status: 'pending' as 'paid' | 'pending' | 'upcoming',
     renewal_date: '',
@@ -775,7 +775,7 @@ export default function GastosPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
                   <select
                     value={companyFormData.frequency}
-                    onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as 'monthly' | 'annual' })}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as Frequency })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -922,7 +922,7 @@ export default function GastosPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
                   <select
                     value={clientExpenseFormData.frequency}
-                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as 'monthly' | 'annual' })}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as Frequency })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -1051,7 +1051,7 @@ export default function GastosPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
                   <select
                     value={companyFormData.frequency}
-                    onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as 'monthly' | 'annual' })}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as Frequency })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -1196,7 +1196,7 @@ export default function GastosPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
                   <select
                     value={clientExpenseFormData.frequency}
-                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as 'monthly' | 'annual' })}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as Frequency })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="monthly">{t.expenses.monthly}</option>
