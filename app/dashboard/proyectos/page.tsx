@@ -176,13 +176,28 @@ export default function ProyectosPage() {
       .from('project_milestones')
       .select('project_id, paid_amount');
 
+    // Load additions to calculate extra amounts
+    const { data: additionsData } = await supabase
+      .from('project_additions')
+      .select('project_id, amount, status');
+
     const projectsWithClients: ProjectWithClient[] = (projectsData || []).map(project => {
       const projectMilestones = milestonesData?.filter(m => m.project_id === project.id) || [];
       const totalPaid = projectMilestones.reduce((sum, m) => sum + (m.paid_amount || 0), 0);
+
+      // Calculate additions totals
+      const projectAdditions = additionsData?.filter(a => a.project_id === project.id) || [];
+      const additionsTotal = projectAdditions.reduce((sum, a) => sum + (a.amount || 0), 0);
+      const additionsPaid = projectAdditions
+        .filter(a => a.status === 'paid')
+        .reduce((sum, a) => sum + (a.amount || 0), 0);
+
       return {
         ...project,
         client: clientsData?.find(c => c.id === project.client_id),
         total_paid: totalPaid,
+        additions_total: additionsTotal,
+        additions_paid: additionsPaid,
       };
     });
 
@@ -691,6 +706,7 @@ export default function ProyectosPage() {
 
       setShowAdditionForm(false);
       await loadAdditions(selectedProjectForAdditions.id);
+      await loadProjects(); // Refresh to update totals in list
     } catch (error) {
       console.error('Error saving addition:', error);
       alert(t.messages.saveError);
@@ -711,6 +727,7 @@ export default function ProyectosPage() {
       if (selectedProjectForAdditions) {
         await loadAdditions(selectedProjectForAdditions.id);
       }
+      await loadProjects(); // Refresh to update totals in list
     } catch (error) {
       console.error('Error deleting addition:', error);
       alert(t.messages.deleteError);
@@ -1116,18 +1133,23 @@ export default function ProyectosPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {project.total_amount ? (
+                      {project.total_amount || (project.additions_paid || 0) > 0 ? (
                         <div className="flex flex-col">
                           <span className={`text-sm font-semibold ${
-                            project.status === 'completed' || (project.total_paid || 0) >= project.total_amount
+                            project.status === 'completed' || (project.total_paid || 0) >= (project.total_amount || 0)
                               ? 'text-green-600 dark:text-green-400'
                               : (project.total_paid || 0) > 0
                                 ? 'text-orange-500 dark:text-orange-400'
                                 : 'text-gray-900 dark:text-white'
                           }`}>
-                            {formatCurrency(project.total_amount, project.currency)} {project.currency}
+                            {formatCurrency((project.total_amount || 0) + (project.additions_paid || 0), project.currency)} {project.currency}
                           </span>
-                          {project.payment_type === 'milestone' && (project.total_paid || 0) > 0 && (project.total_paid || 0) < project.total_amount && (
+                          {(project.additions_paid || 0) > 0 && (
+                            <span className="text-xs text-green-600 dark:text-green-400">
+                              (+{formatCurrency(project.additions_paid || 0, project.currency)} extras)
+                            </span>
+                          )}
+                          {project.payment_type === 'milestone' && (project.total_paid || 0) > 0 && (project.total_paid || 0) < (project.total_amount || 0) && (
                             <span className="text-xs text-gray-500 dark:text-gray-400">
                               ({formatCurrency(project.total_paid || 0, project.currency)} {t.projects.milestonePaid.toLowerCase()})
                             </span>
@@ -2075,21 +2097,29 @@ export default function ProyectosPage() {
               </div>
 
               {/* Amount */}
-              {selectedProjectForDetail.total_amount && (
+              {(selectedProjectForDetail.total_amount || (selectedProjectForDetail.additions_paid || 0) > 0) && (
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.totalAmount}</h3>
                       <p className={`text-xl font-bold ${
-                        selectedProjectForDetail.status === 'completed' || (selectedProjectForDetail.total_paid || 0) >= selectedProjectForDetail.total_amount
+                        selectedProjectForDetail.status === 'completed' || (selectedProjectForDetail.total_paid || 0) >= (selectedProjectForDetail.total_amount || 0)
                           ? 'text-green-600 dark:text-green-400'
                           : (selectedProjectForDetail.total_paid || 0) > 0
                             ? 'text-orange-500 dark:text-orange-400'
                             : 'text-gray-900 dark:text-white'
                       }`}>
-                        {formatCurrency(selectedProjectForDetail.total_amount, selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
+                        {formatCurrency((selectedProjectForDetail.total_amount || 0) + (selectedProjectForDetail.additions_paid || 0), selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
                       </p>
                     </div>
+                    {(selectedProjectForDetail.additions_paid || 0) > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">{t.projects.additions}</h3>
+                        <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                          +{formatCurrency(selectedProjectForDetail.additions_paid || 0, selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
+                        </p>
+                      </div>
+                    )}
                     {selectedProjectForDetail.payment_type === 'milestone' && (
                       <>
                         <div>
@@ -2101,7 +2131,7 @@ export default function ProyectosPage() {
                         <div>
                           <h3 className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">{t.projects.milestonePending}</h3>
                           <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
-                            {formatCurrency(selectedProjectForDetail.total_amount - (selectedProjectForDetail.total_paid || 0), selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
+                            {formatCurrency((selectedProjectForDetail.total_amount || 0) - (selectedProjectForDetail.total_paid || 0), selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
                           </p>
                         </div>
                       </>

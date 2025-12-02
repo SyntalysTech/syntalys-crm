@@ -167,6 +167,8 @@ export interface ClientWithExpenses extends Client {
 export interface ProjectWithClient extends Project {
   client?: Client;
   total_paid?: number;
+  additions_total?: number;
+  additions_paid?: number;
 }
 
 // Internal Projects (Syntalys Lab)
