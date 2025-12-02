@@ -45,6 +45,10 @@ export default function ProyectosPage() {
     total_amount: '',
     currency: 'CHF' as 'CHF' | 'EUR' | 'USD',
     payment_type: '' as PaymentType | '',
+    has_professional_email: false,
+    professional_email: '',
+    has_website: false,
+    website_url: '',
     notes: '',
   });
 
@@ -138,6 +142,10 @@ export default function ProyectosPage() {
         total_amount: formData.total_amount ? parseFloat(formData.total_amount) : null,
         currency: formData.currency,
         payment_type: formData.payment_type || null,
+        has_professional_email: formData.has_professional_email,
+        professional_email: formData.has_professional_email ? formData.professional_email || null : null,
+        has_website: formData.has_website,
+        website_url: formData.has_website ? formData.website_url || null : null,
         notes: formData.notes || null,
       };
 
@@ -294,6 +302,10 @@ export default function ProyectosPage() {
       total_amount: project.total_amount ? project.total_amount.toString() : '',
       currency: project.currency,
       payment_type: (project.payment_type as PaymentType) || '',
+      has_professional_email: project.has_professional_email || false,
+      professional_email: project.professional_email || '',
+      has_website: project.has_website || false,
+      website_url: project.website_url || '',
       notes: project.notes || '',
     });
     setShowModal(true);
@@ -312,6 +324,10 @@ export default function ProyectosPage() {
       total_amount: '',
       currency: 'CHF',
       payment_type: '',
+      has_professional_email: false,
+      professional_email: '',
+      has_website: false,
+      website_url: '',
       notes: '',
     });
   }
@@ -894,6 +910,56 @@ export default function ProyectosPage() {
                     <option value="annual">{t.projects.annual}</option>
                     <option value="milestone">{t.projects.milestone}</option>
                   </select>
+                </div>
+
+                {/* Email Profesional */}
+                <div className="col-span-2 border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
+                  <div className="flex items-center gap-3 mb-3">
+                    <input
+                      type="checkbox"
+                      id="has_professional_email"
+                      checked={formData.has_professional_email}
+                      onChange={(e) => setFormData({ ...formData, has_professional_email: e.target.checked })}
+                      className="w-4 h-4 text-syntalys-blue border-gray-300 rounded focus:ring-syntalys-blue"
+                    />
+                    <label htmlFor="has_professional_email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t.projects.hasProfessionalEmail}
+                    </label>
+                  </div>
+                  {formData.has_professional_email && (
+                    <input
+                      type="email"
+                      value={formData.professional_email}
+                      onChange={(e) => setFormData({ ...formData, professional_email: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder={t.projects.professionalEmail}
+                    />
+                  )}
+                </div>
+
+                {/* Página Web */}
+                <div className="col-span-2">
+                  <div className="flex items-center gap-3 mb-3">
+                    <input
+                      type="checkbox"
+                      id="has_website"
+                      checked={formData.has_website}
+                      onChange={(e) => setFormData({ ...formData, has_website: e.target.checked })}
+                      className="w-4 h-4 text-syntalys-blue border-gray-300 rounded focus:ring-syntalys-blue"
+                    />
+                    <label htmlFor="has_website" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t.projects.hasWebsite}
+                    </label>
+                  </div>
+                  {formData.has_website && (
+                    <input
+                      type="url"
+                      value={formData.website_url}
+                      onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="https://..."
+                    />
+                  )}
                 </div>
 
                 <div className="col-span-2">

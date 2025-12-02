@@ -184,6 +184,11 @@ export interface Translations {
     repositoryUrl: string;
     demoUrl: string;
     clientProjects: string;
+    // Email y Web profesional
+    hasProfessionalEmail: string;
+    professionalEmail: string;
+    hasWebsite: string;
+    websiteUrl: string;
   };
 
   // Expenses
@@ -636,6 +641,10 @@ export const translations: Record<Language, Translations> = {
       repositoryUrl: 'URL del Repositorio',
       demoUrl: 'URL Demo',
       clientProjects: 'Proyectos de Clientes',
+      hasProfessionalEmail: 'Tiene email profesional',
+      professionalEmail: 'Email Profesional',
+      hasWebsite: 'Tiene página web',
+      websiteUrl: 'URL de la Web',
     },
     expenses: {
       title: 'Gestión de Gastos',
@@ -1063,6 +1072,10 @@ export const translations: Record<Language, Translations> = {
       repositoryUrl: 'URL du Dépôt',
       demoUrl: 'URL Démo',
       clientProjects: 'Projets Clients',
+      hasProfessionalEmail: 'A un email professionnel',
+      professionalEmail: 'Email Professionnel',
+      hasWebsite: 'A un site web',
+      websiteUrl: 'URL du Site Web',
     },
     expenses: {
       title: 'Gestion des Dépenses',

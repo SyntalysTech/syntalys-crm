@@ -101,6 +101,10 @@ export interface Project {
   total_amount: number | null;
   currency: Currency;
   payment_type: PaymentType | null;
+  has_professional_email: boolean;
+  professional_email: string | null;
+  has_website: boolean;
+  website_url: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
