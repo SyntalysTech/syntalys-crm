@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus, ProjectMilestone, MilestoneStatus, Currency, ProjectAddition, ProjectAdditionStatus } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -497,6 +497,39 @@ export default function ProyectosPage() {
 
     return filtered;
   }
+
+  // Project statistics
+  const projectStats = useMemo(() => {
+    const activeProjects = projects.filter(p => p.status === 'active');
+    const completedProjects = projects.filter(p => p.status === 'completed');
+    const pausedProjects = projects.filter(p => p.status === 'paused');
+
+    // Calculate totals
+    let totalAmount = 0;
+    let totalPaid = 0;
+    let totalAdditions = 0;
+
+    projects.forEach(p => {
+      totalAmount += p.total_amount || 0;
+      totalPaid += p.total_paid || 0;
+      totalAdditions += p.additions_paid || 0;
+    });
+
+    const totalPending = totalAmount - totalPaid;
+    const totalWithAdditions = totalAmount + totalAdditions;
+
+    return {
+      total: projects.length,
+      active: activeProjects.length,
+      completed: completedProjects.length,
+      paused: pausedProjects.length,
+      totalAmount,
+      totalPaid,
+      totalPending,
+      totalAdditions,
+      totalWithAdditions,
+    };
+  }, [projects]);
 
   // Milestone functions
   async function openMilestonesModal(project: Project) {
@@ -1175,6 +1208,44 @@ export default function ProyectosPage() {
             </table>
           </div>
         </div>
+          )}
+
+          {/* Mini Statistics */}
+          {projects.length > 0 && (
+            <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {/* Total Projects */}
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectStats.total}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{t.nav.projects}</p>
+                </div>
+                {/* Active */}
+                <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{projectStats.active}</p>
+                  <p className="text-xs text-green-600 dark:text-green-400">{t.projects.active}</p>
+                </div>
+                {/* Completed */}
+                <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{projectStats.completed}</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">{t.projects.completed}</p>
+                </div>
+                {/* Total Amount */}
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(projectStats.totalWithAdditions, 'CHF')}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
+                </div>
+                {/* Paid */}
+                <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.totalPaid + projectStats.totalAdditions, 'CHF')}</p>
+                  <p className="text-xs text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
+                </div>
+                {/* Pending */}
+                <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(projectStats.totalPending, 'CHF')}</p>
+                  <p className="text-xs text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
+                </div>
+              </div>
+            </div>
           )}
         </>
       )}

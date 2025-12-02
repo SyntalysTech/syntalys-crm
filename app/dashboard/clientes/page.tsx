@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Client, Project } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { FaEllipsisV, FaEdit, FaTrash, FaEye, FaUpload, FaFilePdf, FaDownload, FaTimes, FaFolder, FaFileInvoiceDollar } from 'react-icons/fa';
+import { FaEllipsisV, FaEdit, FaTrash, FaEye, FaUpload, FaFilePdf, FaDownload, FaTimes, FaFolder, FaFileInvoiceDollar, FaSearch } from 'react-icons/fa';
 
 // Lista de países con traducciones ES/FR
 const COUNTRIES_DATA = {
@@ -115,6 +115,12 @@ export default function ClientesPage() {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [countryFilter, setCountryFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [projectCounts, setProjectCounts] = useState<Record<string, number>>({});
+
   // Client detail states
   const [clientProjects, setClientProjects] = useState<Project[]>([]);
   const [clientInvoices, setClientInvoices] = useState<Invoice[]>([]);
@@ -184,23 +190,71 @@ export default function ClientesPage() {
   async function loadClients() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .order('name', { ascending: true });
+      const [clientsResult, projectsResult] = await Promise.all([
+        supabase.from('clients').select('*').order('name', { ascending: true }),
+        supabase.from('projects').select('client_id'),
+      ]);
 
-      if (error) {
-        console.error('Error loading clients:', error);
+      if (clientsResult.error) {
+        console.error('Error loading clients:', clientsResult.error);
         return;
       }
 
-      setClients(data || []);
+      setClients(clientsResult.data || []);
+
+      // Count projects per client
+      const counts: Record<string, number> = {};
+      (projectsResult.data || []).forEach(p => {
+        counts[p.client_id] = (counts[p.client_id] || 0) + 1;
+      });
+      setProjectCounts(counts);
     } catch (error) {
       console.error('Error in loadClients:', error);
     } finally {
       setLoading(false);
     }
   }
+
+  // Filter clients based on search and filters
+  const filteredClients = useMemo(() => {
+    let filtered = clients;
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(c =>
+        c.name.toLowerCase().includes(query) ||
+        c.email?.toLowerCase().includes(query) ||
+        c.phone?.toLowerCase().includes(query)
+      );
+    }
+
+    // Country filter
+    if (countryFilter !== 'all') {
+      filtered = filtered.filter(c => c.country === countryFilter);
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(c => c.status === statusFilter);
+    }
+
+    return filtered;
+  }, [clients, searchQuery, countryFilter, statusFilter]);
+
+  // Get unique countries from clients for filter dropdown
+  const availableCountries = useMemo(() => {
+    const countries = new Set<string>();
+    clients.forEach(c => {
+      if (c.country) countries.add(c.country);
+    });
+    return Array.from(countries).sort((a, b) => {
+      const nameA = getCountryName(a);
+      const nameB = getCountryName(b);
+      return nameA.localeCompare(nameB);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clients, language]);
 
   async function loadClientDetails(clientId: string) {
     // Load projects
@@ -554,7 +608,7 @@ export default function ClientesPage() {
 
   return (
     <div className="p-8">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t.clients.title}</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -567,6 +621,52 @@ export default function ClientesPage() {
         >
           + {t.clients.addClient}
         </button>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="mb-6 flex flex-wrap gap-4 items-center">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[200px] max-w-md">
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t.common.search + '...'}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+          />
+        </div>
+
+        {/* Country Filter */}
+        <select
+          value={countryFilter}
+          onChange={(e) => setCountryFilter(e.target.value)}
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+        >
+          <option value="all">{t.forms.country}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
+          {availableCountries.map(code => (
+            <option key={code} value={code}>
+              {getCountryFlag(code)} {getCountryName(code)}
+            </option>
+          ))}
+        </select>
+
+        {/* Status Filter */}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+        >
+          <option value="all">{t.common.status}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
+          <option value="active">{t.clients.active}</option>
+          <option value="inactive">{t.clients.inactive}</option>
+          <option value="suspended">{t.clients.suspended}</option>
+        </select>
+
+        {/* Results count */}
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          {filteredClients.length} {language === 'fr' ? 'clients' : 'clientes'}
+        </span>
       </div>
 
       {/* Lista de clientes */}
@@ -604,13 +704,16 @@ export default function ClientesPage() {
                   <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     {t.forms.country}
                   </th>
+                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    {t.nav.projects}
+                  </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     {t.common.actions}
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {clients.map((client, index) => (
+                {filteredClients.map((client, index) => (
                   <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
@@ -654,6 +757,15 @@ export default function ClientesPage() {
                       ) : (
                         <span className="text-gray-400 dark:text-gray-500">-</span>
                       )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className={`inline-flex items-center justify-center min-w-[28px] px-2 py-1 text-xs font-semibold rounded-full ${
+                        projectCounts[client.id] > 0
+                          ? 'bg-syntalys-blue text-white'
+                          : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                      }`}>
+                        {projectCounts[client.id] || 0}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="relative inline-block" ref={openDropdownId === client.id ? dropdownRef : null}>
