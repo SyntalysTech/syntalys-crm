@@ -407,13 +407,18 @@ export default function ProyectosPage() {
       filtered = filtered.filter(p => {
         const totalAmount = p.total_amount || 0;
         const totalPaid = p.total_paid || 0;
+        const isCompleted = p.status === 'completed';
+        const isFullyPaid = totalAmount > 0 && totalPaid >= totalAmount;
 
         if (paymentFilter === 'paid') {
-          return p.status === 'completed' || (totalAmount > 0 && totalPaid >= totalAmount);
+          // Paid = completed OR fully paid via milestones
+          return isCompleted || isFullyPaid;
         } else if (paymentFilter === 'unpaid') {
-          return totalAmount > 0 && totalPaid === 0;
+          // Unpaid = not completed AND no payments made
+          return !isCompleted && totalPaid === 0;
         } else if (paymentFilter === 'partial') {
-          return totalAmount > 0 && totalPaid > 0 && totalPaid < totalAmount;
+          // Partial = not completed AND has some payment but not full
+          return !isCompleted && totalPaid > 0 && totalPaid < totalAmount;
         }
         return true;
       });
