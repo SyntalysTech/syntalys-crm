@@ -25,6 +25,11 @@ export default function ProyectosPage() {
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
   const [expandedText, setExpandedText] = useState<{ text: string; title: string } | null>(null);
 
+  // Filter and sort state
+  const [paymentFilter, setPaymentFilter] = useState<'all' | 'paid' | 'unpaid' | 'partial'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | ProjectStatus>('all');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'alphabetic' | 'amount'>('newest');
+
   // Milestones state
   const [showMilestonesModal, setShowMilestonesModal] = useState(false);
   const [selectedProjectForMilestones, setSelectedProjectForMilestones] = useState<Project | null>(null);
@@ -388,6 +393,51 @@ export default function ProyectosPage() {
     });
   }
 
+  // Filter and sort projects
+  function getFilteredAndSortedProjects(): ProjectWithClient[] {
+    let filtered = [...projects];
+
+    // Filter by status
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(p => p.status === statusFilter);
+    }
+
+    // Filter by payment status
+    if (paymentFilter !== 'all') {
+      filtered = filtered.filter(p => {
+        const totalAmount = p.total_amount || 0;
+        const totalPaid = p.total_paid || 0;
+
+        if (paymentFilter === 'paid') {
+          return p.status === 'completed' || (totalAmount > 0 && totalPaid >= totalAmount);
+        } else if (paymentFilter === 'unpaid') {
+          return totalAmount > 0 && totalPaid === 0;
+        } else if (paymentFilter === 'partial') {
+          return totalAmount > 0 && totalPaid > 0 && totalPaid < totalAmount;
+        }
+        return true;
+      });
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'alphabetic':
+          return a.project_name.localeCompare(b.project_name);
+        case 'newest':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'oldest':
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'amount':
+          return (b.total_amount || 0) - (a.total_amount || 0);
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }
+
   // Milestone functions
   async function openMilestonesModal(project: Project) {
     setSelectedProjectForMilestones(project);
@@ -748,6 +798,57 @@ export default function ProyectosPage() {
       {/* Client Projects Tab */}
       {activeTab === 'clients' && (
         <>
+          {/* Filters */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+            <div className="flex flex-wrap gap-4 items-center">
+              {/* Status Filter */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.common.status}:</label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as 'all' | ProjectStatus)}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                >
+                  <option value="all">{t.projects.allProjects}</option>
+                  <option value="active">{t.projects.statusActive}</option>
+                  <option value="completed">{t.projects.statusCompleted}</option>
+                  <option value="paused">{t.projects.statusPaused}</option>
+                  <option value="cancelled">{t.projects.statusCancelled}</option>
+                </select>
+              </div>
+
+              {/* Payment Filter */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.projects.filterBy}:</label>
+                <select
+                  value={paymentFilter}
+                  onChange={(e) => setPaymentFilter(e.target.value as 'all' | 'paid' | 'unpaid' | 'partial')}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                >
+                  <option value="all">{t.projects.allProjects}</option>
+                  <option value="paid">{t.projects.filterPaid}</option>
+                  <option value="unpaid">{t.projects.filterUnpaid}</option>
+                  <option value="partial">{t.projects.filterPartial}</option>
+                </select>
+              </div>
+
+              {/* Sort */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.projects.sortBy}:</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'alphabetic' | 'amount')}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                >
+                  <option value="newest">{t.projects.sortNewest}</option>
+                  <option value="oldest">{t.projects.sortOldest}</option>
+                  <option value="alphabetic">{t.projects.sortAlphabetic}</option>
+                  <option value="amount">{t.projects.sortAmount}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           {projects.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">{t.projects.noProjects}</p>
@@ -775,7 +876,7 @@ export default function ProyectosPage() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {projects.map((project, index) => (
+                {getFilteredAndSortedProjects().map((project, index) => (
                   <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4">
                       <div>
@@ -801,7 +902,7 @@ export default function ProyectosPage() {
                       <span className="text-sm text-gray-900 dark:text-white">{project.client?.name || 'N/A'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`text-sm ${project.company_name ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500 italic'}`}>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         {project.company_name || t.projects.individual}
                       </span>
                     </td>

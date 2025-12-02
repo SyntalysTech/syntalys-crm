@@ -176,6 +176,17 @@ export interface Translations {
     paymentType: string;
     noProjects: string;
     createFirst: string;
+    // Filters
+    filterBy: string;
+    allProjects: string;
+    filterPaid: string;
+    filterUnpaid: string;
+    filterPartial: string;
+    sortBy: string;
+    sortAlphabetic: string;
+    sortNewest: string;
+    sortOldest: string;
+    sortAmount: string;
     // Project types
     webDevelopment: string;
     appDevelopment: string;
@@ -693,6 +704,16 @@ export const translations: Record<Language, Translations> = {
       paymentType: 'Tipo de Pago',
       noProjects: 'No hay proyectos registrados aún',
       createFirst: 'Crear primer proyecto',
+      filterBy: 'Filtrar por',
+      allProjects: 'Todos',
+      filterPaid: 'Pagados',
+      filterUnpaid: 'No pagados',
+      filterPartial: 'Pago parcial',
+      sortBy: 'Ordenar por',
+      sortAlphabetic: 'Alfabético',
+      sortNewest: 'Más recientes',
+      sortOldest: 'Más antiguos',
+      sortAmount: 'Monto',
       webDevelopment: 'Desarrollo Web',
       appDevelopment: 'Desarrollo de Apps',
       gameDevelopment: 'Desarrollo de Juegos',
@@ -1178,6 +1199,16 @@ export const translations: Record<Language, Translations> = {
       paymentType: 'Type de Paiement',
       noProjects: 'Aucun projet enregistré pour le moment',
       createFirst: 'Créer le premier projet',
+      filterBy: 'Filtrer par',
+      allProjects: 'Tous',
+      filterPaid: 'Payés',
+      filterUnpaid: 'Non payés',
+      filterPartial: 'Paiement partiel',
+      sortBy: 'Trier par',
+      sortAlphabetic: 'Alphabétique',
+      sortNewest: 'Plus récents',
+      sortOldest: 'Plus anciens',
+      sortAmount: 'Montant',
       webDevelopment: 'Développement Web',
       appDevelopment: 'Développement d\'Apps',
       gameDevelopment: 'Développement de Jeux',
