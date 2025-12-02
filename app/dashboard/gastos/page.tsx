@@ -5,13 +5,15 @@ import { supabase } from '@/lib/supabase';
 import type { CompanyExpense, ClientExpense, Client, ClientWithExpenses, ExpenseCategory, ClientExpenseCategory } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-type ModalType = 'company' | 'client-expense' | null;
+type ModalType = 'company' | 'client-expense' | 'edit-company' | 'edit-client-expense' | null;
 
 export default function GastosPage() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'empresa' | 'clientes'>('empresa');
   const [showModal, setShowModal] = useState<ModalType>(null);
+  const [editingCompanyExpense, setEditingCompanyExpense] = useState<CompanyExpense | null>(null);
+  const [editingClientExpense, setEditingClientExpense] = useState<ClientExpense | null>(null);
 
   // Datos de la empresa
   const [companyExpenses, setCompanyExpenses] = useState<CompanyExpense[]>([]);
@@ -152,6 +154,187 @@ export default function GastosPage() {
     loadAllData();
   }
 
+  function handleEditCompanyExpense(expense: CompanyExpense) {
+    setEditingCompanyExpense(expense);
+    setCompanyFormData({
+      service_name: expense.service_name,
+      description: expense.description || '',
+      amount: expense.amount.toString(),
+      currency: expense.currency,
+      frequency: expense.frequency,
+      category: expense.category || '',
+      status: expense.status,
+      renewal_date: expense.renewal_date || '',
+    });
+    setShowModal('edit-company');
+  }
+
+  function handleEditClientExpense(expense: ClientExpense) {
+    setEditingClientExpense(expense);
+    setClientExpenseFormData({
+      client_id: expense.client_id,
+      service_name: expense.service_name,
+      description: expense.description || '',
+      amount: expense.amount.toString(),
+      currency: expense.currency,
+      frequency: expense.frequency,
+      category: expense.category || '',
+      status: expense.status,
+      renewal_date: expense.renewal_date || '',
+    });
+    setShowModal('edit-client-expense');
+  }
+
+  async function handleUpdateCompanyExpense() {
+    if (!editingCompanyExpense || !companyFormData.service_name || !companyFormData.amount) {
+      alert(t.messages.fillRequired);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('company_expenses')
+        .update({
+          service_name: companyFormData.service_name,
+          description: companyFormData.description || null,
+          amount: parseFloat(companyFormData.amount),
+          currency: companyFormData.currency,
+          frequency: companyFormData.frequency,
+          category: companyFormData.category || null,
+          status: companyFormData.status,
+          renewal_date: companyFormData.renewal_date || null,
+        })
+        .eq('id', editingCompanyExpense.id);
+
+      if (error) {
+        console.error('Error updating company expense:', error);
+        alert(t.messages.saveError);
+        return;
+      }
+
+      resetCompanyForm();
+      setEditingCompanyExpense(null);
+      setShowModal(null);
+      loadAllData();
+    } catch (error) {
+      console.error('Error in handleUpdateCompanyExpense:', error);
+      alert(t.messages.saveError);
+    }
+  }
+
+  async function handleUpdateClientExpense() {
+    if (!editingClientExpense || !clientExpenseFormData.client_id || !clientExpenseFormData.service_name || !clientExpenseFormData.amount) {
+      alert(t.messages.fillRequired);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('client_expenses')
+        .update({
+          client_id: clientExpenseFormData.client_id,
+          service_name: clientExpenseFormData.service_name,
+          description: clientExpenseFormData.description || null,
+          amount: parseFloat(clientExpenseFormData.amount),
+          currency: clientExpenseFormData.currency,
+          frequency: clientExpenseFormData.frequency,
+          category: clientExpenseFormData.category || null,
+          status: clientExpenseFormData.status,
+          renewal_date: clientExpenseFormData.renewal_date || null,
+        })
+        .eq('id', editingClientExpense.id);
+
+      if (error) {
+        console.error('Error updating client expense:', error);
+        alert(t.messages.saveError);
+        return;
+      }
+
+      resetClientExpenseForm();
+      setEditingClientExpense(null);
+      setShowModal(null);
+      loadAllData();
+    } catch (error) {
+      console.error('Error in handleUpdateClientExpense:', error);
+      alert(t.messages.saveError);
+    }
+  }
+
+  async function handleDeleteCompanyExpense(expenseId: string) {
+    if (!confirm(t.expenses.deleteExpenseConfirm)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('company_expenses')
+        .delete()
+        .eq('id', expenseId);
+
+      if (error) {
+        console.error('Error deleting company expense:', error);
+        alert(t.messages.deleteError);
+        return;
+      }
+
+      loadAllData();
+    } catch (error) {
+      console.error('Error in handleDeleteCompanyExpense:', error);
+      alert(t.messages.deleteError);
+    }
+  }
+
+  async function handleDeleteClientExpense(expenseId: string) {
+    if (!confirm(t.expenses.deleteExpenseConfirm)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('client_expenses')
+        .delete()
+        .eq('id', expenseId);
+
+      if (error) {
+        console.error('Error deleting client expense:', error);
+        alert(t.messages.deleteError);
+        return;
+      }
+
+      loadAllData();
+    } catch (error) {
+      console.error('Error in handleDeleteClientExpense:', error);
+      alert(t.messages.deleteError);
+    }
+  }
+
+  function resetCompanyForm() {
+    setCompanyFormData({
+      service_name: '',
+      description: '',
+      amount: '',
+      currency: 'CHF',
+      frequency: 'monthly',
+      category: '',
+      status: 'pending',
+      renewal_date: '',
+    });
+  }
+
+  function resetClientExpenseForm() {
+    setClientExpenseFormData({
+      client_id: '',
+      service_name: '',
+      description: '',
+      amount: '',
+      currency: 'CHF',
+      frequency: 'monthly',
+      category: '',
+      status: 'pending',
+      renewal_date: '',
+    });
+  }
+
   async function handleAddCompanyExpense() {
     if (!companyFormData.service_name || !companyFormData.amount) {
       alert(t.messages.fillRequired);
@@ -178,16 +361,7 @@ export default function GastosPage() {
         return;
       }
 
-      setCompanyFormData({
-        service_name: '',
-        description: '',
-        amount: '',
-        currency: 'CHF',
-        frequency: 'monthly',
-        category: '',
-        status: 'pending',
-        renewal_date: '',
-      });
+      resetCompanyForm();
       setShowModal(null);
       loadAllData();
     } catch (error) {
@@ -223,17 +397,7 @@ export default function GastosPage() {
         return;
       }
 
-      setClientExpenseFormData({
-        client_id: '',
-        service_name: '',
-        description: '',
-        amount: '',
-        currency: 'CHF',
-        frequency: 'monthly',
-        category: '',
-        status: 'pending',
-        renewal_date: '',
-      });
+      resetClientExpenseForm();
       setShowModal(null);
       loadAllData();
     } catch (error) {
@@ -322,12 +486,13 @@ export default function GastosPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.category}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {monthlyExpenses.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
+                      <td colSpan={5} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                         {t.expenses.noMonthlyExpenses}
                       </td>
                     </tr>
@@ -365,6 +530,22 @@ export default function GastosPage() {
                             <option value="upcoming">{t.expenses.upcoming}</option>
                           </select>
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditCompanyExpense(expense)}
+                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                            >
+                              {t.common.edit}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCompanyExpense(expense.id)}
+                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                            >
+                              {t.common.delete}
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -387,12 +568,13 @@ export default function GastosPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.renewal}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {annualExpenses.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
+                      <td colSpan={6} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                         {t.expenses.noAnnualExpenses}
                       </td>
                     </tr>
@@ -434,6 +616,22 @@ export default function GastosPage() {
                             <option value="pending">{t.expenses.pending}</option>
                             <option value="upcoming">{t.expenses.upcoming}</option>
                           </select>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditCompanyExpense(expense)}
+                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                            >
+                              {t.common.edit}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCompanyExpense(expense.id)}
+                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                            >
+                              {t.common.delete}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -479,9 +677,25 @@ export default function GastosPage() {
                                   {expense.frequency === 'monthly' ? t.expenses.monthly : t.expenses.annual} • {expense.category || t.expenses.noCategory}
                                 </p>
                               </div>
-                              <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                                {expense.currency} {Number(expense.amount).toFixed(2)}
-                              </p>
+                              <div className="flex items-center gap-4">
+                                <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                                  {expense.currency} {Number(expense.amount).toFixed(2)}
+                                </p>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleEditClientExpense(expense)}
+                                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                                  >
+                                    {t.common.edit}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteClientExpense(expense.id)}
+                                    className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                                  >
+                                    {t.common.delete}
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -765,6 +979,280 @@ export default function GastosPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(null)}
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+                >
+                  {t.common.cancel}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar Gasto de Empresa */}
+      {showModal === 'edit-company' && editingCompanyExpense && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.editCompanyExpenseTitle}</h2>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addCompanyExpenseSubtitle}</p>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateCompanyExpense(); }} className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.expenses.serviceName} *
+                  </label>
+                  <input
+                    type="text"
+                    value={companyFormData.service_name}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, service_name: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    required
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.description}</label>
+                  <input
+                    type="text"
+                    value={companyFormData.description}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, description: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder={t.expenses.optionalDescription}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.common.amount} *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={companyFormData.amount}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, amount: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    required
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.currency}</label>
+                  <select
+                    value={companyFormData.currency}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="CHF">CHF</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
+                  <select
+                    value={companyFormData.frequency}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as 'monthly' | 'annual' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="monthly">{t.expenses.monthly}</option>
+                    <option value="annual">{t.expenses.annual}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.category}</label>
+                  <select
+                    value={companyFormData.category}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, category: e.target.value as ExpenseCategory | '' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="">{t.expenses.noCategory}</option>
+                    <option value="software">{t.expenses.software}</option>
+                    <option value="hosting">{t.expenses.hosting}</option>
+                    <option value="domain">{t.expenses.domain}</option>
+                    <option value="api">{t.expenses.api}</option>
+                    <option value="development">{t.expenses.development}</option>
+                    <option value="other">{t.expenses.other}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.status}</label>
+                  <select
+                    value={companyFormData.status}
+                    onChange={(e) => setCompanyFormData({ ...companyFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="paid">{t.expenses.paid}</option>
+                    <option value="pending">{t.expenses.pending}</option>
+                    <option value="upcoming">{t.expenses.upcoming}</option>
+                  </select>
+                </div>
+                {companyFormData.frequency === 'annual' && (
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.renewalDate}</label>
+                    <input
+                      type="date"
+                      value={companyFormData.renewal_date}
+                      onChange={(e) => setCompanyFormData({ ...companyFormData, renewal_date: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-4 mt-6">
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                >
+                  {t.common.saveChanges}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowModal(null); setEditingCompanyExpense(null); resetCompanyForm(); }}
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+                >
+                  {t.common.cancel}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar Gasto de Cliente */}
+      {showModal === 'edit-client-expense' && editingClientExpense && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.editClientExpenseTitle}</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addClientExpenseSubtitle}</p>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateClientExpense(); }} className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.expenses.client} *
+                  </label>
+                  <select
+                    value={clientExpenseFormData.client_id}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, client_id: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    required
+                  >
+                    <option value="">{t.expenses.selectClient}</option>
+                    {allClients.map((client) => (
+                      <option key={client.id} value={client.id}>{client.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.expenses.serviceName} *
+                  </label>
+                  <input
+                    type="text"
+                    value={clientExpenseFormData.service_name}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, service_name: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    required
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.description}</label>
+                  <input
+                    type="text"
+                    value={clientExpenseFormData.description}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, description: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder={t.expenses.optionalDescription}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.common.amount} *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={clientExpenseFormData.amount}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, amount: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    required
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.currency}</label>
+                  <select
+                    value={clientExpenseFormData.currency}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="CHF">CHF</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
+                  <select
+                    value={clientExpenseFormData.frequency}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as 'monthly' | 'annual' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="monthly">{t.expenses.monthly}</option>
+                    <option value="annual">{t.expenses.annual}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.category}</label>
+                  <select
+                    value={clientExpenseFormData.category}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, category: e.target.value as ClientExpenseCategory | '' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="">{t.expenses.noCategory}</option>
+                    <option value="domain">{t.expenses.domain}</option>
+                    <option value="hosting">{t.expenses.hosting}</option>
+                    <option value="ssl">{t.expenses.ssl}</option>
+                    <option value="api">{t.expenses.api}</option>
+                    <option value="maintenance">{t.expenses.maintenanceService}</option>
+                    <option value="other">{t.expenses.other}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.status}</label>
+                  <select
+                    value={clientExpenseFormData.status}
+                    onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="paid">{t.expenses.paid}</option>
+                    <option value="pending">{t.expenses.pending}</option>
+                    <option value="upcoming">{t.expenses.upcoming}</option>
+                  </select>
+                </div>
+                {clientExpenseFormData.frequency === 'annual' && (
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.renewalDate}</label>
+                    <input
+                      type="date"
+                      value={clientExpenseFormData.renewal_date}
+                      onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, renewal_date: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-4 mt-6">
+                <button
+                  type="submit"
+                  className="flex-1 bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+                >
+                  {t.common.saveChanges}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowModal(null); setEditingClientExpense(null); resetClientExpenseForm(); }}
                   className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}

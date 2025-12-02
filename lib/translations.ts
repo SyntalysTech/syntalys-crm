@@ -232,6 +232,10 @@ export interface Translations {
     monthly: string;
     annual: string;
     client: string;
+    editExpense: string;
+    editCompanyExpenseTitle: string;
+    editClientExpenseTitle: string;
+    deleteExpenseConfirm: string;
   };
 
   // Income
@@ -636,6 +640,10 @@ export const translations: Record<Language, Translations> = {
       monthly: 'Mensual',
       annual: 'Anual',
       client: 'Cliente',
+      editExpense: 'Editar Gasto',
+      editCompanyExpenseTitle: 'Editar Gasto de Syntalys',
+      editClientExpenseTitle: 'Editar Gasto del Cliente',
+      deleteExpenseConfirm: '¿Estás seguro de que quieres eliminar este gasto?',
     },
     income: {
       title: 'Ingresos',
@@ -1022,6 +1030,10 @@ export const translations: Record<Language, Translations> = {
       monthly: 'Mensuel',
       annual: 'Annuel',
       client: 'Client',
+      editExpense: 'Modifier la Dépense',
+      editCompanyExpenseTitle: 'Modifier la Dépense de Syntalys',
+      editClientExpenseTitle: 'Modifier la Dépense du Client',
+      deleteExpenseConfirm: 'Êtes-vous sûr de vouloir supprimer cette dépense?',
     },
     income: {
       title: 'Revenus',
