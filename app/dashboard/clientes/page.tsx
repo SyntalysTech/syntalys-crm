@@ -2,59 +2,136 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Client } from '@/lib/types';
+import type { Client, Project } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { FaEllipsisV, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEllipsisV, FaEdit, FaTrash, FaEye, FaUpload, FaFilePdf, FaDownload, FaTimes, FaFolder, FaFileInvoiceDollar } from 'react-icons/fa';
 
-// Lista de países con banderas emoji
-const COUNTRIES = [
-  { code: 'CH', name: 'Suiza', flag: '🇨🇭' },
-  { code: 'ES', name: 'España', flag: '🇪🇸' },
-  { code: 'FR', name: 'Francia', flag: '🇫🇷' },
-  { code: 'DE', name: 'Alemania', flag: '🇩🇪' },
-  { code: 'IT', name: 'Italia', flag: '🇮🇹' },
-  { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
-  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧' },
-  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
-  { code: 'MX', name: 'México', flag: '🇲🇽' },
-  { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
-  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
-  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
-  { code: 'PE', name: 'Perú', flag: '🇵🇪' },
-  { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
-  { code: 'NL', name: 'Países Bajos', flag: '🇳🇱' },
-  { code: 'BE', name: 'Bélgica', flag: '🇧🇪' },
-  { code: 'AT', name: 'Austria', flag: '🇦🇹' },
-  { code: 'PL', name: 'Polonia', flag: '🇵🇱' },
-  { code: 'SE', name: 'Suecia', flag: '🇸🇪' },
-  { code: 'NO', name: 'Noruega', flag: '🇳🇴' },
-  { code: 'DK', name: 'Dinamarca', flag: '🇩🇰' },
-  { code: 'FI', name: 'Finlandia', flag: '🇫🇮' },
-  { code: 'IE', name: 'Irlanda', flag: '🇮🇪' },
-  { code: 'CA', name: 'Canadá', flag: '🇨🇦' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
-  { code: 'JP', name: 'Japón', flag: '🇯🇵' },
-  { code: 'CN', name: 'China', flag: '🇨🇳' },
-  { code: 'IN', name: 'India', flag: '🇮🇳' },
-  { code: 'RU', name: 'Rusia', flag: '🇷🇺' },
-  { code: 'ZA', name: 'Sudáfrica', flag: '🇿🇦' },
-];
+// Lista de países con traducciones ES/FR
+const COUNTRIES_DATA = {
+  // Europa
+  CH: { es: 'Suiza', fr: 'Suisse', flag: '🇨🇭' },
+  ES: { es: 'España', fr: 'Espagne', flag: '🇪🇸' },
+  FR: { es: 'Francia', fr: 'France', flag: '🇫🇷' },
+  DE: { es: 'Alemania', fr: 'Allemagne', flag: '🇩🇪' },
+  IT: { es: 'Italia', fr: 'Italie', flag: '🇮🇹' },
+  PT: { es: 'Portugal', fr: 'Portugal', flag: '🇵🇹' },
+  GB: { es: 'Reino Unido', fr: 'Royaume-Uni', flag: '🇬🇧' },
+  NL: { es: 'Países Bajos', fr: 'Pays-Bas', flag: '🇳🇱' },
+  BE: { es: 'Bélgica', fr: 'Belgique', flag: '🇧🇪' },
+  AT: { es: 'Austria', fr: 'Autriche', flag: '🇦🇹' },
+  PL: { es: 'Polonia', fr: 'Pologne', flag: '🇵🇱' },
+  SE: { es: 'Suecia', fr: 'Suède', flag: '🇸🇪' },
+  NO: { es: 'Noruega', fr: 'Norvège', flag: '🇳🇴' },
+  DK: { es: 'Dinamarca', fr: 'Danemark', flag: '🇩🇰' },
+  FI: { es: 'Finlandia', fr: 'Finlande', flag: '🇫🇮' },
+  IE: { es: 'Irlanda', fr: 'Irlande', flag: '🇮🇪' },
+  GR: { es: 'Grecia', fr: 'Grèce', flag: '🇬🇷' },
+  CZ: { es: 'República Checa', fr: 'République tchèque', flag: '🇨🇿' },
+  HU: { es: 'Hungría', fr: 'Hongrie', flag: '🇭🇺' },
+  RO: { es: 'Rumanía', fr: 'Roumanie', flag: '🇷🇴' },
+  BG: { es: 'Bulgaria', fr: 'Bulgarie', flag: '🇧🇬' },
+  HR: { es: 'Croacia', fr: 'Croatie', flag: '🇭🇷' },
+  SK: { es: 'Eslovaquia', fr: 'Slovaquie', flag: '🇸🇰' },
+  SI: { es: 'Eslovenia', fr: 'Slovénie', flag: '🇸🇮' },
+  LU: { es: 'Luxemburgo', fr: 'Luxembourg', flag: '🇱🇺' },
+  LI: { es: 'Liechtenstein', fr: 'Liechtenstein', flag: '🇱🇮' },
+  MC: { es: 'Mónaco', fr: 'Monaco', flag: '🇲🇨' },
+  AD: { es: 'Andorra', fr: 'Andorre', flag: '🇦🇩' },
+  RU: { es: 'Rusia', fr: 'Russie', flag: '🇷🇺' },
+  UA: { es: 'Ucrania', fr: 'Ukraine', flag: '🇺🇦' },
+  // América
+  US: { es: 'Estados Unidos', fr: 'États-Unis', flag: '🇺🇸' },
+  CA: { es: 'Canadá', fr: 'Canada', flag: '🇨🇦' },
+  MX: { es: 'México', fr: 'Mexique', flag: '🇲🇽' },
+  AR: { es: 'Argentina', fr: 'Argentine', flag: '🇦🇷' },
+  BR: { es: 'Brasil', fr: 'Brésil', flag: '🇧🇷' },
+  CL: { es: 'Chile', fr: 'Chili', flag: '🇨🇱' },
+  CO: { es: 'Colombia', fr: 'Colombie', flag: '🇨🇴' },
+  PE: { es: 'Perú', fr: 'Pérou', flag: '🇵🇪' },
+  VE: { es: 'Venezuela', fr: 'Venezuela', flag: '🇻🇪' },
+  EC: { es: 'Ecuador', fr: 'Équateur', flag: '🇪🇨' },
+  UY: { es: 'Uruguay', fr: 'Uruguay', flag: '🇺🇾' },
+  PY: { es: 'Paraguay', fr: 'Paraguay', flag: '🇵🇾' },
+  BO: { es: 'Bolivia', fr: 'Bolivie', flag: '🇧🇴' },
+  CR: { es: 'Costa Rica', fr: 'Costa Rica', flag: '🇨🇷' },
+  PA: { es: 'Panamá', fr: 'Panama', flag: '🇵🇦' },
+  DO: { es: 'República Dominicana', fr: 'République dominicaine', flag: '🇩🇴' },
+  PR: { es: 'Puerto Rico', fr: 'Porto Rico', flag: '🇵🇷' },
+  CU: { es: 'Cuba', fr: 'Cuba', flag: '🇨🇺' },
+  // Asia
+  JP: { es: 'Japón', fr: 'Japon', flag: '🇯🇵' },
+  CN: { es: 'China', fr: 'Chine', flag: '🇨🇳' },
+  IN: { es: 'India', fr: 'Inde', flag: '🇮🇳' },
+  KR: { es: 'Corea del Sur', fr: 'Corée du Sud', flag: '🇰🇷' },
+  SG: { es: 'Singapur', fr: 'Singapour', flag: '🇸🇬' },
+  TH: { es: 'Tailandia', fr: 'Thaïlande', flag: '🇹🇭' },
+  VN: { es: 'Vietnam', fr: 'Vietnam', flag: '🇻🇳' },
+  MY: { es: 'Malasia', fr: 'Malaisie', flag: '🇲🇾' },
+  ID: { es: 'Indonesia', fr: 'Indonésie', flag: '🇮🇩' },
+  PH: { es: 'Filipinas', fr: 'Philippines', flag: '🇵🇭' },
+  AE: { es: 'Emiratos Árabes Unidos', fr: 'Émirats arabes unis', flag: '🇦🇪' },
+  SA: { es: 'Arabia Saudita', fr: 'Arabie saoudite', flag: '🇸🇦' },
+  IL: { es: 'Israel', fr: 'Israël', flag: '🇮🇱' },
+  TR: { es: 'Turquía', fr: 'Turquie', flag: '🇹🇷' },
+  // Oceanía
+  AU: { es: 'Australia', fr: 'Australie', flag: '🇦🇺' },
+  NZ: { es: 'Nueva Zelanda', fr: 'Nouvelle-Zélande', flag: '🇳🇿' },
+  // África
+  ZA: { es: 'Sudáfrica', fr: 'Afrique du Sud', flag: '🇿🇦' },
+  MA: { es: 'Marruecos', fr: 'Maroc', flag: '🇲🇦' },
+  EG: { es: 'Egipto', fr: 'Égypte', flag: '🇪🇬' },
+  NG: { es: 'Nigeria', fr: 'Nigeria', flag: '🇳🇬' },
+  KE: { es: 'Kenia', fr: 'Kenya', flag: '🇰🇪' },
+  TN: { es: 'Túnez', fr: 'Tunisie', flag: '🇹🇳' },
+  DZ: { es: 'Argelia', fr: 'Algérie', flag: '🇩🇿' },
+  SN: { es: 'Senegal', fr: 'Sénégal', flag: '🇸🇳' },
+  CI: { es: 'Costa de Marfil', fr: 'Côte d\'Ivoire', flag: '🇨🇮' },
+};
 
-function getCountryFlag(countryCode: string | null): string {
-  if (!countryCode) return '';
-  const country = COUNTRIES.find(c => c.code === countryCode);
-  return country?.flag || '';
+interface Invoice {
+  id: string;
+  client_id: string;
+  user_id: string;
+  invoice_number: string;
+  amount: number;
+  currency: string;
+  issue_date: string;
+  due_date: string | null;
+  status: 'pending' | 'paid' | 'overdue' | 'cancelled';
+  file_url: string | null;
+  file_name: string | null;
+  notes: string | null;
+  created_at: string;
 }
 
 export default function ClientesPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [clients, setClients] = useState<Client[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showClientDetailModal, setShowClientDetailModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Client detail states
+  const [clientProjects, setClientProjects] = useState<Project[]>([]);
+  const [clientInvoices, setClientInvoices] = useState<Invoice[]>([]);
+  const [activeTab, setActiveTab] = useState<'info' | 'projects' | 'invoices'>('info');
+  const [uploadingInvoice, setUploadingInvoice] = useState(false);
+  const [showAddInvoiceModal, setShowAddInvoiceModal] = useState(false);
+  const [invoiceFormData, setInvoiceFormData] = useState({
+    invoice_number: '',
+    amount: '',
+    currency: 'CHF',
+    issue_date: new Date().toISOString().split('T')[0],
+    due_date: '',
+    status: 'pending' as 'pending' | 'paid' | 'overdue' | 'cancelled',
+    notes: '',
+  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -66,6 +143,28 @@ export default function ClientesPage() {
     status: 'active' as 'active' | 'inactive' | 'suspended',
     is_potential: false,
   });
+
+  // Get countries list with proper language
+  const getCountriesList = () => {
+    return Object.entries(COUNTRIES_DATA)
+      .map(([code, data]) => ({
+        code,
+        name: language === 'fr' ? data.fr : data.es,
+        flag: data.flag,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  };
+
+  const getCountryName = (code: string | null): string => {
+    if (!code || !COUNTRIES_DATA[code as keyof typeof COUNTRIES_DATA]) return '';
+    const data = COUNTRIES_DATA[code as keyof typeof COUNTRIES_DATA];
+    return language === 'fr' ? data.fr : data.es;
+  };
+
+  const getCountryFlag = (code: string | null): string => {
+    if (!code || !COUNTRIES_DATA[code as keyof typeof COUNTRIES_DATA]) return '';
+    return COUNTRIES_DATA[code as keyof typeof COUNTRIES_DATA].flag;
+  };
 
   useEffect(() => {
     loadClients();
@@ -100,6 +199,32 @@ export default function ClientesPage() {
       console.error('Error in loadClients:', error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadClientDetails(clientId: string) {
+    // Load projects
+    const { data: projects, error: projectsError } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('client_id', clientId)
+      .order('created_at', { ascending: false });
+
+    if (!projectsError && projects) {
+      setClientProjects(projects);
+    }
+
+    // Load invoices
+    const { data: invoices, error: invoicesError } = await supabase
+      .from('invoices')
+      .select('*')
+      .eq('client_id', clientId)
+      .order('issue_date', { ascending: false });
+
+    if (!invoicesError && invoices) {
+      setClientInvoices(invoices);
+    } else {
+      setClientInvoices([]);
     }
   }
 
@@ -200,6 +325,125 @@ export default function ClientesPage() {
     }
   }
 
+  async function handleAddInvoice() {
+    if (!selectedClient || !invoiceFormData.invoice_number || !invoiceFormData.amount) {
+      alert(t.messages.fillRequired);
+      return;
+    }
+
+    setUploadingInvoice(true);
+
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        alert(t.messages.saveError);
+        return;
+      }
+
+      let fileUrl = null;
+      let fileName = null;
+
+      // Upload file if selected
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split('.').pop();
+        const filePath = `${user.id}/${selectedClient.id}/${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('invoices')
+          .upload(filePath, selectedFile);
+
+        if (uploadError) {
+          console.error('Error uploading file:', uploadError);
+          alert('Error al subir el archivo');
+          setUploadingInvoice(false);
+          return;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('invoices')
+          .getPublicUrl(filePath);
+
+        fileUrl = urlData.publicUrl;
+        fileName = selectedFile.name;
+      }
+
+      const { error } = await supabase
+        .from('invoices')
+        .insert([{
+          client_id: selectedClient.id,
+          user_id: user.id,
+          invoice_number: invoiceFormData.invoice_number,
+          amount: parseFloat(invoiceFormData.amount),
+          currency: invoiceFormData.currency,
+          issue_date: invoiceFormData.issue_date,
+          due_date: invoiceFormData.due_date || null,
+          status: invoiceFormData.status,
+          file_url: fileUrl,
+          file_name: fileName,
+          notes: invoiceFormData.notes || null,
+        }]);
+
+      if (error) {
+        console.error('Error adding invoice:', error);
+        alert(t.messages.saveError);
+        return;
+      }
+
+      // Reset form
+      setInvoiceFormData({
+        invoice_number: '',
+        amount: '',
+        currency: 'CHF',
+        issue_date: new Date().toISOString().split('T')[0],
+        due_date: '',
+        status: 'pending',
+        notes: '',
+      });
+      setSelectedFile(null);
+      setShowAddInvoiceModal(false);
+      loadClientDetails(selectedClient.id);
+    } catch (error) {
+      console.error('Error in handleAddInvoice:', error);
+      alert(t.messages.saveError);
+    } finally {
+      setUploadingInvoice(false);
+    }
+  }
+
+  async function handleDeleteInvoice(invoice: Invoice) {
+    if (!confirm(`${t.messages.deleteConfirm} "${invoice.invoice_number}"?`)) {
+      return;
+    }
+
+    try {
+      // Delete file from storage if exists
+      if (invoice.file_url) {
+        const filePath = invoice.file_url.split('/invoices/')[1];
+        if (filePath) {
+          await supabase.storage.from('invoices').remove([filePath]);
+        }
+      }
+
+      const { error } = await supabase
+        .from('invoices')
+        .delete()
+        .eq('id', invoice.id);
+
+      if (error) {
+        console.error('Error deleting invoice:', error);
+        alert(t.messages.deleteError);
+        return;
+      }
+
+      if (selectedClient) {
+        loadClientDetails(selectedClient.id);
+      }
+    } catch (error) {
+      console.error('Error in handleDeleteInvoice:', error);
+      alert(t.messages.deleteError);
+    }
+  }
+
   function resetForm() {
     setFormData({
       name: '',
@@ -232,6 +476,14 @@ export default function ClientesPage() {
     setShowEditModal(true);
   }
 
+  function openClientDetail(client: Client) {
+    setOpenDropdownId(null);
+    setSelectedClient(client);
+    setActiveTab('info');
+    loadClientDetails(client.id);
+    setShowClientDetailModal(true);
+  }
+
   function getInitials(name: string): string {
     const words = name.trim().split(/\s+/);
     if (words.length === 1) {
@@ -256,6 +508,38 @@ export default function ClientesPage() {
       hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
     return colors[Math.abs(hash) % colors.length];
+  }
+
+  function formatCurrency(amount: number, currency: string): string {
+    return new Intl.NumberFormat(language === 'fr' ? 'fr-CH' : 'es-ES', {
+      style: 'currency',
+      currency: currency,
+    }).format(amount);
+  }
+
+  function getInvoiceStatusColor(status: string): string {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'overdue':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      case 'cancelled':
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
+  }
+
+  function getInvoiceStatusLabel(status: string): string {
+    const labels: Record<string, Record<string, string>> = {
+      paid: { es: 'Pagada', fr: 'Payée' },
+      pending: { es: 'Pendiente', fr: 'En attente' },
+      overdue: { es: 'Vencida', fr: 'En retard' },
+      cancelled: { es: 'Cancelada', fr: 'Annulée' },
+    };
+    return labels[status]?.[language] || status;
   }
 
   if (loading) {
@@ -364,7 +648,7 @@ export default function ClientesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       {client.country ? (
-                        <span className="text-2xl" title={COUNTRIES.find(c => c.code === client.country)?.name}>
+                        <span className="text-2xl" title={getCountryName(client.country)}>
                           {getCountryFlag(client.country)}
                         </span>
                       ) : (
@@ -382,8 +666,15 @@ export default function ClientesPage() {
                         {openDropdownId === client.id && (
                           <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
                             <button
-                              onClick={() => openEditModal(client)}
+                              onClick={() => openClientDetail(client)}
                               className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 rounded-t-lg"
+                            >
+                              <FaEye className="w-4 h-4 text-green-600" />
+                              {language === 'fr' ? 'Voir la fiche' : 'Ver ficha'}
+                            </button>
+                            <button
+                              onClick={() => openEditModal(client)}
+                              className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3"
                             >
                               <FaEdit className="w-4 h-4 text-syntalys-blue" />
                               {t.common.edit}
@@ -464,7 +755,7 @@ export default function ClientesPage() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">{t.forms.selectCountry}</option>
-                  {COUNTRIES.map((country) => (
+                  {getCountriesList().map((country) => (
                     <option key={country.code} value={country.code}>
                       {country.flag} {country.name}
                     </option>
@@ -587,7 +878,7 @@ export default function ClientesPage() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">{t.forms.selectCountry}</option>
-                  {COUNTRIES.map((country) => (
+                  {getCountriesList().map((country) => (
                     <option key={country.code} value={country.code}>
                       {country.flag} {country.name}
                     </option>
@@ -650,6 +941,401 @@ export default function ClientesPage() {
                 className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {t.common.saveChanges}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Ficha de Cliente */}
+      {showClientDetailModal && selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl ${getAvatarColor(selectedClient.name)}`}>
+                  {getInitials(selectedClient.name)}
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    {selectedClient.name}
+                    {selectedClient.country && (
+                      <span className="text-2xl" title={getCountryName(selectedClient.country)}>
+                        {getCountryFlag(selectedClient.country)}
+                      </span>
+                    )}
+                  </h2>
+                  <p className="text-gray-500 dark:text-gray-400">{selectedClient.email || '-'}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowClientDetailModal(false);
+                  setSelectedClient(null);
+                }}
+                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="border-b border-gray-200 dark:border-gray-700">
+              <nav className="flex px-6">
+                <button
+                  onClick={() => setActiveTab('info')}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === 'info'
+                      ? 'border-syntalys-blue text-syntalys-blue'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  }`}
+                >
+                  {language === 'fr' ? 'Informations' : 'Información'}
+                </button>
+                <button
+                  onClick={() => setActiveTab('projects')}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
+                    activeTab === 'projects'
+                      ? 'border-syntalys-blue text-syntalys-blue'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  }`}
+                >
+                  <FaFolder className="w-4 h-4" />
+                  {t.nav.projects} ({clientProjects.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab('invoices')}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
+                    activeTab === 'invoices'
+                      ? 'border-syntalys-blue text-syntalys-blue'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  }`}
+                >
+                  <FaFileInvoiceDollar className="w-4 h-4" />
+                  {language === 'fr' ? 'Factures' : 'Facturas'} ({clientInvoices.length})
+                </button>
+              </nav>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {/* Info Tab */}
+              {activeTab === 'info' && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.forms.email}</p>
+                      <p className="text-gray-900 dark:text-white font-medium">{selectedClient.email || '-'}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.forms.phone}</p>
+                      <p className="text-gray-900 dark:text-white font-medium">{selectedClient.phone || '-'}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.forms.country}</p>
+                      <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
+                        {selectedClient.country ? (
+                          <>
+                            <span className="text-xl">{getCountryFlag(selectedClient.country)}</span>
+                            {getCountryName(selectedClient.country)}
+                          </>
+                        ) : '-'}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.common.status}</p>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        selectedClient.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                        selectedClient.status === 'inactive' ? 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-300' :
+                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                      }`}>
+                        {selectedClient.status === 'active' ? t.clients.active : selectedClient.status === 'inactive' ? t.clients.inactive : t.clients.suspended}
+                      </span>
+                    </div>
+                  </div>
+                  {selectedClient.notes && (
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.common.notes}</p>
+                      <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{selectedClient.notes}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Projects Tab */}
+              {activeTab === 'projects' && (
+                <div>
+                  {clientProjects.length === 0 ? (
+                    <div className="text-center py-12">
+                      <FaFolder className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-500 dark:text-gray-400">{t.projects.noProjects}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {clientProjects.map((project) => (
+                        <div key={project.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold text-gray-900 dark:text-white">{project.project_name}</h4>
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                              project.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
+                              project.status === 'paused' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                              'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                            }`}>
+                              {project.status === 'active' ? t.projects.statusActive :
+                               project.status === 'completed' ? t.projects.statusCompleted :
+                               project.status === 'paused' ? t.projects.statusPaused :
+                               t.projects.statusCancelled}
+                            </span>
+                          </div>
+                          {project.description && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{project.description}</p>
+                          )}
+                          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                            {project.total_amount && (
+                              <span>{formatCurrency(project.total_amount, project.currency)}</span>
+                            )}
+                            {project.start_date && (
+                              <span>{new Date(project.start_date).toLocaleDateString()}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Invoices Tab */}
+              {activeTab === 'invoices' && (
+                <div>
+                  <div className="flex justify-end mb-4">
+                    <button
+                      onClick={() => setShowAddInvoiceModal(true)}
+                      className="bg-syntalys-blue text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    >
+                      <FaUpload className="w-4 h-4" />
+                      {language === 'fr' ? 'Ajouter une facture' : 'Añadir factura'}
+                    </button>
+                  </div>
+
+                  {clientInvoices.length === 0 ? (
+                    <div className="text-center py-12">
+                      <FaFileInvoiceDollar className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-500 dark:text-gray-400">
+                        {language === 'fr' ? 'Aucune facture enregistrée' : 'No hay facturas registradas'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {clientInvoices.map((invoice) => (
+                        <div key={invoice.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <FaFilePdf className="w-8 h-8 text-red-500" />
+                              <div>
+                                <h4 className="font-semibold text-gray-900 dark:text-white">
+                                  {invoice.invoice_number}
+                                </h4>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {new Date(invoice.issue_date).toLocaleDateString()} - {formatCurrency(invoice.amount, invoice.currency)}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getInvoiceStatusColor(invoice.status)}`}>
+                                {getInvoiceStatusLabel(invoice.status)}
+                              </span>
+                              {invoice.file_url && (
+                                <a
+                                  href={invoice.file_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="p-2 text-syntalys-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
+                                  title={language === 'fr' ? 'Télécharger' : 'Descargar'}
+                                >
+                                  <FaDownload className="w-4 h-4" />
+                                </a>
+                              )}
+                              <button
+                                onClick={() => handleDeleteInvoice(invoice)}
+                                className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                              >
+                                <FaTrash className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                          {invoice.notes && (
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{invoice.notes}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Añadir Factura */}
+      {showAddInvoiceModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                {language === 'fr' ? 'Ajouter une facture' : 'Añadir factura'}
+              </h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {language === 'fr' ? 'Numéro de facture' : 'Número de factura'} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={invoiceFormData.invoice_number}
+                    onChange={(e) => setInvoiceFormData({ ...invoiceFormData, invoice_number: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="FAC-001"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.common.amount} <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={invoiceFormData.amount}
+                      onChange={(e) => setInvoiceFormData({ ...invoiceFormData, amount: e.target.value })}
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="0.00"
+                    />
+                    <select
+                      value={invoiceFormData.currency}
+                      onChange={(e) => setInvoiceFormData({ ...invoiceFormData, currency: e.target.value })}
+                      className="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="CHF">CHF</option>
+                      <option value="EUR">EUR</option>
+                      <option value="USD">USD</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {language === 'fr' ? 'Date d\'émission' : 'Fecha de emisión'}
+                  </label>
+                  <input
+                    type="date"
+                    value={invoiceFormData.issue_date}
+                    onChange={(e) => setInvoiceFormData({ ...invoiceFormData, issue_date: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {language === 'fr' ? 'Date d\'échéance' : 'Fecha de vencimiento'}
+                  </label>
+                  <input
+                    type="date"
+                    value={invoiceFormData.due_date}
+                    onChange={(e) => setInvoiceFormData({ ...invoiceFormData, due_date: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t.common.status}
+                </label>
+                <select
+                  value={invoiceFormData.status}
+                  onChange={(e) => setInvoiceFormData({ ...invoiceFormData, status: e.target.value as any })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <option value="pending">{getInvoiceStatusLabel('pending')}</option>
+                  <option value="paid">{getInvoiceStatusLabel('paid')}</option>
+                  <option value="overdue">{getInvoiceStatusLabel('overdue')}</option>
+                  <option value="cancelled">{getInvoiceStatusLabel('cancelled')}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {language === 'fr' ? 'Fichier PDF' : 'Archivo PDF'}
+                </label>
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-syntalys-blue transition-colors"
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  {selectedFile ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <FaFilePdf className="w-6 h-6 text-red-500" />
+                      <span className="text-gray-900 dark:text-white">{selectedFile.name}</span>
+                    </div>
+                  ) : (
+                    <div>
+                      <FaUpload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-gray-500 dark:text-gray-400">
+                        {language === 'fr' ? 'Cliquez pour sélectionner un PDF' : 'Haz clic para seleccionar un PDF'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t.common.notes}
+                </label>
+                <textarea
+                  value={invoiceFormData.notes}
+                  onChange={(e) => setInvoiceFormData({ ...invoiceFormData, notes: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  rows={2}
+                />
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowAddInvoiceModal(false);
+                  setSelectedFile(null);
+                }}
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                {t.common.cancel}
+              </button>
+              <button
+                onClick={handleAddInvoice}
+                disabled={uploadingInvoice || !invoiceFormData.invoice_number || !invoiceFormData.amount}
+                className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {uploadingInvoice ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    {language === 'fr' ? 'Envoi en cours...' : 'Subiendo...'}
+                  </>
+                ) : (
+                  language === 'fr' ? 'Ajouter' : 'Añadir'
+                )}
               </button>
             </div>
           </div>
