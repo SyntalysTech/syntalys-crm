@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Link from 'next/link';
-import { FaRobot, FaArrowRight, FaQuoteLeft, FaBook, FaRadio, FaPlay, FaStop, FaVolumeUp } from 'react-icons/fa';
+import { FaRobot, FaArrowRight, FaQuoteLeft, FaBook, FaBroadcastTower, FaPlay, FaStop, FaVolumeUp } from 'react-icons/fa';
 
 // Motivational quotes in Spanish
 const motivationalQuotesES = [
@@ -176,10 +176,10 @@ export default function DashboardPage() {
     return proverbs[dayOfYear % proverbs.length];
   }, [dayOfYear, language]);
 
-  // Bible radio streams
+  // Bible radio streams - with preaching/teaching content
   const radioStreams = {
-    es: 'https://stream.zeno.fm/0r0xa792kwzuv', // Radio Luz (Spanish Christian radio)
-    fr: 'https://stream.zeno.fm/dh2fkfg1qwzuv', // Phare FM (French Christian radio)
+    es: 'https://playerservices.streamtheworld.com/api/livestream-redirect/RADIOFETV.mp3', // Radio Fe y Esperanza (predicaciones)
+    fr: 'https://radio.rcf.fr/rcf-national.mp3', // RCF (Radio Chrétienne Francophone - enseignements)
   };
 
   const handlePlayRadio = () => {
@@ -287,7 +287,7 @@ export default function DashboardPage() {
         <div className="bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl shadow-sm border border-emerald-200 dark:border-emerald-700 p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="bg-emerald-500 p-2 rounded-lg text-white">
-              <FaRadio className="w-5 h-5" />
+              <FaBroadcastTower className="w-5 h-5" />
             </div>
             <h2 className="text-lg font-semibold text-emerald-800 dark:text-emerald-200">{t.dashboard.bibleRadio}</h2>
           </div>
@@ -362,44 +362,32 @@ export default function DashboardPage() {
                 ))}
               </div>
               <span className="text-sm text-emerald-600 dark:text-emerald-400 ml-2">
-                {radioLanguage === 'es' ? 'Radio Luz' : 'Phare FM'}
+                {radioLanguage === 'es' ? 'Radio Fe y Esperanza' : 'RCF'}
               </span>
             </div>
           )}
         </div>
 
-        {/* AI Assistant card */}
-        <div className="bg-gradient-to-br from-syntalys-blue to-blue-700 rounded-xl shadow-sm p-6 text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="bg-white/20 p-2 rounded-lg">
-              <FaRobot className="w-5 h-5" />
+        {/* AI Assistant card - compact */}
+        <div className="bg-gradient-to-br from-syntalys-blue to-blue-700 rounded-xl shadow-sm p-4 text-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-lg">
+                <FaRobot className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="font-semibold">{t.dashboard.aiAssistant}</h2>
+                <p className="text-blue-200 text-sm">{t.dashboard.aiAssistantDescription}</p>
+              </div>
             </div>
-            <h2 className="text-lg font-semibold">{t.dashboard.aiAssistant}</h2>
+            <Link
+              href="/dashboard/chat"
+              className="flex items-center gap-2 bg-white text-syntalys-blue px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors text-sm"
+            >
+              {t.dashboard.openChat}
+              <FaArrowRight className="w-3 h-3" />
+            </Link>
           </div>
-
-          <p className="text-blue-100 mb-6">
-            {t.dashboard.aiAssistantDescription}
-          </p>
-
-          <div className="space-y-3 mb-6">
-            <div className="bg-white/10 rounded-lg p-3 text-sm">
-              &ldquo;{t.chatAI.suggestion1}&rdquo;
-            </div>
-            <div className="bg-white/10 rounded-lg p-3 text-sm">
-              &ldquo;{t.chatAI.suggestion2}&rdquo;
-            </div>
-            <div className="bg-white/10 rounded-lg p-3 text-sm">
-              &ldquo;{t.chatAI.suggestion3}&rdquo;
-            </div>
-          </div>
-
-          <Link
-            href="/dashboard/chat"
-            className="inline-flex items-center gap-2 bg-white text-syntalys-blue px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
-          >
-            {t.dashboard.openChat}
-            <FaArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </div>
     </div>

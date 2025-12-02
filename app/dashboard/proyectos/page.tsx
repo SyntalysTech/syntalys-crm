@@ -504,32 +504,40 @@ export default function ProyectosPage() {
     const completedProjects = projects.filter(p => p.status === 'completed');
     const pausedProjects = projects.filter(p => p.status === 'paused');
 
-    // Calculate totals
-    let totalAmount = 0;
-    let totalPaid = 0;
-    let totalAdditionsPaid = 0;
-    let totalAdditionsAll = 0;
+    // Calculate totals by currency
+    const byCurrency = {
+      CHF: { totalAmount: 0, totalPaid: 0, totalAdditionsPaid: 0, totalAdditionsAll: 0 },
+      EUR: { totalAmount: 0, totalPaid: 0, totalAdditionsPaid: 0, totalAdditionsAll: 0 },
+    };
 
     projects.forEach(p => {
-      totalAmount += p.total_amount || 0;
-      totalPaid += p.total_paid || 0;
-      totalAdditionsPaid += p.additions_paid || 0;
-      totalAdditionsAll += p.additions_total || 0;
+      const currency = p.currency === 'EUR' ? 'EUR' : 'CHF';
+      byCurrency[currency].totalAmount += p.total_amount || 0;
+      byCurrency[currency].totalPaid += p.total_paid || 0;
+      byCurrency[currency].totalAdditionsPaid += p.additions_paid || 0;
+      byCurrency[currency].totalAdditionsAll += p.additions_total || 0;
     });
 
-    const totalPending = (totalAmount + totalAdditionsAll) - (totalPaid + totalAdditionsPaid);
-    const totalWithAdditions = totalAmount + totalAdditionsAll;
+    // Calculate totals and pending for each currency
+    const chf = {
+      totalWithAdditions: byCurrency.CHF.totalAmount + byCurrency.CHF.totalAdditionsAll,
+      totalPaid: byCurrency.CHF.totalPaid + byCurrency.CHF.totalAdditionsPaid,
+      totalPending: (byCurrency.CHF.totalAmount + byCurrency.CHF.totalAdditionsAll) - (byCurrency.CHF.totalPaid + byCurrency.CHF.totalAdditionsPaid),
+    };
+
+    const eur = {
+      totalWithAdditions: byCurrency.EUR.totalAmount + byCurrency.EUR.totalAdditionsAll,
+      totalPaid: byCurrency.EUR.totalPaid + byCurrency.EUR.totalAdditionsPaid,
+      totalPending: (byCurrency.EUR.totalAmount + byCurrency.EUR.totalAdditionsAll) - (byCurrency.EUR.totalPaid + byCurrency.EUR.totalAdditionsPaid),
+    };
 
     return {
       total: projects.length,
       active: activeProjects.length,
       completed: completedProjects.length,
       paused: pausedProjects.length,
-      totalAmount,
-      totalPaid,
-      totalPending,
-      totalAdditionsPaid,
-      totalWithAdditions,
+      chf,
+      eur,
     };
   }, [projects]);
 
@@ -1215,7 +1223,8 @@ export default function ProyectosPage() {
           {/* Mini Statistics */}
           {projects.length > 0 && (
             <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {/* Project counts */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
                 {/* Total Projects */}
                 <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectStats.total}</p>
@@ -1231,21 +1240,51 @@ export default function ProyectosPage() {
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{projectStats.completed}</p>
                   <p className="text-xs text-blue-600 dark:text-blue-400">{t.projects.completed}</p>
                 </div>
-                {/* Total Amount */}
-                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(projectStats.totalWithAdditions, 'CHF')}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
-                </div>
-                {/* Paid */}
-                <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.totalPaid + projectStats.totalAdditionsPaid, 'CHF')}</p>
-                  <p className="text-xs text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
-                </div>
-                {/* Pending */}
-                <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(projectStats.totalPending, 'CHF')}</p>
-                  <p className="text-xs text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
-                </div>
+              </div>
+
+              {/* Financial stats by currency */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* CHF Section */}
+                {(projectStats.chf.totalWithAdditions > 0 || projectStats.chf.totalPaid > 0) && (
+                  <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">🇨🇭 CHF</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(projectStats.chf.totalWithAdditions, 'CHF')}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
+                      </div>
+                      <div className="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <p className="text-lg font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.chf.totalPaid, 'CHF')}</p>
+                        <p className="text-xs text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
+                      </div>
+                      <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                        <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(projectStats.chf.totalPending, 'CHF')}</p>
+                        <p className="text-xs text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* EUR Section */}
+                {(projectStats.eur.totalWithAdditions > 0 || projectStats.eur.totalPaid > 0) && (
+                  <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">🇪🇺 EUR</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(projectStats.eur.totalWithAdditions, 'EUR')}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
+                      </div>
+                      <div className="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <p className="text-lg font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.eur.totalPaid, 'EUR')}</p>
+                        <p className="text-xs text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
+                      </div>
+                      <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                        <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(projectStats.eur.totalPending, 'EUR')}</p>
+                        <p className="text-xs text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

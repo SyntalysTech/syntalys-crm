@@ -92,6 +92,7 @@ interface Invoice {
   id: string;
   client_id: string;
   user_id: string;
+  project_id: string | null;
   invoice_number: string;
   amount: number;
   currency: string;
@@ -135,6 +136,7 @@ export default function ClientesPage() {
     due_date: '',
     status: 'pending' as 'pending' | 'paid' | 'overdue' | 'cancelled',
     notes: '',
+    project_id: '',
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -426,6 +428,7 @@ export default function ClientesPage() {
         .insert([{
           client_id: selectedClient.id,
           user_id: user.id,
+          project_id: invoiceFormData.project_id || null,
           invoice_number: invoiceFormData.invoice_number,
           amount: parseFloat(invoiceFormData.amount),
           currency: invoiceFormData.currency,
@@ -452,6 +455,7 @@ export default function ClientesPage() {
         due_date: '',
         status: 'pending',
         notes: '',
+        project_id: '',
       });
       setSelectedFile(null);
       setShowAddInvoiceModal(false);
@@ -1302,42 +1306,75 @@ export default function ClientesPage() {
               </h2>
             </div>
             <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              {/* Project selector */}
+              {clientProjects.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {language === 'fr' ? 'Numéro de facture' : 'Número de factura'} <span className="text-red-500">*</span>
+                    {t.nav.projects}
+                  </label>
+                  <select
+                    value={invoiceFormData.project_id}
+                    onChange={(e) => {
+                      const projectId = e.target.value;
+                      const selectedProject = clientProjects.find(p => p.id === projectId);
+                      setInvoiceFormData({
+                        ...invoiceFormData,
+                        project_id: projectId,
+                        currency: selectedProject?.currency || invoiceFormData.currency,
+                      });
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="">{language === 'fr' ? '-- Sélectionner un projet --' : '-- Seleccionar proyecto --'}</option>
+                    {clientProjects.map((project) => (
+                      <option key={project.id} value={project.id}>
+                        {project.project_name} {project.total_amount ? `(${project.total_amount} ${project.currency})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {language === 'fr' ? 'Numéro de facture' : 'Número de factura'} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={invoiceFormData.invoice_number}
+                  onChange={(e) => setInvoiceFormData({ ...invoiceFormData, invoice_number: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder={t.forms.invoiceNumberPlaceholder}
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t.common.amount} <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="text"
-                    value={invoiceFormData.invoice_number}
-                    onChange={(e) => setInvoiceFormData({ ...invoiceFormData, invoice_number: e.target.value })}
+                    type="number"
+                    step="0.01"
+                    value={invoiceFormData.amount}
+                    onChange={(e) => setInvoiceFormData({ ...invoiceFormData, amount: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder={t.forms.invoiceNumberPlaceholder}
+                    placeholder="0.00"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t.common.amount} <span className="text-red-500">*</span>
+                    {t.common.currency}
                   </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={invoiceFormData.amount}
-                      onChange={(e) => setInvoiceFormData({ ...invoiceFormData, amount: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      placeholder="0.00"
-                    />
-                    <select
-                      value={invoiceFormData.currency}
-                      onChange={(e) => setInvoiceFormData({ ...invoiceFormData, currency: e.target.value })}
-                      className="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    >
-                      <option value="CHF">CHF</option>
-                      <option value="EUR">EUR</option>
-                      <option value="USD">USD</option>
-                    </select>
-                  </div>
+                  <select
+                    value={invoiceFormData.currency}
+                    onChange={(e) => setInvoiceFormData({ ...invoiceFormData, currency: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="CHF">CHF</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                  </select>
                 </div>
               </div>
 
