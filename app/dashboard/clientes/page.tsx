@@ -317,6 +317,9 @@ export default function ClientesPage() {
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     {t.common.status}
                   </th>
+                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    {t.forms.country}
+                  </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     {t.common.actions}
                   </th>
@@ -327,11 +330,6 @@ export default function ClientesPage() {
                   <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        {client.country && (
-                          <span className="text-xl" title={COUNTRIES.find(c => c.code === client.country)?.name}>
-                            {getCountryFlag(client.country)}
-                          </span>
-                        )}
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${getAvatarColor(client.name)}`}>
                           {getInitials(client.name)}
                         </div>
@@ -363,6 +361,15 @@ export default function ClientesPage() {
                       }`}>
                         {client.status === 'active' ? t.clients.active : client.status === 'inactive' ? t.clients.inactive : t.clients.suspended}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      {client.country ? (
+                        <span className="text-2xl" title={COUNTRIES.find(c => c.code === client.country)?.name}>
+                          {getCountryFlag(client.country)}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 dark:text-gray-500">-</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="relative inline-block" ref={openDropdownId === client.id ? dropdownRef : null}>
