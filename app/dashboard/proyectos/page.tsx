@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus, ProjectMilestone, MilestoneStatus, Currency } from '@/lib/types';
+import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus, ProjectMilestone, MilestoneStatus, Currency, ProjectAddition, ProjectAdditionStatus } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Image from 'next/image';
 import {
@@ -33,6 +33,8 @@ export default function ProyectosPage() {
   const [paymentFilter, setPaymentFilter] = useState<'all' | 'paid' | 'unpaid' | 'partial'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | ProjectStatus>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'alphabetic' | 'amount'>('newest');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [clientFilter, setClientFilter] = useState<string>('all');
 
   // Project detail view state
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -54,6 +56,20 @@ export default function ProyectosPage() {
     paid_date: '',
     status: 'pending' as MilestoneStatus,
     paid_amount: '',
+  });
+
+  // Additions state
+  const [showAdditionsModal, setShowAdditionsModal] = useState(false);
+  const [selectedProjectForAdditions, setSelectedProjectForAdditions] = useState<Project | null>(null);
+  const [additions, setAdditions] = useState<ProjectAddition[]>([]);
+  const [showAdditionForm, setShowAdditionForm] = useState(false);
+  const [editingAddition, setEditingAddition] = useState<ProjectAddition | null>(null);
+  const [additionFormData, setAdditionFormData] = useState({
+    name: '',
+    description: '',
+    amount: '',
+    currency: 'CHF' as Currency,
+    status: 'pending' as ProjectAdditionStatus,
   });
 
   const handleDropdownClick = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
@@ -405,6 +421,22 @@ export default function ProyectosPage() {
   function getFilteredAndSortedProjects(): ProjectWithClient[] {
     let filtered = [...projects];
 
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.project_name.toLowerCase().includes(query) ||
+        p.company_name?.toLowerCase().includes(query) ||
+        p.client?.name.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by client
+    if (clientFilter !== 'all') {
+      filtered = filtered.filter(p => p.client_id === clientFilter);
+    }
+
     // Filter by status
     if (statusFilter !== 'all') {
       filtered = filtered.filter(p => p.status === statusFilter);
@@ -576,6 +608,121 @@ export default function ProyectosPage() {
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
       case 'partial':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
+  }
+
+  // Additions functions
+  async function openAdditionsModal(project: Project) {
+    setSelectedProjectForAdditions(project);
+    setShowAdditionsModal(true);
+    await loadAdditions(project.id);
+  }
+
+  async function loadAdditions(projectId: string) {
+    const { data, error } = await supabase
+      .from('project_additions')
+      .select('*')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error loading additions:', error);
+      return;
+    }
+    setAdditions(data || []);
+  }
+
+  function openAddAdditionForm() {
+    setEditingAddition(null);
+    setAdditionFormData({
+      name: '',
+      description: '',
+      amount: '',
+      currency: selectedProjectForAdditions?.currency || 'CHF',
+      status: 'pending',
+    });
+    setShowAdditionForm(true);
+  }
+
+  function openEditAdditionForm(addition: ProjectAddition) {
+    setEditingAddition(addition);
+    setAdditionFormData({
+      name: addition.name,
+      description: addition.description || '',
+      amount: addition.amount?.toString() || '',
+      currency: addition.currency,
+      status: addition.status,
+    });
+    setShowAdditionForm(true);
+  }
+
+  async function handleAdditionSubmit() {
+    if (!additionFormData.name || !selectedProjectForAdditions) {
+      alert(t.messages.fillRequired);
+      return;
+    }
+
+    try {
+      const additionData = {
+        project_id: selectedProjectForAdditions.id,
+        name: additionFormData.name,
+        description: additionFormData.description || null,
+        amount: additionFormData.amount ? parseFloat(additionFormData.amount) : null,
+        currency: additionFormData.currency,
+        status: additionFormData.status,
+      };
+
+      if (editingAddition) {
+        const { error } = await supabase
+          .from('project_additions')
+          .update(additionData)
+          .eq('id', editingAddition.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('project_additions')
+          .insert([additionData]);
+
+        if (error) throw error;
+      }
+
+      setShowAdditionForm(false);
+      await loadAdditions(selectedProjectForAdditions.id);
+    } catch (error) {
+      console.error('Error saving addition:', error);
+      alert(t.messages.saveError);
+    }
+  }
+
+  async function handleDeleteAddition(additionId: string) {
+    if (!confirm(t.messages.deleteConfirm + '?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('project_additions')
+        .delete()
+        .eq('id', additionId);
+
+      if (error) throw error;
+
+      if (selectedProjectForAdditions) {
+        await loadAdditions(selectedProjectForAdditions.id);
+      }
+    } catch (error) {
+      console.error('Error deleting addition:', error);
+      alert(t.messages.deleteError);
+    }
+  }
+
+  function getAdditionStatusColor(status: ProjectAdditionStatus): string {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
@@ -814,6 +961,35 @@ export default function ProyectosPage() {
           {/* Filters */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
             <div className="flex flex-wrap gap-4 items-center">
+              {/* Search Bar */}
+              <div className="flex items-center gap-2 flex-1 min-w-[200px] max-w-md">
+                <div className="relative w-full">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t.common.search}
+                    className="w-full pl-10 pr-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                  />
+                </div>
+              </div>
+
+              {/* Client Filter */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.projects.client}:</label>
+                <select
+                  value={clientFilter}
+                  onChange={(e) => setClientFilter(e.target.value)}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                >
+                  <option value="all">{t.projects.allProjects}</option>
+                  {clients.map(client => (
+                    <option key={client.id} value={client.id}>{client.name}</option>
+                  ))}
+                </select>
+              </div>
+
               {/* Status Filter */}
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.common.status}:</label>
@@ -960,8 +1136,8 @@ export default function ProyectosPage() {
                       ) : '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                      {project.start_date ? new Date(project.start_date).toLocaleDateString('es-ES') : 'N/A'}
-                      {project.end_date && ` - ${new Date(project.end_date).toLocaleDateString('es-ES')}`}
+                      {project.start_date ? formatDate(project.start_date) : 'N/A'}
+                      {project.end_date && ` - ${formatDate(project.end_date)}`}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
@@ -1053,11 +1229,11 @@ export default function ProyectosPage() {
                     {(project.start_date || project.target_date) && (
                       <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
                         {project.start_date && (
-                          <span>{t.projects.startDate}: {new Date(project.start_date).toLocaleDateString('es-ES')}</span>
+                          <span>{t.projects.startDate}: {formatDate(project.start_date)}</span>
                         )}
                         {project.start_date && project.target_date && <span className="mx-2">•</span>}
                         {project.target_date && (
-                          <span>{t.projects.targetDate}: {new Date(project.target_date).toLocaleDateString('es-ES')}</span>
+                          <span>{t.projects.targetDate}: {formatDate(project.target_date)}</span>
                         )}
                       </div>
                     )}
@@ -1787,12 +1963,12 @@ export default function ProyectosPage() {
                           )}
                           {milestone.due_date && (
                             <span className="text-gray-500 dark:text-gray-400">
-                              {t.projects.milestoneDueDate}: {new Date(milestone.due_date).toLocaleDateString('es-ES')}
+                              {t.projects.milestoneDueDate}: {formatDate(milestone.due_date)}
                             </span>
                           )}
                           {milestone.paid_date && (
                             <span className="text-green-600 dark:text-green-400">
-                              {t.projects.milestonePaidDate}: {new Date(milestone.paid_date).toLocaleDateString('es-ES')}
+                              {t.projects.milestonePaidDate}: {formatDate(milestone.paid_date)}
                             </span>
                           )}
                         </div>
@@ -1939,13 +2115,13 @@ export default function ProyectosPage() {
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.startDate}</h3>
                   <p className="text-gray-900 dark:text-white">
-                    {selectedProjectForDetail.start_date ? new Date(selectedProjectForDetail.start_date).toLocaleDateString('es-ES') : '-'}
+                    {selectedProjectForDetail.start_date ? formatDate(selectedProjectForDetail.start_date) : '-'}
                   </p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.endDate}</h3>
                   <p className="text-gray-900 dark:text-white">
-                    {selectedProjectForDetail.end_date ? new Date(selectedProjectForDetail.end_date).toLocaleDateString('es-ES') : '-'}
+                    {selectedProjectForDetail.end_date ? formatDate(selectedProjectForDetail.end_date) : '-'}
                   </p>
                 </div>
               </div>
@@ -2085,6 +2261,17 @@ export default function ProyectosPage() {
             <button
               onClick={() => {
                 const project = projects.find(p => p.id === openDropdown);
+                if (project) openAdditionsModal(project);
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              {t.projects.additions}
+            </button>
+            <button
+              onClick={() => {
+                const project = projects.find(p => p.id === openDropdown);
                 if (project) handleDelete(project.id, project.project_name);
                 setOpenDropdown(null);
                 setDropdownPosition(null);
@@ -2095,6 +2282,183 @@ export default function ProyectosPage() {
             </button>
           </div>
         </>
+      )}
+
+      {/* Additions Modal */}
+      {showAdditionsModal && selectedProjectForAdditions && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.projects.additions}</h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{selectedProjectForAdditions.project_name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowAdditionsModal(false);
+                  setShowAdditionForm(false);
+                  setSelectedProjectForAdditions(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              {!showAdditionForm ? (
+                <>
+                  <button
+                    onClick={openAddAdditionForm}
+                    className="mb-4 flex items-center gap-2 px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700"
+                  >
+                    <FaPlus className="w-4 h-4" />
+                    {t.projects.addAddition}
+                  </button>
+
+                  {additions.length === 0 ? (
+                    <p className="text-gray-500 dark:text-gray-400 text-center py-8">{t.projects.noAdditions}</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {additions.map((addition) => (
+                        <div
+                          key={addition.id}
+                          className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-semibold text-gray-900 dark:text-white">{addition.name}</h4>
+                                <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getAdditionStatusColor(addition.status)}`}>
+                                  {addition.status === 'paid' ? t.projects.additionPaid : t.projects.additionPending}
+                                </span>
+                              </div>
+                              {addition.description && (
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{addition.description}</p>
+                              )}
+                              <p className="text-sm font-medium">
+                                {addition.amount ? (
+                                  <span className={addition.status === 'paid' ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}>
+                                    {formatCurrency(addition.amount, addition.currency)} {addition.currency}
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-500 dark:text-gray-400">{t.projects.noAmount}</span>
+                                )}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => openEditAdditionForm(addition)}
+                                className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                              >
+                                <FaEdit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteAddition(addition.id)}
+                                className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                              >
+                                <FaTrash className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {editingAddition ? t.projects.editAddition : t.projects.addAddition}
+                  </h3>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {t.projects.additionName} *
+                    </label>
+                    <input
+                      type="text"
+                      value={additionFormData.name}
+                      onChange={(e) => setAdditionFormData({ ...additionFormData, name: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="Ej: Cambio de diseño, Nueva funcionalidad..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {t.projects.additionDescription}
+                    </label>
+                    <textarea
+                      value={additionFormData.description}
+                      onChange={(e) => setAdditionFormData({ ...additionFormData, description: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t.projects.additionAmount}
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={additionFormData.amount}
+                        onChange={(e) => setAdditionFormData({ ...additionFormData, amount: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t.common.currency}
+                      </label>
+                      <select
+                        value={additionFormData.currency}
+                        onChange={(e) => setAdditionFormData({ ...additionFormData, currency: e.target.value as Currency })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      >
+                        <option value="CHF">CHF</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {t.projects.additionStatus}
+                    </label>
+                    <select
+                      value={additionFormData.status}
+                      onChange={(e) => setAdditionFormData({ ...additionFormData, status: e.target.value as ProjectAdditionStatus })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="pending">{t.projects.additionPending}</option>
+                      <option value="paid">{t.projects.additionPaid}</option>
+                    </select>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4">
+                    <button
+                      onClick={() => setShowAdditionForm(false)}
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                    >
+                      {t.common.cancel}
+                    </button>
+                    <button
+                      onClick={handleAdditionSubmit}
+                      className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700"
+                    >
+                      {t.common.save}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -2189,4 +2553,12 @@ function formatCurrency(amount: number, currency: string): string {
   };
   const locale = locales[currency] || 'de-CH';
   return amount.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
 }

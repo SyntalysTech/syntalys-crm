@@ -130,6 +130,21 @@ export interface ProjectMilestone {
   updated_at: string;
 }
 
+// Project Additions (modifications, extra services for a project)
+export type ProjectAdditionStatus = 'pending' | 'paid';
+
+export interface ProjectAddition {
+  id: string;
+  project_id: string;
+  name: string;
+  description: string | null;
+  amount: number | null;
+  currency: Currency;
+  status: ProjectAdditionStatus;
+  created_at: string;
+  updated_at: string;
+}
+
 // Tipos extendidos con datos relacionados
 export interface ClientWithDetails extends Client {
   expenses?: ClientExpense[];

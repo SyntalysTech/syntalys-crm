@@ -229,6 +229,18 @@ export interface Translations {
     noDueDate: string;
     viewProject: string;
     projectDetails: string;
+    // Additions
+    additions: string;
+    addAddition: string;
+    editAddition: string;
+    additionName: string;
+    additionDescription: string;
+    additionAmount: string;
+    additionStatus: string;
+    additionPaid: string;
+    additionPending: string;
+    noAdditions: string;
+    noAmount: string;
     // Project status
     statusActive: string;
     statusCompleted: string;
@@ -766,6 +778,17 @@ export const translations: Record<Language, Translations> = {
       noDueDate: 'Sin fecha de vencimiento',
       viewProject: 'Ver Proyecto',
       projectDetails: 'Detalles del Proyecto',
+      additions: 'Modificaciones / Extras',
+      addAddition: 'Añadir Modificación',
+      editAddition: 'Editar Modificación',
+      additionName: 'Nombre de la modificación',
+      additionDescription: 'Descripción',
+      additionAmount: 'Monto (opcional)',
+      additionStatus: 'Estado del pago',
+      additionPaid: 'Pagado',
+      additionPending: 'Pendiente',
+      noAdditions: 'No hay modificaciones registradas',
+      noAmount: 'Sin monto',
       statusActive: 'Activo',
       statusCompleted: 'Completado',
       statusPaused: 'En Espera',
@@ -1273,6 +1296,17 @@ export const translations: Record<Language, Translations> = {
       noDueDate: 'Sans date d\'échéance',
       viewProject: 'Voir le Projet',
       projectDetails: 'Détails du Projet',
+      additions: 'Modifications / Extras',
+      addAddition: 'Ajouter une Modification',
+      editAddition: 'Modifier',
+      additionName: 'Nom de la modification',
+      additionDescription: 'Description',
+      additionAmount: 'Montant (optionnel)',
+      additionStatus: 'Statut du paiement',
+      additionPaid: 'Payé',
+      additionPending: 'En Attente',
+      noAdditions: 'Aucune modification enregistrée',
+      noAmount: 'Sans montant',
       statusActive: 'Actif',
       statusCompleted: 'Terminé',
       statusPaused: 'En Attente',
