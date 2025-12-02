@@ -205,6 +205,7 @@ export interface Translations {
     totalPaid: string;
     remainingAmount: string;
     noMilestones: string;
+    noDueDate: string;
     // Project status
     statusActive: string;
     statusCompleted: string;
@@ -715,6 +716,7 @@ export const translations: Record<Language, Translations> = {
       totalPaid: 'Total Pagado',
       remainingAmount: 'Monto Restante',
       noMilestones: 'No hay hitos registrados',
+      noDueDate: 'Sin fecha de vencimiento',
       statusActive: 'Activo',
       statusCompleted: 'Completado',
       statusPaused: 'En Espera',
@@ -1196,6 +1198,7 @@ export const translations: Record<Language, Translations> = {
       totalPaid: 'Total Payé',
       remainingAmount: 'Montant Restant',
       noMilestones: 'Aucun jalon enregistré',
+      noDueDate: 'Sans date d\'échéance',
       statusActive: 'Actif',
       statusCompleted: 'Terminé',
       statusPaused: 'En Attente',

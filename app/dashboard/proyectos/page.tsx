@@ -37,6 +37,7 @@ export default function ProyectosPage() {
     amount: '',
     currency: 'CHF' as Currency,
     due_date: '',
+    no_due_date: false,
     paid_date: '',
     status: 'pending' as MilestoneStatus,
     paid_amount: '',
@@ -140,10 +141,20 @@ export default function ProyectosPage() {
       return;
     }
 
-    const projectsWithClients: ProjectWithClient[] = (projectsData || []).map(project => ({
-      ...project,
-      client: clientsData?.find(c => c.id === project.client_id),
-    }));
+    // Load milestones to calculate paid amounts
+    const { data: milestonesData } = await supabase
+      .from('project_milestones')
+      .select('project_id, paid_amount');
+
+    const projectsWithClients: ProjectWithClient[] = (projectsData || []).map(project => {
+      const projectMilestones = milestonesData?.filter(m => m.project_id === project.id) || [];
+      const totalPaid = projectMilestones.reduce((sum, m) => sum + (m.paid_amount || 0), 0);
+      return {
+        ...project,
+        client: clientsData?.find(c => c.id === project.client_id),
+        total_paid: totalPaid,
+      };
+    });
 
     setProjects(projectsWithClients);
   }
@@ -403,6 +414,7 @@ export default function ProyectosPage() {
       amount: '',
       currency: selectedProjectForMilestones?.currency || 'CHF',
       due_date: '',
+      no_due_date: true,
       paid_date: '',
       status: 'pending',
       paid_amount: '0',
@@ -418,6 +430,7 @@ export default function ProyectosPage() {
       amount: milestone.amount.toString(),
       currency: milestone.currency,
       due_date: milestone.due_date || '',
+      no_due_date: !milestone.due_date,
       paid_date: milestone.paid_date || '',
       status: milestone.status,
       paid_amount: milestone.paid_amount.toString(),
@@ -438,7 +451,7 @@ export default function ProyectosPage() {
         description: milestoneFormData.description || null,
         amount: parseFloat(milestoneFormData.amount),
         currency: milestoneFormData.currency,
-        due_date: milestoneFormData.due_date || null,
+        due_date: milestoneFormData.no_due_date ? null : (milestoneFormData.due_date || null),
         paid_date: milestoneFormData.status === 'paid' ? (milestoneFormData.paid_date || new Date().toISOString().split('T')[0]) : null,
         status: milestoneFormData.status,
         paid_amount: milestoneFormData.status === 'paid'
@@ -803,9 +816,24 @@ export default function ProyectosPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {project.total_amount ? `${project.total_amount.toFixed(2)} ${project.currency}` : '-'}
-                      </span>
+                      {project.total_amount ? (
+                        <div className="flex flex-col">
+                          <span className={`text-sm font-semibold ${
+                            (project.total_paid || 0) >= project.total_amount
+                              ? 'text-green-600 dark:text-green-400'
+                              : (project.total_paid || 0) > 0
+                                ? 'text-orange-500 dark:text-orange-400'
+                                : 'text-gray-900 dark:text-white'
+                          }`}>
+                            {project.total_amount.toFixed(2)} {project.currency}
+                          </span>
+                          {project.payment_type === 'milestone' && (project.total_paid || 0) > 0 && (project.total_paid || 0) < project.total_amount && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              ({(project.total_paid || 0).toFixed(2)} {t.projects.milestonePaid.toLowerCase()})
+                            </span>
+                          )}
+                        </div>
+                      ) : '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                       {project.start_date ? new Date(project.start_date).toLocaleDateString('es-ES') : 'N/A'}
@@ -1380,12 +1408,12 @@ export default function ProyectosPage() {
             </div>
 
             <div className="p-6">
-              {/* Summary */}
+              {/* Summary - using project total, not milestones sum */}
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    {milestones.reduce((sum, m) => sum + m.amount, 0).toFixed(2)} {selectedProjectForMilestones.currency}
+                    {(selectedProjectForMilestones.total_amount || 0).toFixed(2)} {selectedProjectForMilestones.currency}
                   </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
@@ -1397,7 +1425,7 @@ export default function ProyectosPage() {
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
                   <p className="text-sm text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
                   <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
-                    {milestones.reduce((sum, m) => sum + (m.amount - m.paid_amount), 0).toFixed(2)} {selectedProjectForMilestones.currency}
+                    {((selectedProjectForMilestones.total_amount || 0) - milestones.reduce((sum, m) => sum + m.paid_amount, 0)).toFixed(2)} {selectedProjectForMilestones.currency}
                   </p>
                 </div>
               </div>
@@ -1468,12 +1496,24 @@ export default function ProyectosPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.projects.milestoneDueDate}</label>
-                      <input
-                        type="date"
-                        value={milestoneFormData.due_date}
-                        onChange={(e) => setMilestoneFormData({ ...milestoneFormData, due_date: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      />
+                      <div className="flex items-center gap-2 mb-2">
+                        <input
+                          type="checkbox"
+                          id="no_due_date"
+                          checked={milestoneFormData.no_due_date}
+                          onChange={(e) => setMilestoneFormData({ ...milestoneFormData, no_due_date: e.target.checked, due_date: e.target.checked ? '' : milestoneFormData.due_date })}
+                          className="w-4 h-4 text-syntalys-blue border-gray-300 rounded focus:ring-syntalys-blue"
+                        />
+                        <label htmlFor="no_due_date" className="text-sm text-gray-600 dark:text-gray-400">{t.projects.noDueDate}</label>
+                      </div>
+                      {!milestoneFormData.no_due_date && (
+                        <input
+                          type="date"
+                          value={milestoneFormData.due_date}
+                          onChange={(e) => setMilestoneFormData({ ...milestoneFormData, due_date: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        />
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.common.status}</label>
