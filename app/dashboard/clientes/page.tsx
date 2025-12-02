@@ -184,6 +184,32 @@ export default function ClientesPage() {
     setShowEditModal(true);
   }
 
+  function getInitials(name: string): string {
+    const words = name.trim().split(/\s+/);
+    if (words.length === 1) {
+      return words[0].substring(0, 2).toUpperCase();
+    }
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  }
+
+  function getAvatarColor(name: string): string {
+    const colors = [
+      'bg-blue-500',
+      'bg-green-500',
+      'bg-purple-500',
+      'bg-pink-500',
+      'bg-indigo-500',
+      'bg-teal-500',
+      'bg-orange-500',
+      'bg-cyan-500',
+    ];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+
   if (loading) {
     return (
       <div className="p-8">
@@ -252,7 +278,12 @@ export default function ClientesPage() {
                 {clients.map((client) => (
                   <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-gray-900 dark:text-white">{client.name}</div>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${getAvatarColor(client.name)}`}>
+                          {getInitials(client.name)}
+                        </div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">{client.name}</div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-600 dark:text-gray-300">{client.email || '-'}</div>
