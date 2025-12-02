@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
@@ -12,8 +12,16 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile form state
-  const [fullName, setFullName] = useState(profile?.full_name || '');
-  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '');
+  const [fullName, setFullName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  // Sync state with profile when it loads
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name || '');
+      setAvatarUrl(profile.avatar_url || '');
+    }
+  }, [profile]);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileMessage, setProfileMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -124,19 +132,18 @@ export default function ProfilePage() {
       // Create unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
 
-      // Upload to Supabase Storage
+      // Upload to Supabase Storage (bucket is 'avatars', file goes directly in root)
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true });
+        .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       setAvatarUrl(publicUrl);
 

@@ -325,11 +325,21 @@ export default function Sidebar() {
             transition: 'padding-left 400ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-lg font-semibold">
-              {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : profile?.email?.charAt(0).toUpperCase() || 'U'}
-            </span>
-          </div>
+          {profile?.avatar_url ? (
+            <Image
+              src={profile.avatar_url}
+              alt="Avatar"
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-lg font-semibold">
+                {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : profile?.email?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            </div>
+          )}
           <div
             className="min-w-0 overflow-hidden"
             style={{
