@@ -321,6 +321,8 @@ export interface Translations {
     email: string;
     phone: string;
     companyName: string;
+    country: string;
+    selectCountry: string;
   };
 
   // Messages
@@ -767,6 +769,8 @@ export const translations: Record<Language, Translations> = {
       email: 'Email',
       phone: 'Teléfono',
       companyName: 'Nombre de la Empresa',
+      country: 'País',
+      selectCountry: 'Selecciona un país',
     },
     messages: {
       deleteConfirm: '¿Estás seguro de que quieres eliminar',
@@ -1198,6 +1202,8 @@ export const translations: Record<Language, Translations> = {
       email: 'Email',
       phone: 'Téléphone',
       companyName: 'Nom de l\'Entreprise',
+      country: 'Pays',
+      selectCountry: 'Sélectionnez un pays',
     },
     messages: {
       deleteConfirm: 'Êtes-vous sûr de vouloir supprimer',

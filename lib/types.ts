@@ -34,6 +34,7 @@ export interface Client {
   name: string;
   email: string | null;
   phone: string | null;
+  country: string | null;
   status: ClientStatus;
   is_potential: boolean;
   notes: string | null;

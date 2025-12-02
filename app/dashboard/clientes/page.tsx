@@ -1,9 +1,50 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Client } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { FaEllipsisV, FaEdit, FaTrash } from 'react-icons/fa';
+
+// Lista de países con banderas emoji
+const COUNTRIES = [
+  { code: 'CH', name: 'Suiza', flag: '🇨🇭' },
+  { code: 'ES', name: 'España', flag: '🇪🇸' },
+  { code: 'FR', name: 'Francia', flag: '🇫🇷' },
+  { code: 'DE', name: 'Alemania', flag: '🇩🇪' },
+  { code: 'IT', name: 'Italia', flag: '🇮🇹' },
+  { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
+  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧' },
+  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
+  { code: 'MX', name: 'México', flag: '🇲🇽' },
+  { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
+  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
+  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
+  { code: 'PE', name: 'Perú', flag: '🇵🇪' },
+  { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
+  { code: 'NL', name: 'Países Bajos', flag: '🇳🇱' },
+  { code: 'BE', name: 'Bélgica', flag: '🇧🇪' },
+  { code: 'AT', name: 'Austria', flag: '🇦🇹' },
+  { code: 'PL', name: 'Polonia', flag: '🇵🇱' },
+  { code: 'SE', name: 'Suecia', flag: '🇸🇪' },
+  { code: 'NO', name: 'Noruega', flag: '🇳🇴' },
+  { code: 'DK', name: 'Dinamarca', flag: '🇩🇰' },
+  { code: 'FI', name: 'Finlandia', flag: '🇫🇮' },
+  { code: 'IE', name: 'Irlanda', flag: '🇮🇪' },
+  { code: 'CA', name: 'Canadá', flag: '🇨🇦' },
+  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
+  { code: 'JP', name: 'Japón', flag: '🇯🇵' },
+  { code: 'CN', name: 'China', flag: '🇨🇳' },
+  { code: 'IN', name: 'India', flag: '🇮🇳' },
+  { code: 'RU', name: 'Rusia', flag: '🇷🇺' },
+  { code: 'ZA', name: 'Sudáfrica', flag: '🇿🇦' },
+];
+
+function getCountryFlag(countryCode: string | null): string {
+  if (!countryCode) return '';
+  const country = COUNTRIES.find(c => c.code === countryCode);
+  return country?.flag || '';
+}
 
 export default function ClientesPage() {
   const { t } = useLanguage();
@@ -12,12 +53,15 @@ export default function ClientesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Form states
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    country: '',
     notes: '',
     status: 'active' as 'active' | 'inactive' | 'suspended',
     is_potential: false,
@@ -25,6 +69,17 @@ export default function ClientesPage() {
 
   useEffect(() => {
     loadClients();
+  }, []);
+
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenDropdownId(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   async function loadClients() {
@@ -50,7 +105,6 @@ export default function ClientesPage() {
 
   async function handleAddClient() {
     try {
-      // Get the current authenticated user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
 
       if (userError || !user) {
@@ -67,6 +121,7 @@ export default function ClientesPage() {
           company_name: formData.name,
           email: formData.email || null,
           phone: formData.phone || null,
+          country: formData.country || null,
           notes: formData.notes || null,
           status: formData.status,
           is_potential: formData.is_potential,
@@ -78,15 +133,7 @@ export default function ClientesPage() {
         return;
       }
 
-      // Resetear formulario y recargar
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        notes: '',
-        status: 'active',
-        is_potential: false,
-      });
+      resetForm();
       setShowAddModal(false);
       loadClients();
     } catch (error) {
@@ -105,6 +152,7 @@ export default function ClientesPage() {
           name: formData.name,
           email: formData.email || null,
           phone: formData.phone || null,
+          country: formData.country || null,
           notes: formData.notes || null,
           status: formData.status,
           is_potential: formData.is_potential,
@@ -117,15 +165,7 @@ export default function ClientesPage() {
         return;
       }
 
-      // Resetear formulario y recargar
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        notes: '',
-        status: 'active',
-        is_potential: false,
-      });
+      resetForm();
       setShowEditModal(false);
       setSelectedClient(null);
       loadClients();
@@ -136,6 +176,7 @@ export default function ClientesPage() {
   }
 
   async function handleDeleteClient(clientId: string, clientName: string) {
+    setOpenDropdownId(null);
     if (!confirm(`${t.messages.deleteConfirm} "${clientName}"?`)) {
       return;
     }
@@ -159,24 +200,31 @@ export default function ClientesPage() {
     }
   }
 
-  function openAddModal() {
+  function resetForm() {
     setFormData({
       name: '',
       email: '',
       phone: '',
+      country: '',
       notes: '',
       status: 'active',
       is_potential: false,
     });
+  }
+
+  function openAddModal() {
+    resetForm();
     setShowAddModal(true);
   }
 
   function openEditModal(client: Client) {
+    setOpenDropdownId(null);
     setSelectedClient(client);
     setFormData({
       name: client.name,
       email: client.email || '',
       phone: client.phone || '',
+      country: client.country || '',
       notes: client.notes || '',
       status: client.status,
       is_potential: client.is_potential || false,
@@ -279,6 +327,11 @@ export default function ClientesPage() {
                   <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
+                        {client.country && (
+                          <span className="text-xl" title={COUNTRIES.find(c => c.code === client.country)?.name}>
+                            {getCountryFlag(client.country)}
+                          </span>
+                        )}
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${getAvatarColor(client.name)}`}>
                           {getInitials(client.name)}
                         </div>
@@ -293,37 +346,51 @@ export default function ClientesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {client.is_potential ? (
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
                           {t.clients.potential}
                         </span>
                       ) : (
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                           {t.common.client}
                         </span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        client.status === 'active' ? 'bg-green-100 text-green-800' :
-                        client.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
-                        'bg-red-100 text-red-800'
+                        client.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                        client.status === 'inactive' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
+                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
                       }`}>
                         {client.status === 'active' ? t.clients.active : client.status === 'inactive' ? t.clients.inactive : t.clients.suspended}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => openEditModal(client)}
-                        className="text-syntalys-blue dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mr-3"
-                      >
-                        {t.common.edit}
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClient(client.id, client.name)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        {t.common.delete}
-                      </button>
+                      <div className="relative inline-block" ref={openDropdownId === client.id ? dropdownRef : null}>
+                        <button
+                          onClick={() => setOpenDropdownId(openDropdownId === client.id ? null : client.id)}
+                          className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                        >
+                          <FaEllipsisV className="w-4 h-4" />
+                        </button>
+                        {openDropdownId === client.id && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                            <button
+                              onClick={() => openEditModal(client)}
+                              className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 rounded-t-lg"
+                            >
+                              <FaEdit className="w-4 h-4 text-syntalys-blue" />
+                              {t.common.edit}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClient(client.id, client.name)}
+                              className="w-full px-4 py-3 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 rounded-b-lg"
+                            >
+                              <FaTrash className="w-4 h-4" />
+                              {t.common.delete}
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -379,6 +446,23 @@ export default function ClientesPage() {
                     placeholder="+41 xx xxx xx xx"
                   />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t.forms.country}
+                </label>
+                <select
+                  value={formData.country}
+                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <option value="">{t.forms.selectCountry}</option>
+                  {COUNTRIES.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.flag} {country.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -485,6 +569,23 @@ export default function ClientesPage() {
                     placeholder="+41 xx xxx xx xx"
                   />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t.forms.country}
+                </label>
+                <select
+                  value={formData.country}
+                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <option value="">{t.forms.selectCountry}</option>
+                  {COUNTRIES.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.flag} {country.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
