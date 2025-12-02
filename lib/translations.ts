@@ -198,6 +198,16 @@ export interface Translations {
     marketing: string;
     seo: string;
     hosting: string;
+    ai: string;
+    chatbot: string;
+    automation: string;
+    callcenter: string;
+    crmProject: string;
+    erp: string;
+    apiIntegration: string;
+    dataAnalytics: string;
+    cybersecurity: string;
+    cloud: string;
     other: string;
     customType: string;
     // Milestones
@@ -217,6 +227,8 @@ export interface Translations {
     remainingAmount: string;
     noMilestones: string;
     noDueDate: string;
+    viewProject: string;
+    projectDetails: string;
     // Project status
     statusActive: string;
     statusCompleted: string;
@@ -724,6 +736,16 @@ export const translations: Record<Language, Translations> = {
       marketing: 'Marketing Digital',
       seo: 'SEO / Posicionamiento',
       hosting: 'Hosting',
+      ai: 'Inteligencia Artificial',
+      chatbot: 'Chatbot',
+      automation: 'Automatización',
+      callcenter: 'Call Center',
+      crmProject: 'CRM',
+      erp: 'ERP',
+      apiIntegration: 'Integración API',
+      dataAnalytics: 'Análisis de Datos',
+      cybersecurity: 'Ciberseguridad',
+      cloud: 'Cloud / Nube',
       other: 'Otro',
       customType: 'Especificar tipo',
       milestones: 'Hitos de Pago',
@@ -742,6 +764,8 @@ export const translations: Record<Language, Translations> = {
       remainingAmount: 'Monto Restante',
       noMilestones: 'No hay hitos registrados',
       noDueDate: 'Sin fecha de vencimiento',
+      viewProject: 'Ver Proyecto',
+      projectDetails: 'Detalles del Proyecto',
       statusActive: 'Activo',
       statusCompleted: 'Completado',
       statusPaused: 'En Espera',
@@ -1219,6 +1243,16 @@ export const translations: Record<Language, Translations> = {
       marketing: 'Marketing Digital',
       seo: 'SEO / Référencement',
       hosting: 'Hébergement',
+      ai: 'Intelligence Artificielle',
+      chatbot: 'Chatbot',
+      automation: 'Automatisation',
+      callcenter: 'Centre d\'Appels',
+      crmProject: 'CRM',
+      erp: 'ERP',
+      apiIntegration: 'Intégration API',
+      dataAnalytics: 'Analyse de Données',
+      cybersecurity: 'Cybersécurité',
+      cloud: 'Cloud',
       other: 'Autre',
       customType: 'Spécifier le type',
       milestones: 'Jalons de Paiement',
@@ -1237,6 +1271,8 @@ export const translations: Record<Language, Translations> = {
       remainingAmount: 'Montant Restant',
       noMilestones: 'Aucun jalon enregistré',
       noDueDate: 'Sans date d\'échéance',
+      viewProject: 'Voir le Projet',
+      projectDetails: 'Détails du Projet',
       statusActive: 'Actif',
       statusCompleted: 'Terminé',
       statusPaused: 'En Attente',

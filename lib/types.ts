@@ -24,7 +24,7 @@ export type ClientStatus = 'active' | 'inactive' | 'suspended';
 export type ExpenseCategory = 'software' | 'hosting' | 'domain' | 'api' | 'development' | 'other';
 export type ClientExpenseCategory = 'domain' | 'hosting' | 'ssl' | 'api' | 'maintenance' | 'other';
 export type IncomeCategory = 'web_development' | 'maintenance' | 'hosting' | 'domain' | 'crm' | 'subscription' | 'other';
-export type ProjectType = 'web_development' | 'app_development' | 'game_development' | 'ecommerce' | 'maintenance' | 'consulting' | 'design' | 'marketing' | 'seo' | 'hosting' | 'other';
+export type ProjectType = 'web_development' | 'app_development' | 'game_development' | 'ecommerce' | 'maintenance' | 'consulting' | 'design' | 'marketing' | 'seo' | 'hosting' | 'ai' | 'chatbot' | 'automation' | 'callcenter' | 'crm' | 'erp' | 'api_integration' | 'data_analytics' | 'cybersecurity' | 'cloud' | 'other';
 export type ProjectStatus = 'active' | 'completed' | 'paused' | 'cancelled';
 export type PaymentType = 'one_time' | 'monthly' | 'annual' | 'milestone';
 

@@ -5,7 +5,11 @@ import { supabase } from '@/lib/supabase';
 import type { Project, ProjectWithClient, Client, ProjectType, ProjectStatus, PaymentType, InternalProject, InternalProjectStatus, ProjectMilestone, MilestoneStatus, Currency } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Image from 'next/image';
-import { FaGithub, FaExternalLinkAlt, FaLightbulb, FaCode, FaCheckCircle, FaPause, FaTimes, FaEllipsisV, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
+import {
+  FaGithub, FaExternalLinkAlt, FaLightbulb, FaCode, FaCheckCircle, FaPause, FaTimes, FaEllipsisV, FaPlus, FaTrash, FaEdit,
+  FaGlobe, FaMobileAlt, FaGamepad, FaShoppingCart, FaWrench, FaUserTie, FaPaintBrush, FaBullhorn, FaSearch, FaServer,
+  FaRobot, FaComments, FaCogs, FaHeadset, FaDatabase, FaProjectDiagram, FaPlug, FaChartBar, FaShieldAlt, FaCloud, FaFolder
+} from 'react-icons/fa';
 
 export default function ProyectosPage() {
   const { t } = useLanguage();
@@ -29,6 +33,10 @@ export default function ProyectosPage() {
   const [paymentFilter, setPaymentFilter] = useState<'all' | 'paid' | 'unpaid' | 'partial'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | ProjectStatus>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'alphabetic' | 'amount'>('newest');
+
+  // Project detail view state
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<ProjectWithClient | null>(null);
 
   // Milestones state
   const [showMilestonesModal, setShowMilestonesModal] = useState(false);
@@ -884,23 +892,28 @@ export default function ProyectosPage() {
                 {getFilteredAndSortedProjects().map((project, index) => (
                   <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">{project.project_name}</div>
-                        {project.description && (
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {project.description.length > 50 ? (
-                              <span>
-                                {project.description.substring(0, 50)}...
-                                <button
-                                  onClick={() => setExpandedText({ text: project.description!, title: project.project_name })}
-                                  className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
-                                >
-                                  {t.common.seeMore}
-                                </button>
-                              </span>
-                            ) : project.description}
-                          </div>
-                        )}
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-0.5 text-gray-500 dark:text-gray-400">
+                          {getProjectTypeIcon(project.project_type)}
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-gray-900 dark:text-white">{project.project_name}</div>
+                          {project.description && (
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {project.description.length > 50 ? (
+                                <span>
+                                  {project.description.substring(0, 50)}...
+                                  <button
+                                    onClick={() => setExpandedText({ text: project.description!, title: project.project_name })}
+                                    className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                  >
+                                    {t.common.seeMore}
+                                  </button>
+                                </span>
+                              ) : project.description}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1183,6 +1196,16 @@ export default function ProyectosPage() {
                     <option value="marketing">{t.projects.marketing}</option>
                     <option value="seo">{t.projects.seo}</option>
                     <option value="hosting">{t.projects.hosting}</option>
+                    <option value="ai">{t.projects.ai}</option>
+                    <option value="chatbot">{t.projects.chatbot}</option>
+                    <option value="automation">{t.projects.automation}</option>
+                    <option value="callcenter">{t.projects.callcenter}</option>
+                    <option value="crm">{t.projects.crmProject}</option>
+                    <option value="erp">{t.projects.erp}</option>
+                    <option value="api_integration">{t.projects.apiIntegration}</option>
+                    <option value="data_analytics">{t.projects.dataAnalytics}</option>
+                    <option value="cybersecurity">{t.projects.cybersecurity}</option>
+                    <option value="cloud">{t.projects.cloud}</option>
                     <option value="other">{t.projects.other}</option>
                   </select>
                   {formData.project_type === 'other' && (
@@ -1423,10 +1446,24 @@ export default function ProyectosPage() {
                     <option value="">{t.forms.notSpecified}</option>
                     <option value="web_development">{t.projects.webDevelopment}</option>
                     <option value="app_development">{t.projects.appDevelopment}</option>
+                    <option value="game_development">{t.projects.gameDevelopment}</option>
+                    <option value="ecommerce">{t.projects.ecommerce}</option>
                     <option value="maintenance">{t.projects.maintenance}</option>
                     <option value="consulting">{t.projects.consulting}</option>
                     <option value="design">{t.projects.design}</option>
+                    <option value="marketing">{t.projects.marketing}</option>
+                    <option value="seo">{t.projects.seo}</option>
                     <option value="hosting">{t.projects.hosting}</option>
+                    <option value="ai">{t.projects.ai}</option>
+                    <option value="chatbot">{t.projects.chatbot}</option>
+                    <option value="automation">{t.projects.automation}</option>
+                    <option value="callcenter">{t.projects.callcenter}</option>
+                    <option value="crm">{t.projects.crmProject}</option>
+                    <option value="erp">{t.projects.erp}</option>
+                    <option value="api_integration">{t.projects.apiIntegration}</option>
+                    <option value="data_analytics">{t.projects.dataAnalytics}</option>
+                    <option value="cybersecurity">{t.projects.cybersecurity}</option>
+                    <option value="cloud">{t.projects.cloud}</option>
                     <option value="other">{t.projects.other}</option>
                   </select>
                 </div>
@@ -1797,6 +1834,206 @@ export default function ProyectosPage() {
         </div>
       )}
 
+      {/* Project Detail Modal */}
+      {showDetailModal && selectedProjectForDetail && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.projects.projectDetails}</h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{selectedProjectForDetail.project_name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowDetailModal(false);
+                  setSelectedProjectForDetail(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Basic Info */}
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.projectName}</h3>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-white">{selectedProjectForDetail.project_name}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.client}</h3>
+                  <p className="text-lg text-gray-900 dark:text-white">{selectedProjectForDetail.client?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.clientType}</h3>
+                  <p className="text-gray-900 dark:text-white">{selectedProjectForDetail.company_name || t.projects.individual}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.type}</h3>
+                  <p className="text-gray-900 dark:text-white">
+                    {selectedProjectForDetail.project_type ? getProjectTypeLabel(selectedProjectForDetail.project_type, t, selectedProjectForDetail.custom_project_type) : '-'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Status and Payment */}
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.common.status}</h3>
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full inline-block ${
+                    selectedProjectForDetail.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                    selectedProjectForDetail.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
+                    selectedProjectForDetail.status === 'paused' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                    'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                  }`}>
+                    {getStatusLabel(selectedProjectForDetail.status, t)}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.paymentType}</h3>
+                  <p className="text-gray-900 dark:text-white">
+                    {selectedProjectForDetail.payment_type ? getPaymentTypeLabel(selectedProjectForDetail.payment_type, t) : '-'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Amount */}
+              {selectedProjectForDetail.total_amount && (
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.totalAmount}</h3>
+                      <p className={`text-xl font-bold ${
+                        selectedProjectForDetail.status === 'completed' || (selectedProjectForDetail.total_paid || 0) >= selectedProjectForDetail.total_amount
+                          ? 'text-green-600 dark:text-green-400'
+                          : (selectedProjectForDetail.total_paid || 0) > 0
+                            ? 'text-orange-500 dark:text-orange-400'
+                            : 'text-gray-900 dark:text-white'
+                      }`}>
+                        {formatCurrency(selectedProjectForDetail.total_amount, selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
+                      </p>
+                    </div>
+                    {selectedProjectForDetail.payment_type === 'milestone' && (
+                      <>
+                        <div>
+                          <h3 className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">{t.projects.milestonePaid}</h3>
+                          <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                            {formatCurrency(selectedProjectForDetail.total_paid || 0, selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
+                          </p>
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">{t.projects.milestonePending}</h3>
+                          <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
+                            {formatCurrency(selectedProjectForDetail.total_amount - (selectedProjectForDetail.total_paid || 0), selectedProjectForDetail.currency)} {selectedProjectForDetail.currency}
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.startDate}</h3>
+                  <p className="text-gray-900 dark:text-white">
+                    {selectedProjectForDetail.start_date ? new Date(selectedProjectForDetail.start_date).toLocaleDateString('es-ES') : '-'}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.endDate}</h3>
+                  <p className="text-gray-900 dark:text-white">
+                    {selectedProjectForDetail.end_date ? new Date(selectedProjectForDetail.end_date).toLocaleDateString('es-ES') : '-'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Professional Email & Website */}
+              {(selectedProjectForDetail.has_professional_email || selectedProjectForDetail.has_website) && (
+                <div className="grid grid-cols-2 gap-6">
+                  {selectedProjectForDetail.has_professional_email && (
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.professionalEmail}</h3>
+                      <p className="text-gray-900 dark:text-white">{selectedProjectForDetail.professional_email || '-'}</p>
+                    </div>
+                  )}
+                  {selectedProjectForDetail.has_website && (
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.websiteUrl}</h3>
+                      {selectedProjectForDetail.website_url ? (
+                        <a
+                          href={selectedProjectForDetail.website_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                        >
+                          {selectedProjectForDetail.website_url}
+                          <FaExternalLinkAlt className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <p className="text-gray-900 dark:text-white">-</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Description */}
+              {selectedProjectForDetail.description && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.common.description}</h3>
+                  <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{selectedProjectForDetail.description}</p>
+                </div>
+              )}
+
+              {/* Notes */}
+              {selectedProjectForDetail.notes && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.common.notes}</h3>
+                  <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{selectedProjectForDetail.notes}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setShowDetailModal(false);
+                    openEditModal(selectedProjectForDetail);
+                  }}
+                  className="px-4 py-2 bg-syntalys-blue text-white rounded-md hover:bg-blue-700"
+                >
+                  {t.common.edit}
+                </button>
+                {selectedProjectForDetail.payment_type === 'milestone' && (
+                  <button
+                    onClick={() => {
+                      setShowDetailModal(false);
+                      openMilestonesModal(selectedProjectForDetail);
+                    }}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                  >
+                    {t.projects.milestones}
+                  </button>
+                )}
+              </div>
+              <button
+                onClick={() => {
+                  setShowDetailModal(false);
+                  setSelectedProjectForDetail(null);
+                }}
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                {t.common.close}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Dropdown fijo para proyectos */}
       {openDropdown && dropdownPosition && (
         <>
@@ -1812,11 +2049,25 @@ export default function ProyectosPage() {
             <button
               onClick={() => {
                 const project = projects.find(p => p.id === openDropdown);
-                if (project) openEditModal(project);
+                if (project) {
+                  setSelectedProjectForDetail(project);
+                  setShowDetailModal(true);
+                }
                 setOpenDropdown(null);
                 setDropdownPosition(null);
               }}
               className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
+            >
+              {t.projects.viewProject}
+            </button>
+            <button
+              onClick={() => {
+                const project = projects.find(p => p.id === openDropdown);
+                if (project) openEditModal(project);
+                setOpenDropdown(null);
+                setDropdownPosition(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               {t.common.edit}
             </button>
@@ -1864,9 +2115,47 @@ function getProjectTypeLabel(type: string, t: any, customType?: string | null): 
     marketing: t.projects.marketing,
     seo: t.projects.seo,
     hosting: t.projects.hosting,
+    ai: t.projects.ai,
+    chatbot: t.projects.chatbot,
+    automation: t.projects.automation,
+    callcenter: t.projects.callcenter,
+    crm: t.projects.crmProject,
+    erp: t.projects.erp,
+    api_integration: t.projects.apiIntegration,
+    data_analytics: t.projects.dataAnalytics,
+    cybersecurity: t.projects.cybersecurity,
+    cloud: t.projects.cloud,
     other: t.projects.other,
   };
   return labels[type] || type;
+}
+
+function getProjectTypeIcon(type: string | null): React.ReactNode {
+  const iconClass = "w-4 h-4";
+  const icons: Record<string, React.ReactNode> = {
+    web_development: <FaGlobe className={iconClass} />,
+    app_development: <FaMobileAlt className={iconClass} />,
+    game_development: <FaGamepad className={iconClass} />,
+    ecommerce: <FaShoppingCart className={iconClass} />,
+    maintenance: <FaWrench className={iconClass} />,
+    consulting: <FaUserTie className={iconClass} />,
+    design: <FaPaintBrush className={iconClass} />,
+    marketing: <FaBullhorn className={iconClass} />,
+    seo: <FaSearch className={iconClass} />,
+    hosting: <FaServer className={iconClass} />,
+    ai: <FaRobot className={iconClass} />,
+    chatbot: <FaComments className={iconClass} />,
+    automation: <FaCogs className={iconClass} />,
+    callcenter: <FaHeadset className={iconClass} />,
+    crm: <FaDatabase className={iconClass} />,
+    erp: <FaProjectDiagram className={iconClass} />,
+    api_integration: <FaPlug className={iconClass} />,
+    data_analytics: <FaChartBar className={iconClass} />,
+    cybersecurity: <FaShieldAlt className={iconClass} />,
+    cloud: <FaCloud className={iconClass} />,
+    other: <FaFolder className={iconClass} />,
+  };
+  return icons[type || 'other'] || <FaFolder className={iconClass} />;
 }
 
 function getStatusLabel(status: string, t: any): string {
@@ -1877,6 +2166,16 @@ function getStatusLabel(status: string, t: any): string {
     cancelled: t.projects.statusCancelled,
   };
   return labels[status] || status;
+}
+
+function getPaymentTypeLabel(paymentType: string, t: any): string {
+  const labels: Record<string, string> = {
+    one_time: t.projects.oneTime,
+    monthly: t.projects.monthly,
+    annual: t.projects.annual,
+    milestone: t.projects.milestone,
+  };
+  return labels[paymentType] || paymentType;
 }
 
 function formatCurrency(amount: number, currency: string): string {

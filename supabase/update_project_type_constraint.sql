@@ -17,6 +17,16 @@ ALTER TABLE projects ADD CONSTRAINT projects_project_type_check
     'marketing',
     'seo',
     'hosting',
+    'ai',
+    'chatbot',
+    'automation',
+    'callcenter',
+    'crm',
+    'erp',
+    'api_integration',
+    'data_analytics',
+    'cybersecurity',
+    'cloud',
     'other'
   ));
 
@@ -35,5 +45,15 @@ ALTER TABLE internal_projects ADD CONSTRAINT internal_projects_project_type_chec
     'marketing',
     'seo',
     'hosting',
+    'ai',
+    'chatbot',
+    'automation',
+    'callcenter',
+    'crm',
+    'erp',
+    'api_integration',
+    'data_analytics',
+    'cybersecurity',
+    'cloud',
     'other'
   ));
