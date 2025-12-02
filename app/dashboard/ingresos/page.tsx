@@ -165,7 +165,7 @@ export default function IngresosPage() {
     return (
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
-          <p className="text-gray-500">{t.common.loading}...</p>
+          <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
         </div>
       </div>
     );
@@ -175,8 +175,8 @@ export default function IngresosPage() {
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900">{t.income.title}</h1>
-          <p className="text-gray-600 mt-2">{t.income.subtitle}</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{t.income.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">{t.income.subtitle}</p>
         </div>
         <button
           onClick={openAddModal}
@@ -187,62 +187,62 @@ export default function IngresosPage() {
       </div>
 
       {/* Pagos Únicos */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">{t.income.oneTimePayments}</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.income.oneTimePayments}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.client}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.service}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.category}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.amount}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.paymentDate}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.status}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.actions}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.client}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.service}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.category}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.paymentDate}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {oneTimeIncomes.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-400">
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                     {t.income.noOneTimePayments}
                   </td>
                 </tr>
               ) : (
                 oneTimeIncomes.map((income) => (
-                  <tr key={income.id} className="hover:bg-gray-50">
+                  <tr key={income.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="font-medium text-gray-900">{getClientName(income.client_id)}</p>
+                      <p className="font-medium text-gray-900 dark:text-white">{getClientName(income.client_id)}</p>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{income.service_name}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{income.service_name}</p>
                         {income.description && (
-                          <p className="text-sm text-gray-500">{income.description}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{income.description}</p>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">{income.category || '-'}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{income.category || '-'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-lg font-bold text-blue-600">
+                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
                         {income.currency} {income.amount.toFixed(2)}
                       </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         {income.payment_date ? new Date(income.payment_date).toLocaleDateString('es-ES') : '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        income.status === 'paid' ? 'bg-green-100 text-green-800' :
-                        income.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
+                        income.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                        income.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
                         {income.status === 'paid' ? t.expenses.paid : income.status === 'pending' ? t.expenses.pending : t.expenses.upcoming}
                       </span>
@@ -256,7 +256,7 @@ export default function IngresosPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(income.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-700"
                       >
                         {t.common.delete}
                       </button>
@@ -270,56 +270,56 @@ export default function IngresosPage() {
       </div>
 
       {/* Ingresos Mensuales */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">{t.income.monthlyIncome}</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.income.monthlyIncome}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.client}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.service}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.category}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.amount}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.status}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.actions}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.client}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.service}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.category}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {monthlyIncomes.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                     {t.income.noMonthlyIncome}
                   </td>
                 </tr>
               ) : (
                 monthlyIncomes.map((income) => (
-                  <tr key={income.id} className="hover:bg-gray-50">
+                  <tr key={income.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="font-medium text-gray-900">{getClientName(income.client_id)}</p>
+                      <p className="font-medium text-gray-900 dark:text-white">{getClientName(income.client_id)}</p>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{income.service_name}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{income.service_name}</p>
                         {income.description && (
-                          <p className="text-sm text-gray-500">{income.description}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{income.description}</p>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">{income.category || '-'}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{income.category || '-'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-lg font-bold text-green-600">
+                      <p className="text-lg font-bold text-green-600 dark:text-green-400">
                         {income.currency} {income.amount.toFixed(2)}
                       </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        income.status === 'paid' ? 'bg-green-100 text-green-800' :
-                        income.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
+                        income.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                        income.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
                         {income.status === 'paid' ? t.expenses.paid : income.status === 'pending' ? t.expenses.pending : t.expenses.upcoming}
                       </span>
@@ -333,7 +333,7 @@ export default function IngresosPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(income.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-700"
                       >
                         {t.common.delete}
                       </button>
@@ -347,62 +347,62 @@ export default function IngresosPage() {
       </div>
 
       {/* Ingresos Anuales */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">{t.income.annualIncome}</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.income.annualIncome}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.client}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.service}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.category}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.amount}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.income.renewalDate}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.status}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.actions}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.client}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.service}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.category}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.income.renewalDate}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {annualIncomes.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-400">
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                     {t.income.noAnnualIncome}
                   </td>
                 </tr>
               ) : (
                 annualIncomes.map((income) => (
-                  <tr key={income.id} className="hover:bg-gray-50">
+                  <tr key={income.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="font-medium text-gray-900">{getClientName(income.client_id)}</p>
+                      <p className="font-medium text-gray-900 dark:text-white">{getClientName(income.client_id)}</p>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{income.service_name}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{income.service_name}</p>
                         {income.description && (
-                          <p className="text-sm text-gray-500">{income.description}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{income.description}</p>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">{income.category || '-'}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{income.category || '-'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-lg font-bold text-green-600">
+                      <p className="text-lg font-bold text-green-600 dark:text-green-400">
                         {income.currency} {income.amount.toFixed(2)}
                       </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         {income.renewal_date ? new Date(income.renewal_date).toLocaleDateString('es-ES') : '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        income.status === 'paid' ? 'bg-green-100 text-green-800' :
-                        income.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
+                        income.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                        income.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
                         {income.status === 'paid' ? t.expenses.paid : income.status === 'pending' ? t.expenses.pending : t.expenses.upcoming}
                       </span>
@@ -416,7 +416,7 @@ export default function IngresosPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(income.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-700"
                       >
                         {t.common.delete}
                       </button>
@@ -432,24 +432,24 @@ export default function IngresosPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {editingIncome ? t.common.edit + ' ' + t.income.title : t.income.addIncomeTitle}
               </h2>
-              <p className="text-gray-600 mt-1">{t.income.addIncomeSubtitle}</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{t.income.addIncomeSubtitle}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.income.client} *
                   </label>
                   <select
                     value={formData.client_id}
                     onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   >
                     <option value="">{t.forms.selectClient}</option>
@@ -462,34 +462,34 @@ export default function IngresosPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.income.serviceName} *
                   </label>
                   <input
                     type="text"
                     value={formData.service_name}
                     onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="Ej: Desarrollo web, Mantenimiento mensual..."
                     required
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.common.description}
                   </label>
                   <input
                     type="text"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.expenses.optionalDescription}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.common.amount} *
                   </label>
                   <input
@@ -497,7 +497,7 @@ export default function IngresosPage() {
                     step="0.01"
                     value={formData.amount}
                     onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0.00"
                     required
                     min="0"
@@ -505,13 +505,13 @@ export default function IngresosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.common.currency}
                   </label>
                   <select
                     value={formData.currency}
                     onChange={(e) => setFormData({ ...formData, currency: e.target.value as Currency })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -520,13 +520,13 @@ export default function IngresosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.income.frequency}
                   </label>
                   <select
                     value={formData.frequency}
                     onChange={(e) => setFormData({ ...formData, frequency: e.target.value as 'one_time' | 'monthly' | 'annual' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="one_time">{t.income.oneTime}</option>
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -535,13 +535,13 @@ export default function IngresosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.income.category}
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as IncomeCategory | '' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.expenses.noCategory}</option>
                     <option value="web_development">{t.income.webDevelopment}</option>
@@ -555,13 +555,13 @@ export default function IngresosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.common.status}
                   </label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="paid">{t.expenses.paid}</option>
                     <option value="pending">{t.expenses.pending}</option>
@@ -570,27 +570,27 @@ export default function IngresosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.income.paymentDate}
                   </label>
                   <input
                     type="date"
                     value={formData.payment_date}
                     onChange={(e) => setFormData({ ...formData, payment_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
 
                 {(formData.frequency === 'monthly' || formData.frequency === 'annual') && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.income.renewalDate}
                     </label>
                     <input
                       type="date"
                       value={formData.renewal_date}
                       onChange={(e) => setFormData({ ...formData, renewal_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                 )}
@@ -606,7 +606,7 @@ export default function IngresosPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}
                 </button>

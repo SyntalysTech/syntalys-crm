@@ -12,9 +12,20 @@ export interface Translations {
     expenses: string;
     income: string;
     stats: string;
+    passwords: string;
+    settings: string;
     users: string;
     reports: string;
     logout: string;
+  };
+
+  // Sidebar categories
+  sidebar: {
+    general: string;
+    business: string;
+    finance: string;
+    tools: string;
+    admin: string;
   };
 
   // Common
@@ -359,6 +370,60 @@ export interface Translations {
     noDataAvailable: string;
     selectFilters: string;
   };
+
+  // Password Manager
+  passwords: {
+    title: string;
+    subtitle: string;
+    addPassword: string;
+    addPasswordSubtitle: string;
+    editPassword: string;
+    totalPasswords: string;
+    workAccounts: string;
+    personalAccounts: string;
+    bankingAccounts: string;
+    noPasswords: string;
+    createFirst: string;
+    searchPlaceholder: string;
+    allCategories: string;
+    serviceName: string;
+    serviceNamePlaceholder: string;
+    username: string;
+    usernamePlaceholder: string;
+    password: string;
+    generate: string;
+    category: string;
+    notesPlaceholder: string;
+    copy: string;
+    show: string;
+    hide: string;
+    view: string;
+    createdAt: string;
+    // Categories
+    categoryWork: string;
+    categoryPersonal: string;
+    categorySocial: string;
+    categoryBanking: string;
+    categoryEmail: string;
+    categoryHosting: string;
+    categoryDevelopment: string;
+    categoryOther: string;
+  };
+
+  // Settings
+  settings: {
+    description: string;
+    appearance: string;
+    theme: string;
+    lightMode: string;
+    lightModeDesc: string;
+    darkMode: string;
+    darkModeDesc: string;
+    language: string;
+    languageDesc: string;
+    spanish: string;
+    french: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -370,9 +435,18 @@ export const translations: Record<Language, Translations> = {
       expenses: 'Gastos',
       income: 'Ingresos',
       stats: 'Estadísticas',
+      passwords: 'Contraseñas',
+      settings: 'Ajustes',
       users: 'Usuarios',
       reports: 'Reportes',
       logout: 'Cerrar Sesión',
+    },
+    sidebar: {
+      general: 'General',
+      business: 'Negocio',
+      finance: 'Finanzas',
+      tools: 'Herramientas',
+      admin: 'Administración',
     },
     common: {
       add: 'Agregar',
@@ -689,6 +763,55 @@ export const translations: Record<Language, Translations> = {
       noDataAvailable: 'No hay datos disponibles',
       selectFilters: 'Selecciona diferentes filtros o agrega datos en las secciones correspondientes',
     },
+    passwords: {
+      title: 'Gestor de Contraseñas',
+      subtitle: 'Administra tus cuentas y contraseñas de forma segura',
+      addPassword: 'Agregar Contraseña',
+      addPasswordSubtitle: 'Guarda una nueva cuenta de forma segura',
+      editPassword: 'Editar Contraseña',
+      totalPasswords: 'Total de Contraseñas',
+      workAccounts: 'Cuentas de Trabajo',
+      personalAccounts: 'Cuentas Personales',
+      bankingAccounts: 'Cuentas Bancarias',
+      noPasswords: 'No hay contraseñas guardadas aún',
+      createFirst: 'Agregar primera contraseña',
+      searchPlaceholder: 'Buscar por servicio, usuario o email...',
+      allCategories: 'Todas las categorías',
+      serviceName: 'Nombre del Servicio',
+      serviceNamePlaceholder: 'Ej: Google, Netflix, Banco...',
+      username: 'Usuario',
+      usernamePlaceholder: 'Tu nombre de usuario',
+      password: 'Contraseña',
+      generate: 'Generar',
+      category: 'Categoría',
+      notesPlaceholder: 'Notas adicionales sobre esta cuenta...',
+      copy: 'Copiar',
+      show: 'Mostrar',
+      hide: 'Ocultar',
+      view: 'Ver',
+      createdAt: 'Creado el',
+      categoryWork: 'Trabajo',
+      categoryPersonal: 'Personal',
+      categorySocial: 'Redes Sociales',
+      categoryBanking: 'Banca',
+      categoryEmail: 'Email',
+      categoryHosting: 'Hosting',
+      categoryDevelopment: 'Desarrollo',
+      categoryOther: 'Otro',
+    },
+    settings: {
+      description: 'Configura las preferencias de tu cuenta',
+      appearance: 'Apariencia',
+      theme: 'Tema',
+      lightMode: 'Modo Claro',
+      lightModeDesc: 'Fondo blanco, texto oscuro',
+      darkMode: 'Modo Oscuro',
+      darkModeDesc: 'Fondo oscuro, texto claro',
+      language: 'Idioma',
+      languageDesc: 'Selecciona el idioma de la interfaz',
+      spanish: 'Español',
+      french: 'Français',
+    },
   },
   fr: {
     nav: {
@@ -698,9 +821,18 @@ export const translations: Record<Language, Translations> = {
       expenses: 'Dépenses',
       income: 'Revenus',
       stats: 'Statistiques',
+      passwords: 'Mots de passe',
+      settings: 'Paramètres',
       users: 'Utilisateurs',
       reports: 'Rapports',
       logout: 'Déconnexion',
+    },
+    sidebar: {
+      general: 'Général',
+      business: 'Affaires',
+      finance: 'Finances',
+      tools: 'Outils',
+      admin: 'Administration',
     },
     common: {
       add: 'Ajouter',
@@ -1016,6 +1148,55 @@ export const translations: Record<Language, Translations> = {
       totalOf: 'Total de',
       noDataAvailable: 'Aucune donnée disponible',
       selectFilters: 'Sélectionnez différents filtres ou ajoutez des données dans les sections correspondantes',
+    },
+    passwords: {
+      title: 'Gestionnaire de Mots de Passe',
+      subtitle: 'Gérez vos comptes et mots de passe en toute sécurité',
+      addPassword: 'Ajouter un Mot de Passe',
+      addPasswordSubtitle: 'Enregistrer un nouveau compte en toute sécurité',
+      editPassword: 'Modifier le Mot de Passe',
+      totalPasswords: 'Total des Mots de Passe',
+      workAccounts: 'Comptes Professionnels',
+      personalAccounts: 'Comptes Personnels',
+      bankingAccounts: 'Comptes Bancaires',
+      noPasswords: 'Aucun mot de passe enregistré pour le moment',
+      createFirst: 'Ajouter le premier mot de passe',
+      searchPlaceholder: 'Rechercher par service, utilisateur ou email...',
+      allCategories: 'Toutes les catégories',
+      serviceName: 'Nom du Service',
+      serviceNamePlaceholder: 'Ex: Google, Netflix, Banque...',
+      username: 'Nom d\'utilisateur',
+      usernamePlaceholder: 'Votre nom d\'utilisateur',
+      password: 'Mot de passe',
+      generate: 'Générer',
+      category: 'Catégorie',
+      notesPlaceholder: 'Notes supplémentaires sur ce compte...',
+      copy: 'Copier',
+      show: 'Afficher',
+      hide: 'Masquer',
+      view: 'Voir',
+      createdAt: 'Créé le',
+      categoryWork: 'Travail',
+      categoryPersonal: 'Personnel',
+      categorySocial: 'Réseaux Sociaux',
+      categoryBanking: 'Banque',
+      categoryEmail: 'Email',
+      categoryHosting: 'Hébergement',
+      categoryDevelopment: 'Développement',
+      categoryOther: 'Autre',
+    },
+    settings: {
+      description: 'Configurez les préférences de votre compte',
+      appearance: 'Apparence',
+      theme: 'Thème',
+      lightMode: 'Mode Clair',
+      lightModeDesc: 'Fond blanc, texte sombre',
+      darkMode: 'Mode Sombre',
+      darkModeDesc: 'Fond sombre, texte clair',
+      language: 'Langue',
+      languageDesc: 'Sélectionnez la langue de l\'interface',
+      spanish: 'Español',
+      french: 'Français',
     },
   },
 };

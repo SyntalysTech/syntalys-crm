@@ -161,18 +161,18 @@ export default function EstadisticasPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t.stats.title}</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t.stats.title}</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
           {t.stats.subtitle}
         </p>
       </div>
 
       {/* Controles */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Selector de tipo de datos */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t.stats.dataType}
             </label>
             <select
@@ -185,7 +185,7 @@ export default function EstadisticasPage() {
                   setPeriod('one_time');
                 }
               }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="client_income">{t.stats.clientIncome}</option>
               <option value="projects">{t.nav.projects}</option>
@@ -196,13 +196,13 @@ export default function EstadisticasPage() {
 
           {/* Selector de período */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t.stats.period}
             </label>
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value as Period)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               {dataType === 'projects' ? (
                 <>
@@ -221,13 +221,13 @@ export default function EstadisticasPage() {
 
           {/* Selector de tipo de gráfico */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t.stats.chartType}
             </label>
             <select
               value={chartType}
               onChange={(e) => setChartType(e.target.value as ChartType)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-syntalys-blue focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="bar">{t.stats.bars}</option>
               <option value="line">{t.stats.lines}</option>
@@ -239,48 +239,48 @@ export default function EstadisticasPage() {
 
       {/* Resumen rápido */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">{t.common.total}</h3>
-          <p className="text-3xl font-bold text-syntalys-blue">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{t.common.total}</h3>
+          <p className="text-3xl font-bold text-syntalys-blue dark:text-blue-400">
             {totalAmount.toFixed(2)} CHF
           </p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             {dataTypeLabels[dataType]} {periodLabels[period]}
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">{t.stats.average}</h3>
-          <p className="text-3xl font-bold text-green-600">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{t.stats.average}</h3>
+          <p className="text-3xl font-bold text-green-600 dark:text-green-400">
             {monthlyData.length > 0 ? (totalAmount / monthlyData.length).toFixed(2) : '0.00'} CHF
           </p>
-          <p className="text-xs text-gray-500 mt-1">{t.stats.perPeriod}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.stats.perPeriod}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">{t.stats.records}</h3>
-          <p className="text-3xl font-bold text-purple-600">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{t.stats.records}</h3>
+          <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
             {getCurrentData().length}
           </p>
-          <p className="text-xs text-gray-500 mt-1">{t.stats.totalOf} {periodLabels[period]}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t.stats.totalOf} {periodLabels[period]}</p>
         </div>
       </div>
 
       {/* Gráfico principal */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
           {dataTypeLabels[dataType]} - {periodLabels[period]}
         </h2>
 
         {loading ? (
           <div className="flex items-center justify-center h-96">
-            <p className="text-gray-500">{t.common.loading}...</p>
+            <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
           </div>
         ) : monthlyData.length === 0 ? (
-          <div className="flex items-center justify-center h-96 border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="flex items-center justify-center h-96 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
             <div className="text-center">
-              <p className="text-gray-500 text-lg mb-2">{t.stats.noDataAvailable}</p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">{t.stats.noDataAvailable}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">
                 {t.stats.selectFilters}
               </p>
             </div>
@@ -622,10 +622,10 @@ function PieChart({ data }: { data: { category: string; amount: number }[] }) {
               style={{ backgroundColor: colors[index % colors.length] }}
             />
             <div className="text-sm">
-              <span className="font-medium">
+              <span className="font-medium text-gray-900 dark:text-white">
                 {categoryLabels[item.category] || item.category}
               </span>
-              <span className="text-gray-600 ml-2">
+              <span className="text-gray-600 dark:text-gray-400 ml-2">
                 {item.amount.toFixed(2)} CHF
               </span>
             </div>

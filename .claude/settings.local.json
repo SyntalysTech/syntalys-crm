@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nRemove statistics cards from all pages except Dashboard and Statistics\n\n- Remove stats cards from Clients page (total clients, expenses, income, profit)\n- Remove stats columns from Clients table (expenses, income, profit per client)\n- Simplify Clients data loading - no longer loads expenses/income/projects\n- Remove stats cards from Projects page (total, active, paused, completed, values)\n- Remove stats cards from Expenses page (company and client expense totals)\n- Remove client expense totals in expenses by client section\n- Remove stats cards from Income page (one-time, monthly, annual totals)\n\nStatistics are now ONLY shown in:\n1. Dashboard - main overview with all financial data\n2. Statistics page - detailed charts and graphs\n\nThis simplifies the UI and centralizes all statistics in dedicated pages.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

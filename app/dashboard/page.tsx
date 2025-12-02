@@ -109,12 +109,12 @@ export default function DashboardPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           {t.dashboard.welcome}, {profile?.full_name || profile?.email || '-'}
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
           {t.dashboard.connectedAs}{' '}
-          <span className="font-semibold text-syntalys-blue">
+          <span className="font-semibold text-syntalys-blue dark:text-blue-400">
             {profile?.role === 'super_admin' && t.dashboard.superAdmin}
             {profile?.role === 'admin' && t.dashboard.admin}
             {profile?.role === 'gestor' && t.dashboard.manager}
@@ -154,23 +154,23 @@ export default function DashboardPage() {
       {/* Resumen financiero */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Ingresos */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4 text-green-700">{t.income.title}</h2>
-          <p className="text-gray-600 mb-4">{t.income.subtitle}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4 text-green-700 dark:text-green-400">{t.income.title}</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{t.income.subtitle}</p>
           {loading ? (
             <div className="mt-6 text-center py-12">
-              <p className="text-gray-500">{t.common.loading}...</p>
+              <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
             </div>
           ) : stats.totalIncome > 0 ? (
             <div className="mt-6">
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="border-l-4 border-green-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 mb-1">{t.dashboard.monthly}</h3>
-                  <p className="text-2xl font-bold text-green-600">{stats.monthlyIncome.toFixed(2)} CHF</p>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.monthly}</h3>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.monthlyIncome.toFixed(2)} CHF</p>
                 </div>
                 <div className="border-l-4 border-emerald-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 mb-1">{t.dashboard.annualProjection}</h3>
-                  <p className="text-2xl font-bold text-emerald-600">{stats.yearlyIncomeProjected.toFixed(2)} CHF</p>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.annualProjection}</h3>
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.yearlyIncomeProjected.toFixed(2)} CHF</p>
                 </div>
               </div>
               <a
@@ -181,30 +181,30 @@ export default function DashboardPage() {
               </a>
             </div>
           ) : (
-            <div className="mt-6 text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
-              <p className="text-gray-500">{t.dashboard.noIncome}</p>
+            <div className="mt-6 text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-lg">
+              <p className="text-gray-500 dark:text-gray-400">{t.dashboard.noIncome}</p>
             </div>
           )}
         </div>
 
         {/* Gastos */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4 text-red-700">{t.dashboard.expensesSummary}</h2>
-          <p className="text-gray-600 mb-4">{t.dashboard.expensesSummarySubtitle}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4 text-red-700 dark:text-red-400">{t.dashboard.expensesSummary}</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{t.dashboard.expensesSummarySubtitle}</p>
           {loading ? (
             <div className="mt-6 text-center py-12">
-              <p className="text-gray-500">{t.common.loading}...</p>
+              <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
             </div>
           ) : stats.totalExpenses > 0 ? (
             <div className="mt-6">
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="border-l-4 border-red-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 mb-1">{t.dashboard.monthly}</h3>
-                  <p className="text-2xl font-bold text-red-600">{stats.monthlyExpenses.toFixed(2)} CHF</p>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.monthly}</h3>
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.monthlyExpenses.toFixed(2)} CHF</p>
                 </div>
                 <div className="border-l-4 border-orange-500 pl-4">
-                  <h3 className="text-sm font-medium text-gray-600 mb-1">{t.dashboard.annualProjection}</h3>
-                  <p className="text-2xl font-bold text-orange-600">{stats.yearlyExpensesProjected.toFixed(2)} CHF</p>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.dashboard.annualProjection}</h3>
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.yearlyExpensesProjected.toFixed(2)} CHF</p>
                 </div>
               </div>
               <a
@@ -215,33 +215,33 @@ export default function DashboardPage() {
               </a>
             </div>
           ) : (
-            <div className="mt-6 text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
-              <p className="text-gray-500">{t.dashboard.noExpenses}</p>
-              <p className="text-sm text-gray-400 mt-2">{t.dashboard.noExpensesSubtitle}</p>
+            <div className="mt-6 text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-lg">
+              <p className="text-gray-500 dark:text-gray-400">{t.dashboard.noExpenses}</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">{t.dashboard.noExpensesSubtitle}</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Beneficio / Margen */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">{t.dashboard.projectedAnnualProfit}</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{t.dashboard.projectedAnnualProfit}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-4 bg-green-50 rounded-lg">
-            <p className="text-sm text-gray-600 mb-2">{t.dashboard.annualIncome}</p>
-            <p className="text-3xl font-bold text-green-600">
+          <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t.dashboard.annualIncome}</p>
+            <p className="text-3xl font-bold text-green-600 dark:text-green-400">
               {loading ? '...' : `${stats.yearlyIncomeProjected.toFixed(2)} CHF`}
             </p>
           </div>
-          <div className="text-center p-4 bg-red-50 rounded-lg">
-            <p className="text-sm text-gray-600 mb-2">{t.dashboard.annualExpense}</p>
-            <p className="text-3xl font-bold text-red-600">
+          <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t.dashboard.annualExpense}</p>
+            <p className="text-3xl font-bold text-red-600 dark:text-red-400">
               {loading ? '...' : `${stats.yearlyExpensesProjected.toFixed(2)} CHF`}
             </p>
           </div>
-          <div className="text-center p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-gray-600 mb-2">{t.dashboard.netProfit}</p>
-            <p className={`text-3xl font-bold ${(stats.yearlyIncomeProjected - stats.yearlyExpensesProjected) >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+          <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t.dashboard.netProfit}</p>
+            <p className={`text-3xl font-bold ${(stats.yearlyIncomeProjected - stats.yearlyExpensesProjected) >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
               {loading ? '...' : `${(stats.yearlyIncomeProjected - stats.yearlyExpensesProjected).toFixed(2)} CHF`}
             </p>
           </div>
@@ -263,13 +263,13 @@ function StatsCard({
   color: string;
 }) {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-gray-600 text-sm">{title}</p>
-          <p className="text-2xl font-bold mt-1">{value}</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">{title}</p>
+          <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">{value}</p>
           {subtitle && (
-            <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>
           )}
         </div>
         <div className={`${color} w-12 h-12 rounded-full flex-shrink-0`}></div>

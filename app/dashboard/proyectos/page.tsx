@@ -286,7 +286,7 @@ export default function ProyectosPage() {
     return (
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
-          <p className="text-gray-500">{t.common.loading}...</p>
+          <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
         </div>
       </div>
     );
@@ -296,8 +296,8 @@ export default function ProyectosPage() {
     <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t.projects.title}</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t.projects.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             {t.projects.subtitle}
           </p>
         </div>
@@ -311,8 +311,8 @@ export default function ProyectosPage() {
 
       {/* Lista de proyectos */}
       {projects.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <p className="text-gray-500 mb-4">{t.projects.noProjects}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">{t.projects.noProjects}</p>
           <button
             onClick={openAddModal}
             className="bg-syntalys-blue text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
@@ -321,66 +321,66 @@ export default function ProyectosPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.projects.projectName}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.projects.client}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.forms.companyName}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.projects.type}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.status}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.forms.value}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.forms.dates}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.actions}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.projects.projectName}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.projects.client}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.forms.companyName}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.projects.type}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.forms.value}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.forms.dates}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {projects.map((project) => (
-                  <tr key={project.id} className="hover:bg-gray-50">
+                  <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{project.project_name}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{project.project_name}</div>
                         {project.description && (
-                          <div className="text-sm text-gray-500">{project.description}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{project.description}</div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">{project.client?.name || 'N/A'}</span>
+                      <span className="text-sm text-gray-900 dark:text-white">{project.client?.name || 'N/A'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">{project.company_name || '-'}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{project.company_name || '-'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         {project.project_type ? getProjectTypeLabel(project.project_type, t) : '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        project.status === 'active' ? 'bg-green-100 text-green-800' :
-                        project.status === 'completed' ? 'bg-blue-100 text-blue-800' :
-                        project.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
+                        project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                        project.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
+                        project.status === 'paused' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
                         {getStatusLabel(project.status, t)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-semibold text-gray-900">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
                         {project.total_amount ? `${project.total_amount.toFixed(2)} ${project.currency}` : '-'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                       {project.start_date ? new Date(project.start_date).toLocaleDateString('es-ES') : 'N/A'}
                       {project.end_date && ` - ${new Date(project.end_date).toLocaleDateString('es-ES')}`}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
                         onClick={() => openEditModal(project)}
-                        className="text-syntalys-blue hover:text-blue-700 mr-3"
+                        className="text-syntalys-blue dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mr-3"
                       >
                         {t.common.edit}
                       </button>
@@ -402,22 +402,22 @@ export default function ProyectosPage() {
       {/* Modal Agregar/Editar Proyecto */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {editingProject ? t.projects.editProject : t.projects.addProject}
               </h2>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.projects.client} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.client_id}
                     onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.forms.selectClient}</option>
                     {clients.map((client) => (
@@ -427,48 +427,48 @@ export default function ProyectosPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.forms.companyName}
                   </label>
                   <input
                     type="text"
                     value={formData.company_name}
                     onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.clients.companyName}
                   />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.projects.projectName} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.project_name}
                     onChange={(e) => setFormData({ ...formData, project_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.forms.projectPlaceholder}
                   />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.description}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.description}</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     rows={3}
                     placeholder={t.forms.descriptionPlaceholder}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.projects.type}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.type}</label>
                   <select
                     value={formData.project_type}
                     onChange={(e) => setFormData({ ...formData, project_type: e.target.value as ProjectType | '' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.forms.notSpecified}</option>
                     <option value="web_development">{t.projects.webDevelopment}</option>
@@ -482,11 +482,11 @@ export default function ProyectosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.status}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.status}</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as ProjectStatus })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="active">{t.projects.statusActive}</option>
                     <option value="completed">{t.projects.statusCompleted}</option>
@@ -496,43 +496,43 @@ export default function ProyectosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.projects.startDate}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.startDate}</label>
                   <input
                     type="date"
                     value={formData.start_date}
                     onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.projects.endDate}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.endDate}</label>
                   <input
                     type="date"
                     value={formData.end_date}
                     onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.projects.totalAmount}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.totalAmount}</label>
                   <input
                     type="number"
                     step="0.01"
                     value={formData.total_amount}
                     onChange={(e) => setFormData({ ...formData, total_amount: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0.00"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.currency}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.currency}</label>
                   <select
                     value={formData.currency}
                     onChange={(e) => setFormData({ ...formData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -541,11 +541,11 @@ export default function ProyectosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.projects.paymentType}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.projects.paymentType}</label>
                   <select
                     value={formData.payment_type}
                     onChange={(e) => setFormData({ ...formData, payment_type: e.target.value as PaymentType | '' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.forms.notSpecified}</option>
                     <option value="one_time">{t.projects.oneTime}</option>
@@ -556,24 +556,24 @@ export default function ProyectosPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.notes}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.notes}</label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     rows={2}
                     placeholder={t.forms.notesPlaceholder}
                   />
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
               <button
                 onClick={() => {
                   setShowModal(false);
                   setEditingProject(null);
                 }}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 {t.common.cancel}
               </button>

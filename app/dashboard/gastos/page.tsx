@@ -246,7 +246,7 @@ export default function GastosPage() {
     return (
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
-          <p className="text-gray-500">{t.common.loading}...</p>
+          <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
         </div>
       </div>
     );
@@ -256,8 +256,8 @@ export default function GastosPage() {
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900">{t.expenses.title}</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{t.expenses.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             {t.expenses.subtitle}
           </p>
         </div>
@@ -281,14 +281,14 @@ export default function GastosPage() {
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex space-x-8">
           <button
             onClick={() => setActiveTab('empresa')}
             className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'empresa'
                 ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
             }`}
           >
             {t.expenses.companyExpensesTab}
@@ -298,7 +298,7 @@ export default function GastosPage() {
             className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'clientes'
                 ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
             }`}
           >
             {t.expenses.clientExpensesTab}
@@ -310,43 +310,43 @@ export default function GastosPage() {
       {activeTab === 'empresa' ? (
         <div>
           {/* Gastos Mensuales */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">{t.expenses.monthlyExpenses}</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.expenses.monthlyExpenses}</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.expenses.service}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.expenses.category}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.amount}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.status}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.service}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.category}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {monthlyExpenses.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
+                      <td colSpan={4} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                         {t.expenses.noMonthlyExpenses}
                       </td>
                     </tr>
                   ) : (
                     monthlyExpenses.map((expense) => (
-                      <tr key={expense.id} className="hover:bg-gray-50">
+                      <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900">{expense.service_name}</div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                             {expense.description && (
-                              <div className="text-sm text-gray-500">{expense.description}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{expense.description}</div>
                             )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600">{expense.category || '-'}</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-300">{expense.category || '-'}</span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-semibold text-gray-900">
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
                             {expense.currency} {Number(expense.amount).toFixed(2)}
                           </span>
                         </td>
@@ -355,9 +355,9 @@ export default function GastosPage() {
                             value={expense.status}
                             onChange={(e) => updateExpenseStatus(expense.id, e.target.value as 'paid' | 'pending' | 'upcoming')}
                             className={`px-3 py-1 text-xs font-semibold rounded-full border-0 cursor-pointer ${
-                              expense.status === 'paid' ? 'bg-green-100 text-green-800' :
-                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
+                              expense.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                             }`}
                           >
                             <option value="paid">{t.expenses.paid}</option>
@@ -374,49 +374,49 @@ export default function GastosPage() {
           </div>
 
           {/* Gastos Anuales */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">{t.expenses.annualExpenses}</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.expenses.annualExpenses}</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.expenses.service}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.expenses.category}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.amount}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.expenses.renewal}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t.common.status}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.service}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.category}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.renewal}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {annualExpenses.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-400">
+                      <td colSpan={5} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                         {t.expenses.noAnnualExpenses}
                       </td>
                     </tr>
                   ) : (
                     annualExpenses.map((expense) => (
-                      <tr key={expense.id} className="hover:bg-gray-50">
+                      <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900">{expense.service_name}</div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                             {expense.description && (
-                              <div className="text-sm text-gray-500">{expense.description}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{expense.description}</div>
                             )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600">{expense.category || '-'}</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-300">{expense.category || '-'}</span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-semibold text-gray-900">
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
                             {expense.currency} {Number(expense.amount).toFixed(2)}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-gray-600 dark:text-gray-300">
                             {expense.renewal_date ? new Date(expense.renewal_date).toLocaleDateString('es-ES') : '-'}
                           </span>
                         </td>
@@ -425,9 +425,9 @@ export default function GastosPage() {
                             value={expense.status}
                             onChange={(e) => updateExpenseStatus(expense.id, e.target.value as 'paid' | 'pending' | 'upcoming')}
                             className={`px-3 py-1 text-xs font-semibold rounded-full border-0 cursor-pointer ${
-                              expense.status === 'paid' ? 'bg-green-100 text-green-800' :
-                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
+                              expense.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                             }`}
                           >
                             <option value="paid">{t.expenses.paid}</option>
@@ -446,47 +446,47 @@ export default function GastosPage() {
       ) : (
         <div>
           {/* Lista de clientes */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">{t.expenses.expensesByClient} ({clients.length})</h2>
-              <p className="text-sm text-gray-600 mt-1">{t.expenses.expensesByClientSubtitle}</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.expenses.expensesByClient} ({clients.length})</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t.expenses.expensesByClientSubtitle}</p>
             </div>
             {clients.length === 0 ? (
-              <div className="p-12 text-center text-gray-400">
+              <div className="p-12 text-center text-gray-400 dark:text-gray-500">
                 {t.expenses.noClientsRegistered}
               </div>
             ) : (
-              <div className="divide-y divide-gray-200">
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 {clients.map((client) => (
                   <div key={client.id} className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{client.name}</h3>
-                        <p className="text-sm text-gray-500">{client.email || '-'}</p>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{client.name}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{client.email || '-'}</p>
                       </div>
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-700 mb-3">{t.expenses.theirExpenses}</h4>
-                      <p className="text-xs text-gray-500 mb-3">{t.expenses.theirExpensesSubtitle}</p>
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{t.expenses.theirExpenses}</h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{t.expenses.theirExpensesSubtitle}</p>
                       {client.expenses && client.expenses.length > 0 ? (
                         <div className="space-y-2">
                           {client.expenses.map((expense) => (
-                            <div key={expense.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-l-4 border-orange-400">
+                            <div key={expense.id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-orange-400">
                               <div>
-                                <p className="font-medium text-gray-900">{expense.service_name}</p>
-                                <p className="text-xs text-gray-500">
+                                <p className="font-medium text-gray-900 dark:text-white">{expense.service_name}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
                                   {expense.frequency === 'monthly' ? t.expenses.monthly : t.expenses.annual} • {expense.category || t.expenses.noCategory}
                                 </p>
                               </div>
-                              <p className="text-lg font-bold text-orange-600">
+                              <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
                                 {expense.currency} {Number(expense.amount).toFixed(2)}
                               </p>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-400 p-4 bg-gray-50 rounded-lg text-center">{t.expenses.noClientExpenses}</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">{t.expenses.noClientExpenses}</p>
                       )}
                     </div>
                   </div>
@@ -500,38 +500,38 @@ export default function GastosPage() {
       {/* Modal Agregar Gasto de Empresa */}
       {showModal === 'company' && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">{t.expenses.addCompanyExpenseTitle}</h2>
-              <p className="text-gray-600 mt-1">{t.expenses.addCompanyExpenseSubtitle}</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.addCompanyExpenseTitle}</h2>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addCompanyExpenseSubtitle}</p>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); handleAddCompanyExpense(); }} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.expenses.serviceName} *
                   </label>
                   <input
                     type="text"
                     value={companyFormData.service_name}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, service_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="Ej: Claude Max, Vercel Pro..."
                     required
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.description}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.description}</label>
                   <input
                     type="text"
                     value={companyFormData.description}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.expenses.optionalDescription}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.common.amount} *
                   </label>
                   <input
@@ -539,18 +539,18 @@ export default function GastosPage() {
                     step="0.01"
                     value={companyFormData.amount}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0.00"
                     required
                     min="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.currency}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.currency}</label>
                   <select
                     value={companyFormData.currency}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -558,22 +558,22 @@ export default function GastosPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.expenses.frequency}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
                   <select
                     value={companyFormData.frequency}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as 'monthly' | 'annual' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="monthly">{t.expenses.monthly}</option>
                     <option value="annual">{t.expenses.annual}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.expenses.category}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.category}</label>
                   <select
                     value={companyFormData.category}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, category: e.target.value as ExpenseCategory | '' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.expenses.noCategory}</option>
                     <option value="software">{t.expenses.software}</option>
@@ -585,11 +585,11 @@ export default function GastosPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.status}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.status}</label>
                   <select
                     value={companyFormData.status}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="paid">{t.expenses.paid}</option>
                     <option value="pending">{t.expenses.pending}</option>
@@ -598,12 +598,12 @@ export default function GastosPage() {
                 </div>
                 {companyFormData.frequency === 'annual' && (
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t.expenses.renewalDate}</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.renewalDate}</label>
                     <input
                       type="date"
                       value={companyFormData.renewal_date}
                       onChange={(e) => setCompanyFormData({ ...companyFormData, renewal_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                 )}
@@ -618,7 +618,7 @@ export default function GastosPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(null)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}
                 </button>
@@ -631,21 +631,21 @@ export default function GastosPage() {
       {/* Modal Agregar Gasto de Cliente */}
       {showModal === 'client-expense' && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">{t.expenses.addClientExpenseTitle}</h2>
-              <p className="text-sm text-gray-600 mt-1">{t.expenses.addClientExpenseSubtitle}</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.addClientExpenseTitle}</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addClientExpenseSubtitle}</p>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); handleAddClientExpense(); }} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.expenses.client} *
                   </label>
                   <select
                     value={clientExpenseFormData.client_id}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, client_id: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   >
                     <option value="">{t.expenses.selectClient}</option>
@@ -655,30 +655,30 @@ export default function GastosPage() {
                   </select>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.expenses.serviceName} *
                   </label>
                   <input
                     type="text"
                     value={clientExpenseFormData.service_name}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, service_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="Ej: Dominio, Hosting, SSL..."
                     required
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.description}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.description}</label>
                   <input
                     type="text"
                     value={clientExpenseFormData.description}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.expenses.optionalDescription}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.common.amount} *
                   </label>
                   <input
@@ -686,18 +686,18 @@ export default function GastosPage() {
                     step="0.01"
                     value={clientExpenseFormData.amount}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0.00"
                     required
                     min="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.currency}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.currency}</label>
                   <select
                     value={clientExpenseFormData.currency}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -705,22 +705,22 @@ export default function GastosPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.expenses.frequency}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.frequency}</label>
                   <select
                     value={clientExpenseFormData.frequency}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as 'monthly' | 'annual' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="monthly">{t.expenses.monthly}</option>
                     <option value="annual">{t.expenses.annual}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.expenses.category}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.category}</label>
                   <select
                     value={clientExpenseFormData.category}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, category: e.target.value as ClientExpenseCategory | '' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.expenses.noCategory}</option>
                     <option value="domain">{t.expenses.domain}</option>
@@ -732,11 +732,11 @@ export default function GastosPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.common.status}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.common.status}</label>
                   <select
                     value={clientExpenseFormData.status}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="paid">{t.expenses.paid}</option>
                     <option value="pending">{t.expenses.pending}</option>
@@ -745,12 +745,12 @@ export default function GastosPage() {
                 </div>
                 {clientExpenseFormData.frequency === 'annual' && (
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t.expenses.renewalDate}</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.expenses.renewalDate}</label>
                     <input
                       type="date"
                       value={clientExpenseFormData.renewal_date}
                       onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, renewal_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                 )}
@@ -765,7 +765,7 @@ export default function GastosPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(null)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}
                 </button>

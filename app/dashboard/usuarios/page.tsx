@@ -205,7 +205,7 @@ export default function UsuariosPage() {
     return (
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
-          <p className="text-gray-500">{t.common.loading}...</p>
+          <p className="text-gray-500 dark:text-gray-400">{t.common.loading}...</p>
         </div>
       </div>
     );
@@ -219,8 +219,8 @@ export default function UsuariosPage() {
     <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t.users.title}</h1>
-          <p className="text-gray-600 mt-2">{t.users.subtitle}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t.users.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">{t.users.subtitle}</p>
         </div>
         <button
           onClick={openAddModal}
@@ -232,24 +232,24 @@ export default function UsuariosPage() {
 
       {/* Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.users.totalUsers}</h3>
-          <p className="text-3xl font-bold text-syntalys-blue">{users.length}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t.users.totalUsers}</h3>
+          <p className="text-3xl font-bold text-syntalys-blue dark:text-blue-400">{users.length}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.users.activeUsers}</h3>
-          <p className="text-3xl font-bold text-green-600">{activeUsers}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t.users.activeUsers}</h3>
+          <p className="text-3xl font-bold text-green-600 dark:text-green-400">{activeUsers}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{t.users.inactiveUsers}</h3>
-          <p className="text-3xl font-bold text-gray-600">{inactiveUsers}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t.users.inactiveUsers}</h3>
+          <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">{inactiveUsers}</p>
         </div>
       </div>
 
       {/* Lista de usuarios */}
       {users.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <p className="text-gray-500 mb-4">{t.users.noUsers}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">{t.users.noUsers}</p>
           <button
             onClick={openAddModal}
             className="bg-syntalys-blue text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
@@ -258,59 +258,59 @@ export default function UsuariosPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   {t.users.fullName}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   {t.users.email}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   {t.users.role}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   {t.common.status}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   {t.common.actions}
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-syntalys-blue rounded-full flex items-center justify-center text-white font-semibold">
                         {user.full_name?.charAt(0).toUpperCase() || user.email.charAt(0).toUpperCase()}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.full_name || '-'}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{user.full_name || '-'}</div>
                         {user.phone && (
-                          <div className="text-sm text-gray-500">{user.phone}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{user.phone}</div>
                         )}
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{user.email}</div>
+                    <div className="text-sm text-gray-900 dark:text-white">{user.email}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.role === 'super_admin' ? 'bg-purple-100 text-purple-800' :
-                      user.role === 'admin' ? 'bg-blue-100 text-blue-800' :
-                      user.role === 'gestor' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
+                      user.role === 'super_admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' :
+                      user.role === 'admin' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
+                      user.role === 'gestor' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                      'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                     }`}>
                       {getRoleLabel(user.role)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      user.active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
                     }`}>
                       {user.active ? t.users.userActive : t.users.userInactive}
                     </span>
@@ -318,7 +318,7 @@ export default function UsuariosPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
                       onClick={() => openEditModal(user)}
-                      className="text-syntalys-blue hover:text-blue-700 mr-4"
+                      className="text-syntalys-blue dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mr-4"
                     >
                       {t.common.edit}
                     </button>
@@ -341,26 +341,26 @@ export default function UsuariosPage() {
       {/* Modal Agregar/Editar Usuario */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {editingUser ? t.users.editUserTitle : t.users.addUserTitle}
               </h2>
-              <p className="text-gray-600 mt-1">{t.users.addUserSubtitle}</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{t.users.addUserSubtitle}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6">
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.users.email} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600"
                       placeholder={t.users.emailPlaceholder}
                       required
                       disabled={!!editingUser}
@@ -368,40 +368,40 @@ export default function UsuariosPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.users.fullName} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={formData.full_name}
                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder={t.users.namePlaceholder}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.users.phone}
                     </label>
                     <input
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder={t.users.phonePlaceholder}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.users.role} <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={formData.role}
                       onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       <option value="super_admin">{t.users.superAdmin}</option>
                       <option value="admin">{t.users.admin}</option>
@@ -411,7 +411,7 @@ export default function UsuariosPage() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.common.status}
                     </label>
                     <div className="flex items-center">
@@ -421,35 +421,35 @@ export default function UsuariosPage() {
                         onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                         className="h-4 w-4 text-syntalys-blue focus:ring-syntalys-blue border-gray-300 rounded"
                       />
-                      <label className="ml-2 block text-sm text-gray-900">
+                      <label className="ml-2 block text-sm text-gray-900 dark:text-white">
                         {t.users.userActive}
                       </label>
                     </div>
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {editingUser ? t.users.passwordNote : `${t.users.passwordPlaceholder} *`}
                     </label>
                     <input
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-syntalys-blue bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder={t.users.passwordPlaceholder}
                       required={!editingUser}
                       minLength={6}
                     />
                     {editingUser && (
-                      <p className="mt-1 text-sm text-gray-500">{t.users.passwordNote}</p>
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t.users.passwordNote}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Descripción del rol */}
-                <div className="bg-blue-50 p-4 rounded-md">
-                  <h4 className="text-sm font-semibold text-blue-900 mb-2">{t.users.roleDescription}:</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
+                <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-md">
+                  <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">{t.users.roleDescription}:</h4>
+                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                     <li><strong>{t.users.superAdmin}:</strong> {t.users.superAdminDesc}</li>
                     <li><strong>{t.users.admin}:</strong> {t.users.adminDesc}</li>
                     <li><strong>{t.users.manager}:</strong> {t.users.managerDesc}</li>
@@ -462,7 +462,7 @@ export default function UsuariosPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 >
                   {t.common.cancel}
                 </button>

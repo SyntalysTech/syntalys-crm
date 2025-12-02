@@ -129,6 +129,23 @@ export interface ProjectWithClient extends Project {
   client?: Client;
 }
 
+// Password Manager Types
+export type PasswordCategory = 'work' | 'personal' | 'social' | 'banking' | 'email' | 'hosting' | 'development' | 'other';
+
+export interface Password {
+  id: string;
+  user_id: string;
+  service_name: string;
+  username: string | null;
+  email: string | null;
+  password: string;
+  url: string | null;
+  notes: string | null;
+  category: PasswordCategory | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
