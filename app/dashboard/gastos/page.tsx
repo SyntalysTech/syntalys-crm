@@ -524,7 +524,7 @@ export default function GastosPage() {
                     </tr>
                   ) : (
                     monthlyExpenses.map((expense, index) => (
-                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-blue-50 dark:hover:bg-blue-900/20`}>
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} hover:bg-blue-50 dark:hover:bg-blue-900/20`}>
                         <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                           {expense.description && (
@@ -607,7 +607,7 @@ export default function GastosPage() {
                     </tr>
                   ) : (
                     oneTimeExpenses.map((expense, index) => (
-                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-green-50 dark:hover:bg-green-900/20`}>
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} hover:bg-green-50 dark:hover:bg-green-900/20`}>
                         <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                           {expense.description && (
@@ -691,7 +691,7 @@ export default function GastosPage() {
                     </tr>
                   ) : (
                     annualExpenses.map((expense, index) => (
-                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-purple-50 dark:hover:bg-purple-900/20`}>
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} hover:bg-purple-50 dark:hover:bg-purple-900/20`}>
                         <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
                           {expense.description && (
@@ -795,7 +795,7 @@ export default function GastosPage() {
                     }
 
                     return allClientExpenses.map((expense, index) => (
-                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-orange-50 dark:hover:bg-orange-900/20`}>
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} hover:bg-orange-50 dark:hover:bg-orange-900/20`}>
                         <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <span className="text-sm font-medium text-gray-900 dark:text-white">{expense.clientName}</span>
                         </td>
