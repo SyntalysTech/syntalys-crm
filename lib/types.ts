@@ -21,7 +21,7 @@ export type Frequency = 'one_time' | 'monthly' | 'annual';
 export type PaymentStatus = 'paid' | 'pending' | 'upcoming';
 export type ClientStatus = 'active' | 'inactive' | 'suspended';
 
-export type ExpenseCategory = 'software' | 'hosting' | 'domain' | 'api' | 'development' | 'other';
+export type ExpenseCategory = 'software' | 'hosting' | 'domain' | 'api' | 'development' | 'ia' | 'cloud' | 'security' | 'backup' | 'analytics' | 'marketing' | 'seo' | 'email' | 'communications' | 'storage' | 'infrastructure' | 'licenses' | 'subscriptions' | 'tools' | 'automation' | 'testing' | 'monitoring' | 'cdn' | 'database' | 'payments' | 'advertising' | 'training' | 'support' | 'other';
 export type ClientExpenseCategory = 'domain' | 'hosting' | 'ssl' | 'api' | 'maintenance' | 'other';
 export type IncomeCategory = 'web_development' | 'maintenance' | 'hosting' | 'domain' | 'crm' | 'subscription' | 'other';
 export type ProjectType = 'web_development' | 'app_development' | 'game_development' | 'ecommerce' | 'maintenance' | 'consulting' | 'design' | 'marketing' | 'seo' | 'hosting' | 'ai' | 'chatbot' | 'automation' | 'callcenter' | 'crm' | 'erp' | 'api_integration' | 'data_analytics' | 'cybersecurity' | 'cloud' | 'other';
@@ -51,6 +51,8 @@ export interface CompanyExpense {
   frequency: Frequency;
   category: ExpenseCategory | null;
   status: PaymentStatus;
+  start_date: string | null;
+  end_date: string | null;
   payment_date: string | null;
   renewal_date: string | null;
   created_at: string;
@@ -60,6 +62,7 @@ export interface CompanyExpense {
 export interface ClientExpense {
   id: string;
   client_id: string;
+  project_id?: string | null;
   service_name: string;
   description: string | null;
   amount: number;
@@ -67,6 +70,8 @@ export interface ClientExpense {
   frequency: Frequency;
   category: ClientExpenseCategory | null;
   status: PaymentStatus;
+  start_date: string | null;
+  end_date: string | null;
   payment_date: string | null;
   renewal_date: string | null;
   created_at: string;
@@ -160,6 +165,7 @@ export interface ClientWithDetails extends Client {
 
 export interface ClientWithExpenses extends Client {
   expenses?: ClientExpense[];
+  projects?: Project[];
   total_expenses_monthly?: number;
   total_expenses_annual?: number;
 }
