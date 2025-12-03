@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { CompanyExpense, ClientExpense, Client, ClientWithExpenses, ExpenseCategory, ClientExpenseCategory, Frequency } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { FaEllipsisV, FaTimes } from 'react-icons/fa';
+import { FaEllipsisV, FaTimes, FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 
 type ModalType = 'company' | 'client-expense' | 'edit-company' | 'edit-client-expense' | null;
 
@@ -19,6 +19,7 @@ export default function GastosPage() {
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
   const [dropdownType, setDropdownType] = useState<'company' | 'client' | null>(null);
   const [expandedText, setExpandedText] = useState<{ text: string; title: string } | null>(null);
+  const [expandedClientId, setExpandedClientId] = useState<string | null>(null);
 
   const handleDropdownClick = (e: React.MouseEvent<HTMLButtonElement>, id: string, type: 'company' | 'client') => {
     if (openDropdown === id) {
@@ -756,7 +757,7 @@ export default function GastosPage() {
         </div>
       ) : (
         <div>
-          {/* Gastos de Clientes - Tabla tipo Excel */}
+          {/* Gastos de Clientes - Vista por Cliente */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
             <div className="px-4 py-3 bg-orange-50 dark:bg-orange-900/30 border-b border-gray-300 dark:border-gray-600">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.expensesByClient}</h2>
@@ -766,90 +767,162 @@ export default function GastosPage() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-100 dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-8"></th>
                     <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.client}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.frequency}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.renewal}</th>
-                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.totalServices}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.monthlyTotal}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.annualTotal}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {(() => {
-                    const allClientExpenses = clients.flatMap(client =>
-                      (client.expenses || []).map(expense => ({
-                        ...expense,
-                        clientName: client.name
-                      }))
-                    );
+                  {clients.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500 border border-gray-300 dark:border-gray-600">
+                        {t.expenses.noClientsRegistered}
+                      </td>
+                    </tr>
+                  ) : (
+                    clients.map((client, index) => {
+                      const clientExpenses = client.expenses || [];
+                      const monthlyTotal = clientExpenses
+                        .filter(e => e.frequency === 'monthly')
+                        .reduce((sum, e) => sum + Number(e.amount), 0);
+                      const annualTotal = clientExpenses
+                        .filter(e => e.frequency === 'annual')
+                        .reduce((sum, e) => sum + Number(e.amount), 0);
+                      const isExpanded = expandedClientId === client.id;
 
-                    if (allClientExpenses.length === 0) {
                       return (
-                        <tr>
-                          <td colSpan={7} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500 border border-gray-300 dark:border-gray-600">
-                            {t.expenses.noClientExpenses}
-                          </td>
-                        </tr>
-                      );
-                    }
-
-                    return allClientExpenses.map((expense, index) => (
-                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} hover:bg-orange-50 dark:hover:bg-orange-900/20`}>
-                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">{expense.clientName}</span>
-                        </td>
-                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
-                          {expense.description && (
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              {expense.description.length > 30 ? (
-                                <span>
-                                  {expense.description.substring(0, 30)}...
-                                  <button
-                                    onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
-                                    className="ml-1 text-orange-600 dark:text-orange-400 hover:underline"
-                                  >
-                                    {t.common.seeMore}
-                                  </button>
-                                </span>
-                              ) : expense.description}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
-                          <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category || '-'}</span>
-                        </td>
-                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
-                          <span className={`px-2 py-1 text-xs font-medium rounded border ${
-                            expense.frequency === 'monthly' ? 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700' :
-                            expense.frequency === 'annual' ? 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:border-purple-700' :
-                            'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
-                          }`}>
-                            {expense.frequency === 'monthly' ? t.expenses.monthly : expense.frequency === 'annual' ? t.expenses.annual : t.expenses.oneTime}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
-                          <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">
-                            {expense.currency} {Number(expense.amount).toFixed(2)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
-                            {expense.renewal_date ? new Date(expense.renewal_date).toLocaleDateString('es-ES') : '-'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">
-                          <button
-                            onClick={(e) => handleDropdownClick(e, `client-${expense.id}`, 'client')}
-                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                        <>
+                          {/* Fila del cliente */}
+                          <tr
+                            key={client.id}
+                            className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} hover:bg-orange-50 dark:hover:bg-orange-900/20 cursor-pointer`}
+                            onClick={() => setExpandedClientId(isExpanded ? null : client.id)}
                           >
-                            <FaEllipsisV className="w-3 h-3 text-gray-500 dark:text-gray-400" />
-                          </button>
-                        </td>
-                      </tr>
-                    ));
-                  })()}
+                            <td className="px-4 py-3 border border-gray-300 dark:border-gray-600 text-center">
+                              {isExpanded ? (
+                                <FaChevronDown className="w-3 h-3 text-orange-500" />
+                              ) : (
+                                <FaChevronRight className="w-3 h-3 text-gray-400" />
+                              )}
+                            </td>
+                            <td className="px-4 py-3 border border-gray-300 dark:border-gray-600">
+                              <div className="text-sm font-semibold text-gray-900 dark:text-white">{client.name}</div>
+                              {client.email && (
+                                <div className="text-xs text-gray-500 dark:text-gray-400">{client.email}</div>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 border border-gray-300 dark:border-gray-600">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">{clientExpenses.length} {clientExpenses.length === 1 ? 'servicio' : 'servicios'}</span>
+                            </td>
+                            <td className="px-4 py-3 border border-gray-300 dark:border-gray-600">
+                              <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                                CHF {monthlyTotal.toFixed(2)}/mes
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 border border-gray-300 dark:border-gray-600">
+                              <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                                CHF {annualTotal.toFixed(2)}/año
+                              </span>
+                            </td>
+                          </tr>
+
+                          {/* Detalle expandido del cliente */}
+                          {isExpanded && (
+                            <tr key={`${client.id}-detail`}>
+                              <td colSpan={5} className="p-0 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900">
+                                <div className="p-4">
+                                  {/* Header con botón añadir */}
+                                  <div className="flex justify-between items-center mb-3">
+                                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                      Gastos de {client.name}
+                                    </h4>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setClientExpenseFormData({ ...clientExpenseFormData, client_id: client.id });
+                                        setShowModal('client-expense');
+                                      }}
+                                      className="flex items-center gap-1 px-3 py-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded transition-colors"
+                                    >
+                                      <FaPlus className="w-2.5 h-2.5" />
+                                      Añadir Gasto
+                                    </button>
+                                  </div>
+
+                                  {/* Tabla de gastos del cliente */}
+                                  {clientExpenses.length === 0 ? (
+                                    <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+                                      Este cliente no tiene gastos registrados
+                                    </p>
+                                  ) : (
+                                    <table className="w-full border-collapse">
+                                      <thead>
+                                        <tr className="bg-gray-200 dark:bg-gray-700">
+                                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
+                                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
+                                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{t.expenses.frequency}</th>
+                                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
+                                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{t.expenses.renewal}</th>
+                                          <th className="px-3 py-2 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 w-12"></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {clientExpenses.map((expense, expIndex) => (
+                                          <tr key={expense.id} className={`${expIndex % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-100 dark:bg-gray-850'}`}>
+                                            <td className="px-3 py-2 border border-gray-300 dark:border-gray-600">
+                                              <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
+                                              {expense.description && (
+                                                <div className="text-xs text-gray-500 dark:text-gray-400">{expense.description}</div>
+                                              )}
+                                            </td>
+                                            <td className="px-3 py-2 border border-gray-300 dark:border-gray-600">
+                                              <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category || '-'}</span>
+                                            </td>
+                                            <td className="px-3 py-2 border border-gray-300 dark:border-gray-600">
+                                              <span className={`px-2 py-0.5 text-xs font-medium rounded ${
+                                                expense.frequency === 'monthly' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
+                                                expense.frequency === 'annual' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' :
+                                                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                                              }`}>
+                                                {expense.frequency === 'monthly' ? t.expenses.monthly : expense.frequency === 'annual' ? t.expenses.annual : t.expenses.oneTime}
+                                              </span>
+                                            </td>
+                                            <td className="px-3 py-2 border border-gray-300 dark:border-gray-600">
+                                              <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">
+                                                {expense.currency} {Number(expense.amount).toFixed(2)}
+                                              </span>
+                                            </td>
+                                            <td className="px-3 py-2 border border-gray-300 dark:border-gray-600">
+                                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                                {expense.renewal_date ? new Date(expense.renewal_date).toLocaleDateString('es-ES') : '-'}
+                                              </span>
+                                            </td>
+                                            <td className="px-3 py-2 border border-gray-300 dark:border-gray-600 text-center">
+                                              <button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  handleDropdownClick(e, `client-${expense.id}`, 'client');
+                                                }}
+                                                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                                              >
+                                                <FaEllipsisV className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                                              </button>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>

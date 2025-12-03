@@ -322,6 +322,9 @@ export interface Translations {
     noMonthlyExpenses: string;
     noAnnualExpenses: string;
     noClientsRegistered: string;
+    totalServices: string;
+    monthlyTotal: string;
+    annualTotal: string;
     expensesByClient: string;
     expensesByClientSubtitle: string;
     theirExpenses: string;
@@ -899,6 +902,9 @@ export const translations: Record<Language, Translations> = {
       noMonthlyExpenses: 'No hay gastos mensuales registrados',
       noAnnualExpenses: 'No hay gastos anuales registrados',
       noClientsRegistered: 'No hay clientes registrados',
+      totalServices: 'Servicios',
+      monthlyTotal: 'Total Mensual',
+      annualTotal: 'Total Anual',
       expensesByClient: 'Gastos por Cliente',
       expensesByClientSubtitle: 'Servicios que los clientes usan (hosting, dominios, etc.)',
       theirExpenses: 'Sus Gastos',
@@ -1453,6 +1459,9 @@ export const translations: Record<Language, Translations> = {
       noMonthlyExpenses: 'Aucune dépense mensuelle enregistrée',
       noAnnualExpenses: 'Aucune dépense annuelle enregistrée',
       noClientsRegistered: 'Aucun client enregistré',
+      totalServices: 'Services',
+      monthlyTotal: 'Total Mensuel',
+      annualTotal: 'Total Annuel',
       expensesByClient: 'Dépenses par Client',
       expensesByClientSubtitle: 'Services que les clients utilisent (hébergement, domaines, etc.)',
       theirExpenses: 'Leurs Dépenses',
