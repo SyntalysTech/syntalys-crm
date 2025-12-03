@@ -500,67 +500,65 @@ export default function GastosPage() {
       {activeTab === 'empresa' ? (
         <div>
           {/* Gastos Mensuales */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.expenses.monthlyExpenses}</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 mb-6 overflow-hidden">
+            <div className="px-4 py-3 bg-blue-50 dark:bg-blue-900/30 border-b border-gray-300 dark:border-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.monthlyExpenses}</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.service}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.category}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.status}</th>
+                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody>
                   {monthlyExpenses.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
+                      <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500 border border-gray-300 dark:border-gray-600">
                         {t.expenses.noMonthlyExpenses}
                       </td>
                     </tr>
                   ) : (
                     monthlyExpenses.map((expense, index) => (
-                      <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
-                            {expense.description && (
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {expense.description.length > 40 ? (
-                                  <span>
-                                    {expense.description.substring(0, 40)}...
-                                    <button
-                                      onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
-                                      className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
-                                    >
-                                      {t.common.seeMore}
-                                    </button>
-                                  </span>
-                                ) : expense.description}
-                              </div>
-                            )}
-                          </div>
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-blue-50 dark:hover:bg-blue-900/20`}>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
+                          {expense.description && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {expense.description.length > 40 ? (
+                                <span>
+                                  {expense.description.substring(0, 40)}...
+                                  <button
+                                    onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
+                                    className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                  >
+                                    {t.common.seeMore}
+                                  </button>
+                                </span>
+                              ) : expense.description}
+                            </div>
+                          )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">{expense.category || '-'}</span>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category || '-'}</span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <span className="text-sm font-semibold text-gray-900 dark:text-white">
                             {expense.currency} {Number(expense.amount).toFixed(2)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <select
                             value={expense.status}
                             onChange={(e) => updateExpenseStatus(expense.id, e.target.value as 'paid' | 'pending' | 'upcoming')}
-                            className={`px-3 py-1 text-xs font-semibold rounded-full border-0 cursor-pointer ${
-                              expense.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
-                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
-                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            className={`px-2 py-1 text-xs font-medium rounded border cursor-pointer ${
+                              expense.status === 'paid' ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700' :
+                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700' :
+                              'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
                             }`}
                           >
                             <option value="paid">{t.expenses.paid}</option>
@@ -568,103 +566,12 @@ export default function GastosPage() {
                             <option value="upcoming">{t.expenses.upcoming}</option>
                           </select>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">
                           <button
                             onClick={(e) => handleDropdownClick(e, `monthly-${expense.id}`, 'company')}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
                           >
-                            <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Gastos Anuales */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.expenses.annualExpenses}</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.service}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.category}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.renewal}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {annualExpenses.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
-                        {t.expenses.noAnnualExpenses}
-                      </td>
-                    </tr>
-                  ) : (
-                    annualExpenses.map((expense, index) => (
-                      <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
-                            {expense.description && (
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {expense.description.length > 40 ? (
-                                  <span>
-                                    {expense.description.substring(0, 40)}...
-                                    <button
-                                      onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
-                                      className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
-                                    >
-                                      {t.common.seeMore}
-                                    </button>
-                                  </span>
-                                ) : expense.description}
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">{expense.category || '-'}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {expense.currency} {Number(expense.amount).toFixed(2)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">
-                            {expense.renewal_date ? new Date(expense.renewal_date).toLocaleDateString('es-ES') : '-'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <select
-                            value={expense.status}
-                            onChange={(e) => updateExpenseStatus(expense.id, e.target.value as 'paid' | 'pending' | 'upcoming')}
-                            className={`px-3 py-1 text-xs font-semibold rounded-full border-0 cursor-pointer ${
-                              expense.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
-                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
-                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                            }`}
-                          >
-                            <option value="paid">{t.expenses.paid}</option>
-                            <option value="pending">{t.expenses.pending}</option>
-                            <option value="upcoming">{t.expenses.upcoming}</option>
-                          </select>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <button
-                            onClick={(e) => handleDropdownClick(e, `annual-${expense.id}`, 'company')}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                          >
-                            <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                            <FaEllipsisV className="w-3 h-3 text-gray-500 dark:text-gray-400" />
                           </button>
                         </td>
                       </tr>
@@ -676,67 +583,65 @@ export default function GastosPage() {
           </div>
 
           {/* Gastos Únicos */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mt-6 overflow-hidden">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.expenses.oneTimeExpenses}</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 mb-6 overflow-hidden">
+            <div className="px-4 py-3 bg-green-50 dark:bg-green-900/30 border-b border-gray-300 dark:border-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.oneTimeExpenses}</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.service}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.expenses.category}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.amount}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.status}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t.common.actions}</th>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.status}</th>
+                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody>
                   {oneTimeExpenses.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
+                      <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500 border border-gray-300 dark:border-gray-600">
                         {t.expenses.noOneTimeExpenses}
                       </td>
                     </tr>
                   ) : (
                     oneTimeExpenses.map((expense, index) => (
-                      <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
-                            {expense.description && (
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {expense.description.length > 40 ? (
-                                  <span>
-                                    {expense.description.substring(0, 40)}...
-                                    <button
-                                      onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
-                                      className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
-                                    >
-                                      {t.common.seeMore}
-                                    </button>
-                                  </span>
-                                ) : expense.description}
-                              </div>
-                            )}
-                          </div>
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-green-50 dark:hover:bg-green-900/20`}>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
+                          {expense.description && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {expense.description.length > 40 ? (
+                                <span>
+                                  {expense.description.substring(0, 40)}...
+                                  <button
+                                    onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
+                                    className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                  >
+                                    {t.common.seeMore}
+                                  </button>
+                                </span>
+                              ) : expense.description}
+                            </div>
+                          )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">{expense.category || '-'}</span>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category || '-'}</span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <span className="text-sm font-semibold text-gray-900 dark:text-white">
                             {expense.currency} {Number(expense.amount).toFixed(2)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                           <select
                             value={expense.status}
                             onChange={(e) => updateExpenseStatus(expense.id, e.target.value as 'paid' | 'pending' | 'upcoming')}
-                            className={`px-3 py-1 text-xs font-semibold rounded-full border-0 cursor-pointer ${
-                              expense.status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
-                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
-                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            className={`px-2 py-1 text-xs font-medium rounded border cursor-pointer ${
+                              expense.status === 'paid' ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700' :
+                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700' :
+                              'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
                             }`}
                           >
                             <option value="paid">{t.expenses.paid}</option>
@@ -744,12 +649,101 @@ export default function GastosPage() {
                             <option value="upcoming">{t.expenses.upcoming}</option>
                           </select>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">
                           <button
                             onClick={(e) => handleDropdownClick(e, `onetime-${expense.id}`, 'company')}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
                           >
-                            <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                            <FaEllipsisV className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Gastos Anuales */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
+            <div className="px-4 py-3 bg-purple-50 dark:bg-purple-900/30 border-b border-gray-300 dark:border-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.annualExpenses}</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.renewal}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.status}</th>
+                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {annualExpenses.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500 border border-gray-300 dark:border-gray-600">
+                        {t.expenses.noAnnualExpenses}
+                      </td>
+                    </tr>
+                  ) : (
+                    annualExpenses.map((expense, index) => (
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-purple-50 dark:hover:bg-purple-900/20`}>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
+                          {expense.description && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {expense.description.length > 40 ? (
+                                <span>
+                                  {expense.description.substring(0, 40)}...
+                                  <button
+                                    onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
+                                    className="ml-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                  >
+                                    {t.common.seeMore}
+                                  </button>
+                                </span>
+                              ) : expense.description}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category || '-'}</span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {expense.currency} {Number(expense.amount).toFixed(2)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                            {expense.renewal_date ? new Date(expense.renewal_date).toLocaleDateString('es-ES') : '-'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <select
+                            value={expense.status}
+                            onChange={(e) => updateExpenseStatus(expense.id, e.target.value as 'paid' | 'pending' | 'upcoming')}
+                            className={`px-2 py-1 text-xs font-medium rounded border cursor-pointer ${
+                              expense.status === 'paid' ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700' :
+                              expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700' :
+                              'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+                            }`}
+                          >
+                            <option value="paid">{t.expenses.paid}</option>
+                            <option value="pending">{t.expenses.pending}</option>
+                            <option value="upcoming">{t.expenses.upcoming}</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">
+                          <button
+                            onClick={(e) => handleDropdownClick(e, `annual-${expense.id}`, 'company')}
+                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                          >
+                            <FaEllipsisV className="w-3 h-3 text-gray-500 dark:text-gray-400" />
                           </button>
                         </td>
                       </tr>
@@ -762,65 +756,103 @@ export default function GastosPage() {
         </div>
       ) : (
         <div>
-          {/* Lista de clientes */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.expenses.expensesByClient} ({clients.length})</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t.expenses.expensesByClientSubtitle}</p>
+          {/* Gastos de Clientes - Tabla tipo Excel */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
+            <div className="px-4 py-3 bg-orange-50 dark:bg-orange-900/30 border-b border-gray-300 dark:border-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.expensesByClient}</h2>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t.expenses.expensesByClientSubtitle}</p>
             </div>
-            {clients.length === 0 ? (
-              <div className="p-12 text-center text-gray-400 dark:text-gray-500">
-                {t.expenses.noClientsRegistered}
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {clients.map((client) => (
-                  <div key={client.id} className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{client.name}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{client.email || '-'}</p>
-                      </div>
-                    </div>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.client}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.frequency}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.renewal}</th>
+                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const allClientExpenses = clients.flatMap(client =>
+                      (client.expenses || []).map(expense => ({
+                        ...expense,
+                        clientName: client.name
+                      }))
+                    );
 
-                    <div>
-                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{t.expenses.theirExpenses}</h4>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{t.expenses.theirExpensesSubtitle}</p>
-                      {client.expenses && client.expenses.length > 0 ? (
-                        <div className="space-y-2">
-                          {client.expenses.map((expense, expIndex) => (
-                            <div key={expense.id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-orange-400">
-                              <div>
-                                <p className="font-medium text-gray-900 dark:text-white">{expense.service_name}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {expense.frequency === 'monthly' ? t.expenses.monthly : expense.frequency === 'annual' ? t.expenses.annual : t.expenses.oneTime} • {expense.category || t.expenses.noCategory}
-                                  {expense.renewal_date && (expense.frequency === 'monthly' || expense.frequency === 'annual') && (
-                                    <span className="ml-2">• {t.expenses.renewal}: {new Date(expense.renewal_date).toLocaleDateString('es-ES')}</span>
-                                  )}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                                  {expense.currency} {Number(expense.amount).toFixed(2)}
-                                </p>
-                                <button
-                                  onClick={(e) => handleDropdownClick(e, `client-${expense.id}`, 'client')}
-                                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
-                                >
-                                  <FaEllipsisV className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                                </button>
-                              </div>
+                    if (allClientExpenses.length === 0) {
+                      return (
+                        <tr>
+                          <td colSpan={7} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500 border border-gray-300 dark:border-gray-600">
+                            {t.expenses.noClientExpenses}
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return allClientExpenses.map((expense, index) => (
+                      <tr key={expense.id} className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'} hover:bg-orange-50 dark:hover:bg-orange-900/20`}>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">{expense.clientName}</span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{expense.service_name}</div>
+                          {expense.description && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {expense.description.length > 30 ? (
+                                <span>
+                                  {expense.description.substring(0, 30)}...
+                                  <button
+                                    onClick={() => setExpandedText({ text: expense.description!, title: expense.service_name })}
+                                    className="ml-1 text-orange-600 dark:text-orange-400 hover:underline"
+                                  >
+                                    {t.common.seeMore}
+                                  </button>
+                                </span>
+                              ) : expense.description}
                             </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-400 dark:text-gray-500 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">{t.expenses.noClientExpenses}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                          )}
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category || '-'}</span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className={`px-2 py-1 text-xs font-medium rounded border ${
+                            expense.frequency === 'monthly' ? 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700' :
+                            expense.frequency === 'annual' ? 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:border-purple-700' :
+                            'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+                          }`}>
+                            {expense.frequency === 'monthly' ? t.expenses.monthly : expense.frequency === 'annual' ? t.expenses.annual : t.expenses.oneTime}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">
+                            {expense.currency} {Number(expense.amount).toFixed(2)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                            {expense.renewal_date ? new Date(expense.renewal_date).toLocaleDateString('es-ES') : '-'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">
+                          <button
+                            onClick={(e) => handleDropdownClick(e, `client-${expense.id}`, 'client')}
+                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                          >
+                            <FaEllipsisV className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                          </button>
+                        </td>
+                      </tr>
+                    ));
+                  })()}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
