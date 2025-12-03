@@ -814,16 +814,16 @@ export default function GastosPage() {
                               )}
                             </td>
                             <td className="px-4 py-3 border border-gray-300 dark:border-gray-600">
-                              <span className="text-sm text-gray-700 dark:text-gray-300">{clientExpenses.length} {clientExpenses.length === 1 ? 'servicio' : 'servicios'}</span>
+                              <span className="text-sm text-gray-700 dark:text-gray-300">{clientExpenses.length} {clientExpenses.length === 1 ? t.expenses.serviceCount : t.expenses.servicesCount}</span>
                             </td>
                             <td className="px-4 py-3 border border-gray-300 dark:border-gray-600">
                               <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                                CHF {monthlyTotal.toFixed(2)}/mes
+                                CHF {monthlyTotal.toFixed(2)}{t.expenses.perMonth}
                               </span>
                             </td>
                             <td className="px-4 py-3 border border-gray-300 dark:border-gray-600">
                               <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-                                CHF {annualTotal.toFixed(2)}/año
+                                CHF {annualTotal.toFixed(2)}{t.expenses.perYear}
                               </span>
                             </td>
                           </tr>
@@ -836,7 +836,7 @@ export default function GastosPage() {
                                   {/* Header con botón añadir */}
                                   <div className="flex justify-between items-center mb-3">
                                     <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                      Gastos de {client.name}
+                                      {t.expenses.expensesOf} {client.name}
                                     </h4>
                                     <button
                                       onClick={(e) => {
@@ -847,14 +847,14 @@ export default function GastosPage() {
                                       className="flex items-center gap-1 px-3 py-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded transition-colors"
                                     >
                                       <FaPlus className="w-2.5 h-2.5" />
-                                      Añadir Gasto
+                                      {t.expenses.addExpense}
                                     </button>
                                   </div>
 
                                   {/* Tabla de gastos del cliente */}
                                   {clientExpenses.length === 0 ? (
                                     <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
-                                      Este cliente no tiene gastos registrados
+                                      {t.expenses.noExpensesForClient}
                                     </p>
                                   ) : (
                                     <table className="w-full border-collapse">
