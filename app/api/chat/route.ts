@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+// Use service role key for server-side API to bypass RLS
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 async function getCRMContext() {
@@ -14,13 +15,17 @@ async function getCRMContext() {
       { data: projects },
       { data: companyExpenses },
       { data: clientExpenses },
-      { data: income }
+      { data: income },
+      { data: leads },
+      { data: activities }
     ] = await Promise.all([
       supabase.from('clients').select('*'),
       supabase.from('projects').select('*'),
       supabase.from('company_expenses').select('*'),
       supabase.from('client_expenses').select('*'),
-      supabase.from('income').select('*')
+      supabase.from('income').select('*'),
+      supabase.from('leads').select('*'),
+      supabase.from('activities').select('*')
     ]);
 
     // Calculate financial summaries
@@ -64,12 +69,106 @@ async function getCRMContext() {
     // Expenses list
     const expensesList = companyExpenses?.map(e => `- ${e.service_name}: ${e.currency} ${e.amount} (${e.frequency === 'monthly' ? 'mensual' : e.frequency === 'annual' ? 'anual' : 'único'})`).join('\n') || 'Sin gastos';
 
+    // Leads statistics
+    const totalLeads = leads?.length || 0;
+    const newLeads = leads?.filter(l => l.status === 'new').length || 0;
+    const contactedLeads = leads?.filter(l => l.status === 'contacted').length || 0;
+    const interestedLeads = leads?.filter(l => l.status === 'interested').length || 0;
+    const qualifiedLeads = leads?.filter(l => l.status === 'qualified').length || 0;
+    const convertedLeads = leads?.filter(l => l.status === 'converted').length || 0;
+    const lostLeads = leads?.filter(l => l.status === 'lost').length || 0;
+
+    // Leads by pipeline stage
+    const leadsByStage = {
+      initial_contact: leads?.filter(l => l.pipeline_stage === 'initial_contact').length || 0,
+      qualification: leads?.filter(l => l.pipeline_stage === 'qualification').length || 0,
+      proposal: leads?.filter(l => l.pipeline_stage === 'proposal').length || 0,
+      negotiation: leads?.filter(l => l.pipeline_stage === 'negotiation').length || 0,
+      closing: leads?.filter(l => l.pipeline_stage === 'closing').length || 0,
+      won: leads?.filter(l => l.pipeline_stage === 'won').length || 0,
+      lost: leads?.filter(l => l.pipeline_stage === 'lost').length || 0,
+    };
+
+    // Calculate conversion rate
+    const conversionRate = totalLeads > 0 ? ((convertedLeads / totalLeads) * 100).toFixed(1) : '0.0';
+
+    // Potential value from leads
+    const totalLeadValue = leads?.reduce((sum, l) => sum + Number(l.estimated_value || 0), 0) || 0;
+    const qualifiedLeadValue = leads?.filter(l => l.status === 'qualified' || l.status === 'interested').reduce((sum, l) => sum + Number(l.estimated_value || 0), 0) || 0;
+
+    // Leads list with details
+    const leadsList = leads?.map(l => {
+      const stageMap: Record<string, string> = {
+        initial_contact: 'Contacto inicial',
+        qualification: 'Calificación',
+        proposal: 'Propuesta',
+        negotiation: 'Negociación',
+        closing: 'Cierre',
+        won: 'Ganado',
+        lost: 'Perdido'
+      };
+      const statusMap: Record<string, string> = {
+        new: 'nuevo',
+        contacted: 'contactado',
+        interested: 'interesado',
+        qualified: 'calificado',
+        converted: 'convertido',
+        lost: 'perdido',
+        dormant: 'dormido',
+        not_qualified: 'no calificado'
+      };
+      return `- ${l.company_name || l.contact_name}: ${statusMap[l.status] || l.status} | Etapa: ${stageMap[l.pipeline_stage] || l.pipeline_stage} | Servicio: ${l.service_interested || 'N/A'} | Valor estimado: ${l.currency || 'EUR'} ${l.estimated_value || 0}`;
+    }).join('\n') || 'Sin leads';
+
+    // Activities statistics
+    const totalActivities = activities?.length || 0;
+    const pendingActivities = activities?.filter(a => a.status === 'pending').length || 0;
+    const completedActivities = activities?.filter(a => a.status === 'completed').length || 0;
+    const overdueActivities = activities?.filter(a => {
+      if (a.status !== 'pending') return false;
+      const today = new Date().toISOString().split('T')[0];
+      return a.scheduled_date < today;
+    }).length || 0;
+
+    // Today's activities
+    const today = new Date().toISOString().split('T')[0];
+    const todayActivities = activities?.filter(a => a.scheduled_date === today && a.status === 'pending').length || 0;
+
+    // Activities by type
+    const activitiesByType = {
+      call: activities?.filter(a => a.type === 'call').length || 0,
+      email: activities?.filter(a => a.type === 'email').length || 0,
+      meeting: activities?.filter(a => a.type === 'meeting').length || 0,
+      follow_up: activities?.filter(a => a.type === 'follow_up').length || 0,
+      demo: activities?.filter(a => a.type === 'demo').length || 0,
+      proposal: activities?.filter(a => a.type === 'proposal').length || 0,
+    };
+
+    // Detailed client info with projects and income
+    const clientsWithDetails = clients?.map(c => {
+      const clientProjects = projects?.filter(p => p.client_id === c.id) || [];
+      const clientIncome = income?.filter(i => i.client_id === c.id) || [];
+      const clientMonthlyIncome = clientIncome.filter(i => i.frequency === 'monthly').reduce((sum, i) => sum + Number(i.amount), 0);
+      const activeProjectsCount = clientProjects.filter(p => p.status === 'active').length;
+
+      return `- ${c.name}${c.is_potential ? ' (POTENCIAL)' : ''}: ${c.status === 'active' ? '✅ Activo' : c.status === 'inactive' ? '⏸️ Inactivo' : '❌ Suspendido'} | País: ${c.country || 'N/A'} | Email: ${c.email || 'N/A'} | Teléfono: ${c.phone || 'N/A'} | Proyectos activos: ${activeProjectsCount} | Ingreso mensual: CHF ${clientMonthlyIncome.toFixed(2)}`;
+    }).join('\n') || 'Sin clientes';
+
+    // Income details
+    const incomeList = income?.map(i => {
+      const client = clients?.find(c => c.id === i.client_id);
+      return `- ${i.service_name}: ${i.currency} ${i.amount} (${i.frequency === 'monthly' ? 'mensual' : i.frequency === 'annual' ? 'anual' : 'único'}) | Cliente: ${client?.name || 'N/A'} | Estado: ${i.status === 'active' ? 'activo' : i.status}`;
+    }).join('\n') || 'Sin ingresos';
+
     return `
 === DATOS ACTUALES DEL CRM DE SYNTALYS ===
+Fecha actual: ${new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 
 📊 RESUMEN GENERAL:
 - Total clientes: ${totalClients} (${activeClients} activos, ${potentialClients} potenciales)
 - Total proyectos: ${totalProjects} (${activeProjects} activos, ${completedProjects} completados, ${pausedProjects} pausados)
+- Total leads: ${totalLeads}
+- Total actividades: ${totalActivities} (${pendingActivities} pendientes, ${completedActivities} completadas)
 
 💰 FINANZAS MENSUALES:
 - Ingresos mensuales recurrentes: CHF ${totalMonthlyIncome.toFixed(2)}
@@ -92,16 +191,45 @@ async function getCRMContext() {
 - Mensuales: CHF ${monthlyClientExpenses.toFixed(2)}
 - Anuales: CHF ${annualClientExpenses.toFixed(2)}
 
-👥 LISTA DE CLIENTES:
-${clientsList}
+🎯 LEADS Y VENTAS:
+- Total de leads: ${totalLeads}
+- Por estado: ${newLeads} nuevos, ${contactedLeads} contactados, ${interestedLeads} interesados, ${qualifiedLeads} calificados, ${convertedLeads} convertidos, ${lostLeads} perdidos
+- Tasa de conversión: ${conversionRate}%
+- Valor total potencial de leads: EUR ${totalLeadValue.toFixed(2)}
+- Valor de leads calificados/interesados: EUR ${qualifiedLeadValue.toFixed(2)}
+
+🔄 PIPELINE DE VENTAS:
+- Contacto inicial: ${leadsByStage.initial_contact} leads
+- Calificación: ${leadsByStage.qualification} leads
+- Propuesta: ${leadsByStage.proposal} leads
+- Negociación: ${leadsByStage.negotiation} leads
+- Cierre: ${leadsByStage.closing} leads
+- Ganados: ${leadsByStage.won} leads
+- Perdidos: ${leadsByStage.lost} leads
+
+📅 ACTIVIDADES:
+- Actividades para hoy: ${todayActivities}
+- Actividades vencidas: ${overdueActivities}
+- Pendientes totales: ${pendingActivities}
+- Completadas: ${completedActivities}
+- Por tipo: ${activitiesByType.call} llamadas, ${activitiesByType.email} emails, ${activitiesByType.meeting} reuniones, ${activitiesByType.follow_up} seguimientos, ${activitiesByType.demo} demos, ${activitiesByType.proposal} propuestas
+
+👥 LISTA DETALLADA DE CLIENTES:
+${clientsWithDetails}
+
+🎯 LISTA DE LEADS:
+${leadsList}
 
 🗂️ LISTA DE PROYECTOS:
 ${projectsList}
 
+💵 DETALLE DE INGRESOS:
+${incomeList}
+
 📋 GASTOS DE EMPRESA:
 ${expensesList}
 
-=== FIN DE DATOS ===
+=== FIN DE DATOS DEL CRM ===
 `;
   } catch (error) {
     console.error('Error loading CRM context:', error);
@@ -144,21 +272,29 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `Eres un asistente inteligente para Syntalys, una empresa de desarrollo web y servicios digitales con sede en Suiza.
+            content: `Eres el asistente de IA del CRM de Syntalys, una empresa de desarrollo web, automatizaciones, chatbots, voicebots, call center y servicios digitales con sede en Suiza.
 
-Tu rol es ayudar a los usuarios con:
-- Análisis de finanzas basado en datos reales del CRM
-- Consejos para mejorar ingresos y optimizar gastos
-- Información sobre clientes y proyectos
-- Recomendaciones estratégicas de negocio
+TIENES ACCESO COMPLETO A TODOS LOS DATOS DEL CRM EN TIEMPO REAL. Los datos que ves abajo son REALES y ACTUALIZADOS.
 
-IMPORTANTE: Tienes acceso a los datos reales del CRM. Usa estos datos para dar respuestas precisas y útiles.
+Tu rol es:
+1. ANÁLISIS DE DATOS: Analizar clientes, leads, proyectos, ingresos, gastos y actividades
+2. RESPUESTAS ESPECÍFICAS: Cuando pregunten por un cliente, lead o proyecto específico, busca en los datos y da información detallada
+3. ESTADÍSTICAS: Calcular métricas, tendencias y comparaciones
+4. RECOMENDACIONES: Dar consejos de negocio basados en los datos reales
+5. SEGUIMIENTO: Informar sobre actividades pendientes, leads calientes, proyectos activos
+
+REGLAS IMPORTANTES:
+- SIEMPRE usa los datos reales proporcionados para responder
+- Si preguntan por un cliente/lead/proyecto específico, busca en la lista y da TODA la información disponible
+- Cuando pregunten "¿cuántos clientes tengo?", "¿cuáles son mis leads?", etc., usa los números EXACTOS de los datos
+- Puedes hacer cálculos y análisis con los datos
+- Responde en el idioma del usuario (español o francés)
+- Usa CHF como moneda principal para finanzas generales, EUR para leads
+- Sé conciso pero completo
 
 ${crmContext}
 
-Responde de manera profesional, concisa y útil. Usa los datos proporcionados para dar respuestas específicas y accionables.
-Puedes responder en español o francés según el idioma del usuario.
-Cuando hables de dinero, usa CHF como moneda principal.`
+Recuerda: TIENES TODOS LOS DATOS. Úsalos para dar respuestas precisas, específicas y útiles. No digas que no tienes acceso a los datos porque SÍ los tienes arriba.`
           },
           ...messages
         ],
