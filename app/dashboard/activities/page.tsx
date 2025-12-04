@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -174,7 +174,7 @@ export default function ActivitiesPage() {
 
   // Get activity type icon
   function getActivityTypeIcon(type: ActivityType) {
-    const icons: Record<ActivityType, JSX.Element> = {
+    const icons: Record<ActivityType, React.ReactNode> = {
       call: <FaPhone className="w-4 h-4" />,
       email: <FaEnvelope className="w-4 h-4" />,
       meeting: <FaVideo className="w-4 h-4" />,
