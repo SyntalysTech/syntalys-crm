@@ -7,6 +7,7 @@ export interface Translations {
   // Navegación y General
   nav: {
     dashboard: string;
+    leads: string;
     clients: string;
     projects: string;
     expenses: string;
@@ -24,10 +25,117 @@ export interface Translations {
   // Sidebar categories
   sidebar: {
     general: string;
+    sales: string;
     business: string;
     finance: string;
     tools: string;
     admin: string;
+  };
+
+  // Leads
+  leads: {
+    title: string;
+    subtitle: string;
+    addLead: string;
+    editLead: string;
+    deleteLead: string;
+    deleteConfirm: string;
+    // Tabs
+    all: string;
+    myLeads: string;
+    kanban: string;
+    // Stats
+    totalLeads: string;
+    newLeads: string;
+    inProgress: string;
+    wonLeads: string;
+    lostLeads: string;
+    conversionRate: string;
+    // Fields
+    name: string;
+    companyName: string;
+    email: string;
+    phone: string;
+    whatsapp: string;
+    country: string;
+    status: string;
+    source: string;
+    priority: string;
+    temperature: string;
+    estimatedValue: string;
+    serviceInterested: string;
+    firstContactDate: string;
+    lastContactDate: string;
+    nextFollowup: string;
+    contactCount: string;
+    notes: string;
+    rejectionReason: string;
+    assignedTo: string;
+    // Status options
+    statusNew: string;
+    statusContacted: string;
+    statusQualified: string;
+    statusProposal: string;
+    statusNegotiation: string;
+    statusWon: string;
+    statusLost: string;
+    statusNoAnswer: string;
+    statusCallback: string;
+    // Source options
+    sourceWebsite: string;
+    sourceReferral: string;
+    sourceSocialMedia: string;
+    sourceColdCall: string;
+    sourceEmailCampaign: string;
+    sourceEvent: string;
+    sourceAdvertising: string;
+    sourceLinkedin: string;
+    sourceInstagram: string;
+    sourceFacebook: string;
+    sourceTiktok: string;
+    sourceGoogleAds: string;
+    sourceOther: string;
+    // Priority options
+    priorityLow: string;
+    priorityMedium: string;
+    priorityHigh: string;
+    priorityUrgent: string;
+    // Temperature options
+    tempCold: string;
+    tempWarm: string;
+    tempHot: string;
+    // Activity
+    activities: string;
+    addActivity: string;
+    activityCall: string;
+    activityEmail: string;
+    activityWhatsapp: string;
+    activityMeeting: string;
+    activityNote: string;
+    activityStatusChange: string;
+    outcome: string;
+    nextAction: string;
+    // Messages
+    noLeads: string;
+    leadAdded: string;
+    leadUpdated: string;
+    leadDeleted: string;
+    convertToClient: string;
+    convertConfirm: string;
+    // Filters
+    filterByStatus: string;
+    filterBySource: string;
+    filterByPriority: string;
+    filterByTemperature: string;
+    allStatuses: string;
+    allSources: string;
+    allPriorities: string;
+    allTemperatures: string;
+    // Quick actions
+    call: string;
+    sendWhatsapp: string;
+    sendEmail: string;
+    scheduleFollowup: string;
   };
 
   // Common
@@ -643,6 +751,7 @@ export const translations: Record<Language, Translations> = {
   es: {
     nav: {
       dashboard: 'Dashboard',
+      leads: 'Leads',
       clients: 'Clientes',
       projects: 'Proyectos',
       expenses: 'Gastos',
@@ -658,10 +767,104 @@ export const translations: Record<Language, Translations> = {
     },
     sidebar: {
       general: 'General',
+      sales: 'Ventas',
       business: 'Negocio',
       finance: 'Finanzas',
       tools: 'Herramientas',
       admin: 'Administración',
+    },
+    leads: {
+      title: 'Leads',
+      subtitle: 'Gestiona tus leads y oportunidades de venta',
+      addLead: 'Añadir Lead',
+      editLead: 'Editar Lead',
+      deleteLead: 'Eliminar Lead',
+      deleteConfirm: '¿Estás seguro de que quieres eliminar este lead?',
+      all: 'Todos',
+      myLeads: 'Mis Leads',
+      kanban: 'Kanban',
+      totalLeads: 'Total Leads',
+      newLeads: 'Nuevos',
+      inProgress: 'En Progreso',
+      wonLeads: 'Ganados',
+      lostLeads: 'Perdidos',
+      conversionRate: 'Tasa de Conversión',
+      name: 'Nombre',
+      companyName: 'Empresa',
+      email: 'Email',
+      phone: 'Teléfono',
+      whatsapp: 'WhatsApp',
+      country: 'País',
+      status: 'Estado',
+      source: 'Fuente',
+      priority: 'Prioridad',
+      temperature: 'Temperatura',
+      estimatedValue: 'Valor Estimado',
+      serviceInterested: 'Servicio de Interés',
+      firstContactDate: 'Primer Contacto',
+      lastContactDate: 'Último Contacto',
+      nextFollowup: 'Próximo Seguimiento',
+      contactCount: 'Nº Contactos',
+      notes: 'Notas',
+      rejectionReason: 'Motivo de Rechazo',
+      assignedTo: 'Asignado a',
+      statusNew: 'Nuevo',
+      statusContacted: 'Contactado',
+      statusQualified: 'Cualificado',
+      statusProposal: 'Propuesta',
+      statusNegotiation: 'Negociación',
+      statusWon: 'Ganado',
+      statusLost: 'Perdido',
+      statusNoAnswer: 'Sin Respuesta',
+      statusCallback: 'Llamar Después',
+      sourceWebsite: 'Sitio Web',
+      sourceReferral: 'Referido',
+      sourceSocialMedia: 'Redes Sociales',
+      sourceColdCall: 'Llamada en Frío',
+      sourceEmailCampaign: 'Email Marketing',
+      sourceEvent: 'Evento',
+      sourceAdvertising: 'Publicidad',
+      sourceLinkedin: 'LinkedIn',
+      sourceInstagram: 'Instagram',
+      sourceFacebook: 'Facebook',
+      sourceTiktok: 'TikTok',
+      sourceGoogleAds: 'Google Ads',
+      sourceOther: 'Otro',
+      priorityLow: 'Baja',
+      priorityMedium: 'Media',
+      priorityHigh: 'Alta',
+      priorityUrgent: 'Urgente',
+      tempCold: 'Frío',
+      tempWarm: 'Tibio',
+      tempHot: 'Caliente',
+      activities: 'Actividades',
+      addActivity: 'Añadir Actividad',
+      activityCall: 'Llamada',
+      activityEmail: 'Email',
+      activityWhatsapp: 'WhatsApp',
+      activityMeeting: 'Reunión',
+      activityNote: 'Nota',
+      activityStatusChange: 'Cambio de Estado',
+      outcome: 'Resultado',
+      nextAction: 'Próxima Acción',
+      noLeads: 'No hay leads todavía',
+      leadAdded: 'Lead añadido correctamente',
+      leadUpdated: 'Lead actualizado correctamente',
+      leadDeleted: 'Lead eliminado correctamente',
+      convertToClient: 'Convertir a Cliente',
+      convertConfirm: '¿Convertir este lead en cliente?',
+      filterByStatus: 'Filtrar por estado',
+      filterBySource: 'Filtrar por fuente',
+      filterByPriority: 'Filtrar por prioridad',
+      filterByTemperature: 'Filtrar por temperatura',
+      allStatuses: 'Todos los estados',
+      allSources: 'Todas las fuentes',
+      allPriorities: 'Todas las prioridades',
+      allTemperatures: 'Todas las temperaturas',
+      call: 'Llamar',
+      sendWhatsapp: 'Enviar WhatsApp',
+      sendEmail: 'Enviar Email',
+      scheduleFollowup: 'Programar Seguimiento',
     },
     common: {
       add: 'Agregar',
@@ -1229,6 +1432,7 @@ export const translations: Record<Language, Translations> = {
   fr: {
     nav: {
       dashboard: 'Tableau de bord',
+      leads: 'Leads',
       clients: 'Clients',
       projects: 'Projets',
       expenses: 'Dépenses',
@@ -1244,10 +1448,104 @@ export const translations: Record<Language, Translations> = {
     },
     sidebar: {
       general: 'Général',
+      sales: 'Ventes',
       business: 'Affaires',
       finance: 'Finances',
       tools: 'Outils',
       admin: 'Administration',
+    },
+    leads: {
+      title: 'Leads',
+      subtitle: 'Gérez vos leads et opportunités de vente',
+      addLead: 'Ajouter Lead',
+      editLead: 'Modifier Lead',
+      deleteLead: 'Supprimer Lead',
+      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer ce lead?',
+      all: 'Tous',
+      myLeads: 'Mes Leads',
+      kanban: 'Kanban',
+      totalLeads: 'Total Leads',
+      newLeads: 'Nouveaux',
+      inProgress: 'En Cours',
+      wonLeads: 'Gagnés',
+      lostLeads: 'Perdus',
+      conversionRate: 'Taux de Conversion',
+      name: 'Nom',
+      companyName: 'Entreprise',
+      email: 'Email',
+      phone: 'Téléphone',
+      whatsapp: 'WhatsApp',
+      country: 'Pays',
+      status: 'Statut',
+      source: 'Source',
+      priority: 'Priorité',
+      temperature: 'Température',
+      estimatedValue: 'Valeur Estimée',
+      serviceInterested: 'Service d\'Intérêt',
+      firstContactDate: 'Premier Contact',
+      lastContactDate: 'Dernier Contact',
+      nextFollowup: 'Prochain Suivi',
+      contactCount: 'Nº Contacts',
+      notes: 'Notes',
+      rejectionReason: 'Motif de Rejet',
+      assignedTo: 'Assigné à',
+      statusNew: 'Nouveau',
+      statusContacted: 'Contacté',
+      statusQualified: 'Qualifié',
+      statusProposal: 'Proposition',
+      statusNegotiation: 'Négociation',
+      statusWon: 'Gagné',
+      statusLost: 'Perdu',
+      statusNoAnswer: 'Sans Réponse',
+      statusCallback: 'Rappeler Plus Tard',
+      sourceWebsite: 'Site Web',
+      sourceReferral: 'Référence',
+      sourceSocialMedia: 'Réseaux Sociaux',
+      sourceColdCall: 'Appel à Froid',
+      sourceEmailCampaign: 'Email Marketing',
+      sourceEvent: 'Événement',
+      sourceAdvertising: 'Publicité',
+      sourceLinkedin: 'LinkedIn',
+      sourceInstagram: 'Instagram',
+      sourceFacebook: 'Facebook',
+      sourceTiktok: 'TikTok',
+      sourceGoogleAds: 'Google Ads',
+      sourceOther: 'Autre',
+      priorityLow: 'Basse',
+      priorityMedium: 'Moyenne',
+      priorityHigh: 'Haute',
+      priorityUrgent: 'Urgente',
+      tempCold: 'Froid',
+      tempWarm: 'Tiède',
+      tempHot: 'Chaud',
+      activities: 'Activités',
+      addActivity: 'Ajouter Activité',
+      activityCall: 'Appel',
+      activityEmail: 'Email',
+      activityWhatsapp: 'WhatsApp',
+      activityMeeting: 'Réunion',
+      activityNote: 'Note',
+      activityStatusChange: 'Changement de Statut',
+      outcome: 'Résultat',
+      nextAction: 'Prochaine Action',
+      noLeads: 'Aucun lead pour le moment',
+      leadAdded: 'Lead ajouté avec succès',
+      leadUpdated: 'Lead mis à jour avec succès',
+      leadDeleted: 'Lead supprimé avec succès',
+      convertToClient: 'Convertir en Client',
+      convertConfirm: 'Convertir ce lead en client?',
+      filterByStatus: 'Filtrer par statut',
+      filterBySource: 'Filtrer par source',
+      filterByPriority: 'Filtrer par priorité',
+      filterByTemperature: 'Filtrer par température',
+      allStatuses: 'Tous les statuts',
+      allSources: 'Toutes les sources',
+      allPriorities: 'Toutes les priorités',
+      allTemperatures: 'Toutes les températures',
+      call: 'Appeler',
+      sendWhatsapp: 'Envoyer WhatsApp',
+      sendEmail: 'Envoyer Email',
+      scheduleFollowup: 'Planifier Suivi',
     },
     common: {
       add: 'Ajouter',

@@ -198,6 +198,56 @@ export interface InternalProject {
 // Password Manager Types
 export type PasswordCategory = 'work' | 'personal' | 'social' | 'banking' | 'email' | 'hosting' | 'development' | 'other';
 
+// Lead Types for Sales/Setter
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost' | 'no_answer' | 'callback';
+export type LeadSource = 'website' | 'referral' | 'social_media' | 'cold_call' | 'email_campaign' | 'event' | 'advertising' | 'linkedin' | 'instagram' | 'facebook' | 'tiktok' | 'google_ads' | 'other';
+export type LeadPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type LeadTemperature = 'cold' | 'warm' | 'hot';
+
+export interface Lead {
+  id: string;
+  user_id: string;
+  assigned_to: string | null;
+  // Contact Info
+  name: string;
+  company_name: string | null;
+  email: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  country: string | null;
+  // Lead Details
+  status: LeadStatus;
+  source: LeadSource;
+  priority: LeadPriority;
+  temperature: LeadTemperature;
+  // Business Info
+  estimated_value: number | null;
+  currency: Currency;
+  service_interested: string | null;
+  // Tracking
+  first_contact_date: string | null;
+  last_contact_date: string | null;
+  next_followup_date: string | null;
+  contact_count: number;
+  // Notes
+  notes: string | null;
+  rejection_reason: string | null;
+  // Timestamps
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LeadActivity {
+  id: string;
+  lead_id: string;
+  user_id: string;
+  activity_type: 'call' | 'email' | 'whatsapp' | 'meeting' | 'note' | 'status_change';
+  description: string;
+  outcome: string | null;
+  next_action: string | null;
+  created_at: string;
+}
+
 export interface Password {
   id: string;
   user_id: string;
