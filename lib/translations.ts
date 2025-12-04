@@ -8,6 +8,7 @@ export interface Translations {
   nav: {
     dashboard: string;
     leads: string;
+    pipeline: string;
     clients: string;
     projects: string;
     expenses: string;
@@ -136,6 +137,12 @@ export interface Translations {
     sendWhatsapp: string;
     sendEmail: string;
     scheduleFollowup: string;
+    // Pipeline
+    pipelineTitle: string;
+    pipelineSubtitle: string;
+    dragToMove: string;
+    emptyColumn: string;
+    leadsInColumn: string;
   };
 
   // Common
@@ -752,6 +759,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       dashboard: 'Dashboard',
       leads: 'Leads',
+      pipeline: 'Pipeline',
       clients: 'Clientes',
       projects: 'Proyectos',
       expenses: 'Gastos',
@@ -865,6 +873,11 @@ export const translations: Record<Language, Translations> = {
       sendWhatsapp: 'Enviar WhatsApp',
       sendEmail: 'Enviar Email',
       scheduleFollowup: 'Programar Seguimiento',
+      pipelineTitle: 'Pipeline de Ventas',
+      pipelineSubtitle: 'Visualiza y gestiona el flujo de tus leads',
+      dragToMove: 'Arrastra para mover',
+      emptyColumn: 'Sin leads',
+      leadsInColumn: 'leads',
     },
     common: {
       add: 'Agregar',
@@ -1433,6 +1446,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       dashboard: 'Tableau de bord',
       leads: 'Leads',
+      pipeline: 'Pipeline',
       clients: 'Clients',
       projects: 'Projets',
       expenses: 'Dépenses',
@@ -1546,6 +1560,11 @@ export const translations: Record<Language, Translations> = {
       sendWhatsapp: 'Envoyer WhatsApp',
       sendEmail: 'Envoyer Email',
       scheduleFollowup: 'Planifier Suivi',
+      pipelineTitle: 'Pipeline de Ventes',
+      pipelineSubtitle: 'Visualisez et gérez le flux de vos leads',
+      dragToMove: 'Glissez pour déplacer',
+      emptyColumn: 'Aucun lead',
+      leadsInColumn: 'leads',
     },
     common: {
       add: 'Ajouter',
