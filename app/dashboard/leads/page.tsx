@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { supabase } from '@/lib/supabase';
 import type { Lead, LeadStatus, LeadSource, LeadPriority, LeadTemperature, LeadActivity, Currency } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -34,6 +35,7 @@ export default function LeadsPage() {
   const [showModal, setShowModal] = useState<'add' | 'edit' | 'detail' | 'activity' | null>(null);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Filters
@@ -79,6 +81,7 @@ export default function LeadsPage() {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpenDropdown(null);
+        setDropdownPosition(null);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -681,37 +684,25 @@ export default function LeadsPage() {
                           </a>
                         )}
                         {/* Dropdown */}
-                        <div className="relative" ref={dropdownRef}>
+                        <div className="relative">
                           <button
-                            onClick={() => setOpenDropdown(openDropdown === lead.id ? null : lead.id)}
+                            onClick={(e) => {
+                              if (openDropdown === lead.id) {
+                                setOpenDropdown(null);
+                                setDropdownPosition(null);
+                              } else {
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                setDropdownPosition({
+                                  top: rect.bottom + 8,
+                                  left: rect.right - 192, // 192px = w-48
+                                });
+                                setOpenDropdown(lead.id);
+                              }
+                            }}
                             className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                           >
                             <FaEllipsisV className="w-4 h-4" />
                           </button>
-                          {openDropdown === lead.id && (
-                            <div className={`absolute right-0 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 ${index < 2 ? 'top-full mt-2' : 'bottom-full mb-2'}`}>
-                              <button
-                                onClick={() => { openEditModal(lead); setOpenDropdown(null); }}
-                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
-                              >
-                                {t.common.edit}
-                              </button>
-                              {lead.status !== 'won' && lead.status !== 'lost' && (
-                                <button
-                                  onClick={() => { handleConvertToClient(lead); setOpenDropdown(null); }}
-                                  className="w-full px-4 py-2 text-left text-sm text-green-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                >
-                                  {t.leads.convertToClient}
-                                </button>
-                              )}
-                              <button
-                                onClick={() => { handleDeleteLead(lead.id); setOpenDropdown(null); }}
-                                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg"
-                              >
-                                {t.common.delete}
-                              </button>
-                            </div>
-                          )}
                         </div>
                       </div>
                     </td>
@@ -722,6 +713,53 @@ export default function LeadsPage() {
           </table>
         </div>
       </div>
+
+      {/* Dropdown Portal */}
+      {openDropdown && dropdownPosition && typeof document !== 'undefined' && createPortal(
+        <div
+          ref={dropdownRef}
+          className="fixed w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-[9999]"
+          style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
+        >
+          <button
+            onClick={() => {
+              const lead = leads.find(l => l.id === openDropdown);
+              if (lead) openEditModal(lead);
+              setOpenDropdown(null);
+              setDropdownPosition(null);
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
+          >
+            {t.common.edit}
+          </button>
+          {(() => {
+            const lead = leads.find(l => l.id === openDropdown);
+            return lead && lead.status !== 'won' && lead.status !== 'lost' && (
+              <button
+                onClick={() => {
+                  handleConvertToClient(lead);
+                  setOpenDropdown(null);
+                  setDropdownPosition(null);
+                }}
+                className="w-full px-4 py-2 text-left text-sm text-green-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                {t.leads.convertToClient}
+              </button>
+            );
+          })()}
+          <button
+            onClick={() => {
+              if (openDropdown) handleDeleteLead(openDropdown);
+              setOpenDropdown(null);
+              setDropdownPosition(null);
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg"
+          >
+            {t.common.delete}
+          </button>
+        </div>,
+        document.body
+      )}
 
       {/* Add/Edit Modal */}
       {(showModal === 'add' || showModal === 'edit') && (
