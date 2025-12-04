@@ -574,8 +574,8 @@ export default function LeadsPage() {
       </div>
 
       {/* Leads Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="overflow-x-auto overflow-y-visible">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
@@ -689,10 +689,10 @@ export default function LeadsPage() {
                             <FaEllipsisV className="w-4 h-4" />
                           </button>
                           {openDropdown === lead.id && (
-                            <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                            <div className="absolute right-0 bottom-full mb-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[100]">
                               <button
                                 onClick={() => { openEditModal(lead); setOpenDropdown(null); }}
-                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
                               >
                                 {t.common.edit}
                               </button>
@@ -706,7 +706,7 @@ export default function LeadsPage() {
                               )}
                               <button
                                 onClick={() => { handleDeleteLead(lead.id); setOpenDropdown(null); }}
-                                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg"
                               >
                                 {t.common.delete}
                               </button>
