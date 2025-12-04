@@ -4,8 +4,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
-import { FaRobot, FaArrowRight, FaQuoteLeft, FaBook, FaBroadcastTower, FaPlay, FaStop, FaVolumeUp, FaUsers, FaProjectDiagram, FaChartLine, FaCalendarAlt, FaFire, FaUserPlus } from 'react-icons/fa';
+import Image from 'next/image';
+import { FaRobot, FaArrowRight, FaQuoteLeft, FaBroadcastTower, FaPlay, FaStop, FaVolumeUp, FaCalendarAlt } from 'react-icons/fa';
 
 // Motivational quotes
 const motivationalQuotesES = [
@@ -79,29 +79,12 @@ function getDayOfYear(): number {
   return Math.floor(diff / oneDay);
 }
 
-interface DashboardStats {
-  totalClients: number;
-  activeProjects: number;
-  totalLeads: number;
-  hotLeads: number;
-  monthlyIncome: number;
-  monthlyExpenses: number;
-}
-
 export default function DashboardPage() {
   const { profile } = useAuth();
   const { t, language } = useLanguage();
   const [radioLanguage, setRadioLanguage] = useState<'es' | 'fr'>('es');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState<DashboardStats>({
-    totalClients: 0,
-    activeProjects: 0,
-    totalLeads: 0,
-    hotLeads: 0,
-    monthlyIncome: 0,
-    monthlyExpenses: 0,
-  });
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const dayOfYear = useMemo(() => getDayOfYear(), []);
@@ -116,49 +99,9 @@ export default function DashboardPage() {
     return proverbs[dayOfYear % proverbs.length];
   }, [dayOfYear, language]);
 
-  // Load dashboard stats
-  useEffect(() => {
-    async function loadStats() {
-      const [clientsRes, projectsRes, leadsRes, incomeRes, expensesRes] = await Promise.all([
-        supabase.from('clients').select('id', { count: 'exact', head: true }),
-        supabase.from('projects').select('id', { count: 'exact', head: true }).eq('status', 'active'),
-        supabase.from('leads').select('id, temperature'),
-        supabase.from('client_income').select('amount, frequency'),
-        supabase.from('company_expenses').select('amount, frequency'),
-      ]);
-
-      const leads = leadsRes.data || [];
-      const income = incomeRes.data || [];
-      const expenses = expensesRes.data || [];
-
-      // Calculate monthly values
-      const monthlyIncome = income.reduce((sum, i) => {
-        if (i.frequency === 'monthly') return sum + i.amount;
-        if (i.frequency === 'annual') return sum + i.amount / 12;
-        return sum;
-      }, 0);
-
-      const monthlyExpenses = expenses.reduce((sum, e) => {
-        if (e.frequency === 'monthly') return sum + e.amount;
-        if (e.frequency === 'annual') return sum + e.amount / 12;
-        return sum;
-      }, 0);
-
-      setStats({
-        totalClients: clientsRes.count || 0,
-        activeProjects: projectsRes.count || 0,
-        totalLeads: leads.length,
-        hotLeads: leads.filter(l => l.temperature === 'hot').length,
-        monthlyIncome,
-        monthlyExpenses,
-      });
-    }
-    loadStats();
-  }, []);
-
   const radioStreams = {
-    es: 'https://playerservices.streamtheworld.com/api/livestream-redirect/RADIOFETV.mp3',
-    fr: 'https://radio.rcf.fr/rcf-national.mp3',
+    es: 'https://streaming12.elitecomunicacion.es:8050/stream?type=.mp3',
+    fr: 'https://direct.franceinfo.fr/live/franceinfo-midfi.mp3',
   };
 
   const handlePlayRadio = () => {
@@ -206,16 +149,14 @@ export default function DashboardPage() {
     };
   }, []);
 
-  const profit = stats.monthlyIncome - stats.monthlyExpenses;
-
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           {t.dashboard.welcome}, {profile?.full_name || profile?.email?.split('@')[0] || '-'}
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
           {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'es-ES', {
             weekday: 'long',
             year: 'numeric',
@@ -225,69 +166,31 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t.nav.clients}</p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-white mt-1">{stats.totalClients}</p>
-            </div>
-            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-              <FaUsers className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t.nav.projects}</p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-white mt-1">{stats.activeProjects}</p>
-            </div>
-            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-              <FaProjectDiagram className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t.nav.leads}</p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-white mt-1">{stats.totalLeads}</p>
-              {stats.hotLeads > 0 && (
-                <p className="text-xs text-orange-500 flex items-center gap-1 mt-1">
-                  <FaFire className="w-3 h-3" /> {stats.hotLeads} hot
-                </p>
-              )}
-            </div>
-            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-              <FaUserPlus className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{language === 'fr' ? 'Profit mensuel' : 'Beneficio mensual'}</p>
-              <p className={`text-2xl font-semibold mt-1 ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {profit >= 0 ? '+' : ''}{profit.toLocaleString('de-CH', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CHF
-              </p>
-            </div>
-            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-              <FaChartLine className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Quotes */}
         <div className="lg:col-span-2 space-y-4">
-          {/* Daily Quote */}
+          {/* Bible Proverb - First */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Image
+                src="/images/sagrada-biblia-icon.png"
+                alt="Biblia"
+                width={60}
+                height={60}
+                className="opacity-70"
+              />
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t.dashboard.bibleProverb}</span>
+            </div>
+            <blockquote className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed">
+              &ldquo;{dailyProverb.verse}&rdquo;
+            </blockquote>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-3 text-right">
+              — {dailyProverb.reference}
+            </p>
+          </div>
+
+          {/* Daily Quote - Second */}
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-2 mb-3">
               <FaQuoteLeft className="w-4 h-4 text-gray-400" />
@@ -301,22 +204,8 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* Bible Proverb */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <FaBook className="w-4 h-4 text-gray-400" />
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t.dashboard.bibleProverb}</span>
-            </div>
-            <blockquote className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed">
-              &ldquo;{dailyProverb.verse}&rdquo;
-            </blockquote>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-3 text-right">
-              — {dailyProverb.reference}
-            </p>
-          </div>
-
           {/* AI Assistant */}
-          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-5">
+          <div className="bg-syntalys-blue dark:bg-gray-950 rounded-lg p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
@@ -352,7 +241,7 @@ export default function DashboardPage() {
                 onClick={() => handleRadioLanguageChange('es')}
                 className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                   radioLanguage === 'es'
-                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    ? 'bg-syntalys-blue dark:bg-white text-white dark:text-gray-900'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
@@ -362,7 +251,7 @@ export default function DashboardPage() {
                 onClick={() => handleRadioLanguageChange('fr')}
                 className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                   radioLanguage === 'fr'
-                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    ? 'bg-syntalys-blue dark:bg-white text-white dark:text-gray-900'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
@@ -377,7 +266,7 @@ export default function DashboardPage() {
               className={`w-full py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                 isPlaying
                   ? 'bg-red-500 hover:bg-red-600 text-white'
-                  : 'bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 text-white dark:text-gray-900'
+                  : 'bg-syntalys-blue dark:bg-white hover:opacity-90 dark:hover:bg-gray-100 text-white dark:text-gray-900'
               } ${isLoading ? 'opacity-75 cursor-wait' : ''}`}
             >
               {isLoading ? (

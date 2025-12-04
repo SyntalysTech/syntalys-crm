@@ -1,33 +1,45 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Lead, LeadStatus, LeadTemperature, LeadPriority } from '@/lib/types';
+import type { Lead, PipelineStage, LeadTemperature, LeadPriority, ServiceInterested, LeadStatus } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { FaPhone, FaWhatsapp, FaEnvelope, FaFire, FaSnowflake, FaSun, FaCalendarAlt, FaBuilding, FaGripVertical } from 'react-icons/fa';
+import { FaPhone, FaWhatsapp, FaEnvelope, FaFire, FaSnowflake, FaSun, FaCalendarAlt, FaBuilding, FaChevronDown, FaChevronUp, FaFilter } from 'react-icons/fa';
 
-// Status columns configuration
-const STATUS_COLUMNS: { status: LeadStatus; colorClass: string; bgClass: string }[] = [
-  { status: 'new', colorClass: 'border-blue-500', bgClass: 'bg-blue-500' },
-  { status: 'contacted', colorClass: 'border-yellow-500', bgClass: 'bg-yellow-500' },
-  { status: 'qualified', colorClass: 'border-indigo-500', bgClass: 'bg-indigo-500' },
-  { status: 'proposal', colorClass: 'border-purple-500', bgClass: 'bg-purple-500' },
-  { status: 'negotiation', colorClass: 'border-orange-500', bgClass: 'bg-orange-500' },
-  { status: 'won', colorClass: 'border-green-500', bgClass: 'bg-green-500' },
-  { status: 'lost', colorClass: 'border-red-500', bgClass: 'bg-red-500' },
-  { status: 'no_answer', colorClass: 'border-gray-500', bgClass: 'bg-gray-500' },
-  { status: 'callback', colorClass: 'border-cyan-500', bgClass: 'bg-cyan-500' },
+// Pipeline stage columns configuration
+const PIPELINE_COLUMNS: { stage: PipelineStage; color: string }[] = [
+  { stage: 'none', color: 'gray' },
+  { stage: 'proposal', color: 'purple' },
+  { stage: 'demo', color: 'cyan' },
+  { stage: 'negotiation', color: 'orange' },
+  { stage: 'closing', color: 'indigo' },
+  { stage: 'won', color: 'green' },
+  { stage: 'lost', color: 'red' },
 ];
 
+const COLOR_CLASSES: Record<string, { border: string; bg: string; light: string }> = {
+  blue: { border: 'border-blue-500', bg: 'bg-blue-500', light: 'bg-blue-50 dark:bg-blue-900/20' },
+  yellow: { border: 'border-yellow-500', bg: 'bg-yellow-500', light: 'bg-yellow-50 dark:bg-yellow-900/20' },
+  indigo: { border: 'border-indigo-500', bg: 'bg-indigo-500', light: 'bg-indigo-50 dark:bg-indigo-900/20' },
+  purple: { border: 'border-purple-500', bg: 'bg-purple-500', light: 'bg-purple-50 dark:bg-purple-900/20' },
+  orange: { border: 'border-orange-500', bg: 'bg-orange-500', light: 'bg-orange-50 dark:bg-orange-900/20' },
+  green: { border: 'border-green-500', bg: 'bg-green-500', light: 'bg-green-50 dark:bg-green-900/20' },
+  red: { border: 'border-red-500', bg: 'bg-red-500', light: 'bg-red-50 dark:bg-red-900/20' },
+  gray: { border: 'border-gray-500', bg: 'bg-gray-500', light: 'bg-gray-50 dark:bg-gray-900/20' },
+  cyan: { border: 'border-cyan-500', bg: 'bg-cyan-500', light: 'bg-cyan-50 dark:bg-cyan-900/20' },
+};
+
 export default function PipelinePage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { profile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
-  const [dragOverColumn, setDragOverColumn] = useState<LeadStatus | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [dragOverStage, setDragOverStage] = useState<PipelineStage | null>(null);
+  const [collapsedSections, setCollapsedSections] = useState<Record<PipelineStage, boolean>>({} as Record<PipelineStage, boolean>);
+  const [serviceFilter, setServiceFilter] = useState<ServiceInterested | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
 
   useEffect(() => {
     loadLeads();
@@ -48,56 +60,135 @@ export default function PipelinePage() {
     setLoading(false);
   }
 
-  async function handleStatusChange(lead: Lead, newStatus: LeadStatus) {
-    if (lead.status === newStatus) return;
+  async function handleStageChange(lead: Lead, newStage: PipelineStage) {
+    if (lead.pipeline_stage === newStage) return;
 
-    const oldStatus = lead.status;
+    const oldStage = lead.pipeline_stage;
 
     // Optimistic update
     setLeads(prev => prev.map(l =>
-      l.id === lead.id ? { ...l, status: newStatus, updated_at: new Date().toISOString() } : l
+      l.id === lead.id ? { ...l, pipeline_stage: newStage, updated_at: new Date().toISOString() } : l
     ));
 
     const { error } = await supabase
       .from('leads')
       .update({
-        status: newStatus,
+        pipeline_stage: newStage,
         last_contact_date: new Date().toISOString().split('T')[0],
         contact_count: lead.contact_count + 1,
       })
       .eq('id', lead.id);
 
     if (error) {
-      console.error('Error updating lead status:', error);
-      // Revert on error
+      console.error('Error updating lead pipeline stage:', error);
       setLeads(prev => prev.map(l =>
-        l.id === lead.id ? { ...l, status: oldStatus } : l
+        l.id === lead.id ? { ...l, pipeline_stage: oldStage } : l
       ));
       return;
     }
 
-    // Add activity
     await supabase.from('lead_activities').insert([{
       lead_id: lead.id,
       user_id: profile?.id,
       activity_type: 'status_change',
-      description: `Estado cambiado de "${getStatusLabel(oldStatus)}" a "${getStatusLabel(newStatus)}"`,
+      description: `Pipeline cambiado de "${getStageLabel(oldStage || 'none')}" a "${getStageLabel(newStage)}"`,
     }]);
+
+    // Create automatic activities based on pipeline automations
+    await createAutomaticActivities(lead, newStage);
+  }
+
+  async function createAutomaticActivities(lead: Lead, newStage: PipelineStage) {
+    // Fetch automation rules for this stage
+    const { data: automations } = await supabase
+      .from('pipeline_automations')
+      .select('*')
+      .eq('trigger_stage', newStage)
+      .eq('is_active', true);
+
+    if (!automations || automations.length === 0) return;
+
+    // Create activities for each automation rule
+    const activitiesToCreate = automations.map(automation => {
+      const scheduledDate = new Date();
+      scheduledDate.setDate(scheduledDate.getDate() + (automation.days_delay || 0));
+      scheduledDate.setHours(scheduledDate.getHours() + (automation.hours_delay || 0));
+
+      return {
+        user_id: profile?.id,
+        lead_id: lead.id,
+        company_name: lead.company_name,
+        title: automation.activity_title,
+        description: automation.activity_description,
+        activity_type: automation.activity_type,
+        scheduled_date: scheduledDate.toISOString().split('T')[0],
+        scheduled_time: automation.hours_delay ? scheduledDate.toTimeString().slice(0, 5) : '09:00',
+        priority: automation.default_priority || 'medium',
+        status: 'pending',
+        auto_created: true,
+        trigger_stage: newStage,
+      };
+    });
+
+    const { error } = await supabase.from('activities').insert(activitiesToCreate);
+    if (error) {
+      console.error('Error creating automatic activities:', error);
+    }
+  }
+
+  function getStageLabel(stage: PipelineStage): string {
+    const labels: Record<PipelineStage, string> = {
+      none: t.leads.stageNone,
+      proposal: t.leads.stageProposal,
+      demo: t.leads.stageDemo,
+      negotiation: t.leads.stageNegotiation,
+      closing: t.leads.stageClosing,
+      won: t.leads.stageWon,
+      lost: t.leads.stageLost,
+    };
+    return labels[stage];
   }
 
   function getStatusLabel(status: LeadStatus): string {
     const labels: Record<LeadStatus, string> = {
       new: t.leads.statusNew,
       contacted: t.leads.statusContacted,
+      interested: t.leads.statusInterested,
       qualified: t.leads.statusQualified,
-      proposal: t.leads.statusProposal,
-      negotiation: t.leads.statusNegotiation,
-      won: t.leads.statusWon,
-      lost: t.leads.statusLost,
-      no_answer: t.leads.statusNoAnswer,
-      callback: t.leads.statusCallback,
+      not_qualified: t.leads.statusNotQualified,
+      dormant: t.leads.statusDormant,
     };
     return labels[status];
+  }
+
+  function getStatusColor(status: LeadStatus): string {
+    const colors: Record<LeadStatus, string> = {
+      new: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+      contacted: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300',
+      interested: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
+      qualified: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
+      not_qualified: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
+      dormant: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+    };
+    return colors[status];
+  }
+
+  function getServiceLabel(service: ServiceInterested | null): string {
+    if (!service) return '-';
+    const labels: Record<ServiceInterested, string> = {
+      call_center: t.leads.serviceCallCenter,
+      automations: t.leads.serviceAutomations,
+      chatbot: t.leads.serviceChatbot,
+      voicebot: t.leads.serviceVoicebot,
+      web_development: t.leads.serviceWebDevelopment,
+      app_development: t.leads.serviceAppDevelopment,
+      ai: t.leads.serviceAI,
+      crm: t.leads.serviceCRM,
+      marketing: t.leads.serviceMarketing,
+      seo: t.leads.serviceSEO,
+      other: t.leads.serviceOther,
+    };
+    return labels[service];
   }
 
   function getPriorityColor(priority: LeadPriority): string {
@@ -110,16 +201,6 @@ export default function PipelinePage() {
     return colors[priority];
   }
 
-  function getPriorityLabel(priority: LeadPriority): string {
-    const labels: Record<LeadPriority, string> = {
-      low: t.leads.priorityLow,
-      medium: t.leads.priorityMedium,
-      high: t.leads.priorityHigh,
-      urgent: t.leads.priorityUrgent,
-    };
-    return labels[priority];
-  }
-
   function getTemperatureIcon(temp: LeadTemperature) {
     switch (temp) {
       case 'cold': return <FaSnowflake className="text-blue-500" title={t.leads.tempCold} />;
@@ -128,51 +209,51 @@ export default function PipelinePage() {
     }
   }
 
-  // Drag handlers
   function handleDragStart(e: React.DragEvent, lead: Lead) {
     setDraggedLead(lead);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', lead.id);
-    // Add dragging class after a small delay for visual feedback
-    setTimeout(() => {
-      const element = document.getElementById(`lead-card-${lead.id}`);
-      if (element) element.classList.add('opacity-50');
-    }, 0);
   }
 
   function handleDragEnd() {
-    if (draggedLead) {
-      const element = document.getElementById(`lead-card-${draggedLead.id}`);
-      if (element) element.classList.remove('opacity-50');
-    }
     setDraggedLead(null);
-    setDragOverColumn(null);
+    setDragOverStage(null);
   }
 
-  function handleDragOver(e: React.DragEvent, status: LeadStatus) {
+  function handleDragOver(e: React.DragEvent, stage: PipelineStage) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    setDragOverColumn(status);
+    setDragOverStage(stage);
   }
 
   function handleDragLeave() {
-    setDragOverColumn(null);
+    setDragOverStage(null);
   }
 
-  function handleDrop(e: React.DragEvent, newStatus: LeadStatus) {
+  function handleDrop(e: React.DragEvent, newStage: PipelineStage) {
     e.preventDefault();
-    setDragOverColumn(null);
+    setDragOverStage(null);
 
-    if (draggedLead && draggedLead.status !== newStatus) {
-      handleStatusChange(draggedLead, newStatus);
+    if (draggedLead && draggedLead.pipeline_stage !== newStage) {
+      handleStageChange(draggedLead, newStage);
     }
     setDraggedLead(null);
   }
 
-  // Get leads for a specific status
-  function getLeadsByStatus(status: LeadStatus): Lead[] {
-    return leads.filter(lead => lead.status === status);
+  function getLeadsByStage(stage: PipelineStage): Lead[] {
+    return filteredLeads.filter(lead => (lead.pipeline_stage || 'none') === stage);
   }
+
+  function toggleSection(stage: PipelineStage) {
+    setCollapsedSections(prev => ({ ...prev, [stage]: !prev[stage] }));
+  }
+
+  // Filter leads
+  const filteredLeads = leads.filter(lead => {
+    const matchesService = serviceFilter === 'all' || lead.service_interested === serviceFilter;
+    const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
+    return matchesService && matchesStatus;
+  });
 
   if (loading) {
     return (
@@ -186,63 +267,114 @@ export default function PipelinePage() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="p-8">
       {/* Header */}
-      <div className="flex-shrink-0 p-6 pb-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t.leads.pipelineTitle}</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t.leads.pipelineSubtitle}</p>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <span className="hidden sm:inline">{t.leads.dragToMove}</span>
-            <FaGripVertical className="w-4 h-4" />
-          </div>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t.leads.pipelineTitle}</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">{t.leads.pipelineSubtitle}</p>
       </div>
 
-      {/* Kanban Board */}
-      <div
-        ref={scrollContainerRef}
-        className="flex-1 overflow-x-auto overflow-y-hidden px-6 pb-6"
-      >
-        <div className="flex gap-4 h-full min-w-max">
-          {STATUS_COLUMNS.map(({ status, colorClass, bgClass }) => {
-            const columnLeads = getLeadsByStatus(status);
-            const isDropTarget = dragOverColumn === status && draggedLead?.status !== status;
+      {/* Filters */}
+      <div className="mb-6 flex flex-wrap gap-3 items-center bg-syntalys-blue dark:bg-gray-800 rounded-lg p-4">
+        <FaFilter className="text-white dark:text-gray-400" />
+        <select
+          value={serviceFilter}
+          onChange={(e) => setServiceFilter(e.target.value as ServiceInterested | 'all')}
+          className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+        >
+          <option value="all" className="text-gray-900">{t.leads.allServices}</option>
+          <option value="call_center" className="text-gray-900">{t.leads.serviceCallCenter}</option>
+          <option value="automations" className="text-gray-900">{t.leads.serviceAutomations}</option>
+          <option value="chatbot" className="text-gray-900">{t.leads.serviceChatbot}</option>
+          <option value="voicebot" className="text-gray-900">{t.leads.serviceVoicebot}</option>
+          <option value="web_development" className="text-gray-900">{t.leads.serviceWebDevelopment}</option>
+          <option value="app_development" className="text-gray-900">{t.leads.serviceAppDevelopment}</option>
+          <option value="ai" className="text-gray-900">{t.leads.serviceAI}</option>
+          <option value="crm" className="text-gray-900">{t.leads.serviceCRM}</option>
+          <option value="marketing" className="text-gray-900">{t.leads.serviceMarketing}</option>
+          <option value="seo" className="text-gray-900">{t.leads.serviceSEO}</option>
+          <option value="other" className="text-gray-900">{t.leads.serviceOther}</option>
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as LeadStatus | 'all')}
+          className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+        >
+          <option value="all" className="text-gray-900">{t.leads.allStatuses}</option>
+          <option value="new" className="text-gray-900">{t.leads.statusNew}</option>
+          <option value="contacted" className="text-gray-900">{t.leads.statusContacted}</option>
+          <option value="interested" className="text-gray-900">{t.leads.statusInterested}</option>
+          <option value="qualified" className="text-gray-900">{t.leads.statusQualified}</option>
+          <option value="not_qualified" className="text-gray-900">{t.leads.statusNotQualified}</option>
+          <option value="dormant" className="text-gray-900">{t.leads.statusDormant}</option>
+        </select>
+        {(serviceFilter !== 'all' || statusFilter !== 'all') && (
+          <button
+            onClick={() => { setServiceFilter('all'); setStatusFilter('all'); }}
+            className="text-sm text-white/80 hover:text-white dark:text-blue-400"
+          >
+            {t.common.clearFilters}
+          </button>
+        )}
+      </div>
 
-            return (
-              <div
-                key={status}
-                className={`flex flex-col w-72 flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded-lg transition-all duration-200 ${
-                  isDropTarget ? 'ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900' : ''
-                }`}
-                onDragOver={(e) => handleDragOver(e, status)}
-                onDragLeave={handleDragLeave}
-                onDrop={(e) => handleDrop(e, status)}
+      {/* Pipeline Grid - Bento Style */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+        {PIPELINE_COLUMNS.map(({ stage, color }) => {
+          const columnLeads = getLeadsByStage(stage);
+          const isDropTarget = dragOverStage === stage && draggedLead?.pipeline_stage !== stage;
+          const isCollapsed = collapsedSections[stage];
+          const colors = COLOR_CLASSES[color];
+          const columnValue = columnLeads.reduce((sum, l) => sum + (l.estimated_value || 0), 0);
+
+          return (
+            <div
+              key={stage}
+              className={`bg-white dark:bg-gray-800 rounded-xl border-2 transition-all duration-200 ${
+                isDropTarget
+                  ? 'border-blue-500 shadow-lg shadow-blue-500/20'
+                  : 'border-gray-200 dark:border-gray-700'
+              }`}
+              onDragOver={(e) => handleDragOver(e, stage)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, stage)}
+            >
+              {/* Section Header */}
+              <button
+                onClick={() => toggleSection(stage)}
+                className={`w-full px-4 py-3 flex items-center justify-between border-b-2 ${colors.border} rounded-t-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors`}
               >
-                {/* Column Header */}
-                <div className={`flex-shrink-0 px-4 py-3 border-b-2 ${colorClass}`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${bgClass}`}></div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                        {getStatusLabel(status)}
-                      </h3>
-                    </div>
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-0.5 rounded-full">
-                      {columnLeads.length}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <div className={`w-3 h-3 rounded-full ${colors.bg}`}></div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {getStageLabel(stage)}
+                  </h3>
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                    {columnLeads.length}
+                  </span>
                 </div>
+                <div className="flex items-center gap-3">
+                  {columnValue > 0 && (
+                    <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                      CHF {columnValue.toLocaleString()}
+                    </span>
+                  )}
+                  {isCollapsed ? (
+                    <FaChevronDown className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <FaChevronUp className="w-4 h-4 text-gray-400" />
+                  )}
+                </div>
+              </button>
 
-                {/* Column Content */}
-                <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              {/* Section Content */}
+              {!isCollapsed && (
+                <div className={`p-3 space-y-2 max-h-96 overflow-y-auto ${isDropTarget ? colors.light : ''}`}>
                   {columnLeads.length === 0 ? (
-                    <div className={`flex items-center justify-center h-24 border-2 border-dashed rounded-lg transition-colors ${
+                    <div className={`flex items-center justify-center h-20 border-2 border-dashed rounded-lg transition-colors ${
                       isDropTarget
                         ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-300 dark:border-gray-600'
+                        : 'border-gray-200 dark:border-gray-600'
                     }`}>
                       <p className="text-sm text-gray-400 dark:text-gray-500">{t.leads.emptyColumn}</p>
                     </div>
@@ -250,11 +382,12 @@ export default function PipelinePage() {
                     columnLeads.map((lead) => (
                       <div
                         key={lead.id}
-                        id={`lead-card-${lead.id}`}
                         draggable
                         onDragStart={(e) => handleDragStart(e, lead)}
                         onDragEnd={handleDragEnd}
-                        className="bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow group"
+                        className={`bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 cursor-grab active:cursor-grabbing hover:bg-gray-100 dark:hover:bg-gray-700 transition-all border border-transparent hover:border-gray-300 dark:hover:border-gray-600 ${
+                          draggedLead?.id === lead.id ? 'opacity-50 scale-95' : ''
+                        }`}
                       >
                         {/* Card Header */}
                         <div className="flex items-start justify-between gap-2 mb-2">
@@ -274,21 +407,42 @@ export default function PipelinePage() {
                           </div>
                         </div>
 
-                        {/* Priority & Next Followup */}
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(lead.priority)}`}>
-                            {getPriorityLabel(lead.priority)}
+                        {/* Status Badge */}
+                        <div className="mb-2">
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded ${getStatusColor(lead.status)}`}>
+                            {getStatusLabel(lead.status)}
                           </span>
-                          {lead.next_followup_date && (
-                            <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                              <FaCalendarAlt className="w-3 h-3" />
-                              {new Date(lead.next_followup_date).toLocaleDateString()}
+                        </div>
+
+                        {/* Meta info */}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(lead.priority)}`}>
+                            {lead.priority}
+                          </span>
+                          {lead.service_interested && (
+                            <span className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                              {getServiceLabel(lead.service_interested)}
+                            </span>
+                          )}
+                          {lead.estimated_value && (
+                            <span className="text-xs font-semibold text-green-600 dark:text-green-400 ml-auto">
+                              {lead.currency} {lead.estimated_value.toLocaleString()}
                             </span>
                           )}
                         </div>
 
+                        {/* Next followup */}
+                        {lead.next_followup_date && (
+                          <div className="mt-2 flex items-center gap-1">
+                            <FaCalendarAlt className="w-3 h-3 text-gray-400" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {new Date(lead.next_followup_date).toLocaleDateString()}
+                            </span>
+                          </div>
+                        )}
+
                         {/* Quick Actions */}
-                        <div className="flex items-center gap-1 pt-2 border-t border-gray-100 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
                           {lead.phone && (
                             <a
                               href={`tel:${lead.phone}`}
@@ -296,7 +450,7 @@ export default function PipelinePage() {
                               className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
                               title={t.leads.call}
                             >
-                              <FaPhone className="w-3.5 h-3.5" />
+                              <FaPhone className="w-3 h-3" />
                             </a>
                           )}
                           {lead.whatsapp && (
@@ -308,7 +462,7 @@ export default function PipelinePage() {
                               className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded transition-colors"
                               title={t.leads.sendWhatsapp}
                             >
-                              <FaWhatsapp className="w-3.5 h-3.5" />
+                              <FaWhatsapp className="w-3 h-3" />
                             </a>
                           )}
                           {lead.email && (
@@ -318,45 +472,18 @@ export default function PipelinePage() {
                               className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded transition-colors"
                               title={t.leads.sendEmail}
                             >
-                              <FaEnvelope className="w-3.5 h-3.5" />
+                              <FaEnvelope className="w-3 h-3" />
                             </a>
                           )}
-                          {/* Drag handle indicator */}
-                          <div className="ml-auto">
-                            <FaGripVertical className="w-3 h-3 text-gray-300 dark:text-gray-500" />
-                          </div>
                         </div>
-
-                        {/* Estimated Value */}
-                        {lead.estimated_value && (
-                          <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-600">
-                            <p className="text-xs font-semibold text-green-600 dark:text-green-400">
-                              {lead.currency} {lead.estimated_value.toLocaleString()}
-                            </p>
-                          </div>
-                        )}
                       </div>
                     ))
                   )}
                 </div>
-
-                {/* Column Footer - Stats */}
-                {columnLeads.length > 0 && (
-                  <div className="flex-shrink-0 px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 rounded-b-lg">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {columnLeads.length} {t.leads.leadsInColumn}
-                      {columnLeads.some(l => l.estimated_value) && (
-                        <span className="ml-2 text-green-600 dark:text-green-400 font-medium">
-                          CHF {columnLeads.reduce((sum, l) => sum + (l.estimated_value || 0), 0).toLocaleString()}
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '@/lib/supabase';
-import type { Lead, LeadStatus, LeadSource, LeadPriority, LeadTemperature, LeadActivity, Currency } from '@/lib/types';
+import type { Lead, LeadStatus, LeadSource, LeadPriority, LeadTemperature, LeadActivity, Currency, PipelineStage, ServiceInterested, PipelineType } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { FaEllipsisV, FaPhone, FaWhatsapp, FaEnvelope, FaPlus, FaTimes, FaFire, FaSnowflake, FaSun, FaCalendarAlt, FaUser, FaBuilding, FaGlobe, FaSearch, FaFilter } from 'react-icons/fa';
@@ -43,7 +43,8 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
   const [sourceFilter, setSourceFilter] = useState<LeadSource | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<LeadPriority | 'all'>('all');
-  const [temperatureFilter, setTemperatureFilter] = useState<LeadTemperature | 'all'>('all');
+  const [serviceFilter, setServiceFilter] = useState('');
+  const [followupFilter, setFollowupFilter] = useState<'all' | 'today' | 'week' | 'overdue' | 'none'>('all');
   const [showFilters, setShowFilters] = useState(false);
 
   // Form data
@@ -55,12 +56,14 @@ export default function LeadsPage() {
     whatsapp: '',
     country: '',
     status: 'new' as LeadStatus,
+    pipeline_stage: 'none' as PipelineStage,
     source: 'website' as LeadSource,
     priority: 'medium' as LeadPriority,
     temperature: 'warm' as LeadTemperature,
     estimated_value: '',
     currency: 'CHF' as Currency,
-    service_interested: '',
+    service_interested: '' as ServiceInterested | '',
+    pipeline_type: 'general' as PipelineType,
     next_followup_date: '',
     notes: '',
   });
@@ -124,15 +127,28 @@ export default function LeadsPage() {
       whatsapp: '',
       country: '',
       status: 'new',
+      pipeline_stage: 'none',
       source: 'website',
       priority: 'medium',
       temperature: 'warm',
       estimated_value: '',
       currency: 'CHF',
       service_interested: '',
+      pipeline_type: 'general',
       next_followup_date: '',
       notes: '',
     });
+  }
+
+  // Auto-assign pipeline_type based on service_interested
+  function getPipelineTypeFromService(service: ServiceInterested | ''): PipelineType {
+    switch (service) {
+      case 'call_center': return 'call_center';
+      case 'automations': return 'automations';
+      case 'chatbot': return 'chatbot';
+      case 'voicebot': return 'voicebot';
+      default: return 'general';
+    }
   }
 
   async function handleAddLead() {
@@ -140,6 +156,8 @@ export default function LeadsPage() {
       alert('El nombre es obligatorio');
       return;
     }
+
+    const pipelineType = formData.service_interested ? getPipelineTypeFromService(formData.service_interested as ServiceInterested) : 'general';
 
     const { error } = await supabase.from('leads').insert([{
       user_id: profile?.id,
@@ -150,12 +168,14 @@ export default function LeadsPage() {
       whatsapp: formData.whatsapp || null,
       country: formData.country || null,
       status: formData.status,
+      pipeline_stage: formData.pipeline_stage,
       source: formData.source,
       priority: formData.priority,
       temperature: formData.temperature,
       estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
       currency: formData.currency,
       service_interested: formData.service_interested || null,
+      pipeline_type: pipelineType,
       first_contact_date: new Date().toISOString().split('T')[0],
       last_contact_date: new Date().toISOString().split('T')[0],
       next_followup_date: formData.next_followup_date || null,
@@ -176,6 +196,8 @@ export default function LeadsPage() {
   async function handleEditLead() {
     if (!selectedLead || !formData.name) return;
 
+    const pipelineType = formData.service_interested ? getPipelineTypeFromService(formData.service_interested as ServiceInterested) : 'general';
+
     const { error } = await supabase
       .from('leads')
       .update({
@@ -186,12 +208,14 @@ export default function LeadsPage() {
         whatsapp: formData.whatsapp || null,
         country: formData.country || null,
         status: formData.status,
+        pipeline_stage: formData.pipeline_stage,
         source: formData.source,
         priority: formData.priority,
         temperature: formData.temperature,
         estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
         currency: formData.currency,
         service_interested: formData.service_interested || null,
+        pipeline_type: pipelineType,
         next_followup_date: formData.next_followup_date || null,
         notes: formData.notes || null,
       })
@@ -274,36 +298,46 @@ export default function LeadsPage() {
   async function handleConvertToClient(lead: Lead) {
     if (!confirm(t.leads.convertConfirm)) return;
 
+    if (!profile?.id) {
+      alert('Error: Usuario no autenticado');
+      return;
+    }
+
     // Create client
     const { data: clientData, error: clientError } = await supabase
       .from('clients')
       .insert([{
-        user_id: profile?.id,
-        name: lead.company_name || lead.name,
-        email: lead.email,
-        phone: lead.phone,
-        country: lead.country,
+        user_id: profile.id,
+        name: lead.name,
+        company_name: lead.company_name || lead.name,
+        email: lead.email || null,
+        phone: lead.phone || null,
+        country: lead.country || null,
         status: 'active',
         is_potential: false,
-        notes: lead.notes,
+        notes: lead.notes || null,
       }])
       .select()
       .single();
 
     if (clientError) {
       console.error('Error creating client:', clientError);
-      alert('Error al convertir a cliente');
+      alert(`Error al convertir a cliente: ${clientError.message}`);
       return;
     }
 
-    // Update lead status
-    await supabase
+    // Update lead to qualified status and won pipeline stage
+    const { error: updateError } = await supabase
       .from('leads')
-      .update({ status: 'won' })
+      .update({ status: 'qualified', pipeline_stage: 'won' })
       .eq('id', lead.id);
 
+    if (updateError) {
+      console.error('Error updating lead status:', updateError);
+    }
+
     loadLeads();
-    alert('Lead convertido a cliente exitosamente');
+    alert(language === 'fr' ? 'Lead converti en client avec succès' : 'Lead convertido a cliente exitosamente');
   }
 
   function openEditModal(lead: Lead) {
@@ -316,12 +350,14 @@ export default function LeadsPage() {
       whatsapp: lead.whatsapp || '',
       country: lead.country || '',
       status: lead.status,
+      pipeline_stage: lead.pipeline_stage || 'none',
       source: lead.source,
       priority: lead.priority,
       temperature: lead.temperature,
       estimated_value: lead.estimated_value?.toString() || '',
       currency: lead.currency,
       service_interested: lead.service_interested || '',
+      pipeline_type: lead.pipeline_type || 'general',
       next_followup_date: lead.next_followup_date || '',
       notes: lead.notes || '',
     });
@@ -338,13 +374,10 @@ export default function LeadsPage() {
     const labels: Record<LeadStatus, string> = {
       new: t.leads.statusNew,
       contacted: t.leads.statusContacted,
+      interested: t.leads.statusInterested,
       qualified: t.leads.statusQualified,
-      proposal: t.leads.statusProposal,
-      negotiation: t.leads.statusNegotiation,
-      won: t.leads.statusWon,
-      lost: t.leads.statusLost,
-      no_answer: t.leads.statusNoAnswer,
-      callback: t.leads.statusCallback,
+      not_qualified: t.leads.statusNotQualified,
+      dormant: t.leads.statusDormant,
     };
     return labels[status];
   }
@@ -353,15 +386,56 @@ export default function LeadsPage() {
     const colors: Record<LeadStatus, string> = {
       new: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
       contacted: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-      qualified: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
-      proposal: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      negotiation: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-      won: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-      lost: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-      no_answer: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-      callback: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
+      interested: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+      qualified: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+      not_qualified: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+      dormant: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
     };
     return colors[status];
+  }
+
+  function getPipelineStageLabel(stage: PipelineStage): string {
+    const labels: Record<PipelineStage, string> = {
+      none: t.leads.stageNone,
+      proposal: t.leads.stageProposal,
+      negotiation: t.leads.stageNegotiation,
+      demo: t.leads.stageDemo,
+      closing: t.leads.stageClosing,
+      won: t.leads.stageWon,
+      lost: t.leads.stageLost,
+    };
+    return labels[stage];
+  }
+
+  function getPipelineStageColor(stage: PipelineStage): string {
+    const colors: Record<PipelineStage, string> = {
+      none: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+      proposal: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+      negotiation: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+      demo: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
+      closing: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
+      won: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+      lost: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+    };
+    return colors[stage];
+  }
+
+  function getServiceLabel(service: ServiceInterested | null): string {
+    if (!service) return '-';
+    const labels: Record<ServiceInterested, string> = {
+      call_center: t.leads.serviceCallCenter,
+      automations: t.leads.serviceAutomations,
+      chatbot: t.leads.serviceChatbot,
+      voicebot: t.leads.serviceVoicebot,
+      web_development: t.leads.serviceWebDevelopment,
+      app_development: t.leads.serviceAppDevelopment,
+      ai: t.leads.serviceAI,
+      crm: t.leads.serviceCRM,
+      marketing: t.leads.serviceMarketing,
+      seo: t.leads.serviceSEO,
+      other: t.leads.serviceOther,
+    };
+    return labels[service];
   }
 
   function getSourceLabel(source: LeadSource): string {
@@ -370,6 +444,7 @@ export default function LeadsPage() {
       referral: t.leads.sourceReferral,
       social_media: t.leads.sourceSocialMedia,
       cold_call: t.leads.sourceColdCall,
+      cold_email: t.leads.sourceColdEmail,
       email_campaign: t.leads.sourceEmailCampaign,
       event: t.leads.sourceEvent,
       advertising: t.leads.sourceAdvertising,
@@ -378,6 +453,7 @@ export default function LeadsPage() {
       facebook: t.leads.sourceFacebook,
       tiktok: t.leads.sourceTiktok,
       google_ads: t.leads.sourceGoogleAds,
+      reactivated: t.leads.sourceReactivated,
       other: t.leads.sourceOther,
     };
     return labels[source];
@@ -422,18 +498,50 @@ export default function LeadsPage() {
     const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
     const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
     const matchesPriority = priorityFilter === 'all' || lead.priority === priorityFilter;
-    const matchesTemperature = temperatureFilter === 'all' || lead.temperature === temperatureFilter;
+    const matchesService = serviceFilter === '' ||
+      (lead.service_interested && lead.service_interested.toLowerCase().includes(serviceFilter.toLowerCase()));
 
-    return matchesSearch && matchesStatus && matchesSource && matchesPriority && matchesTemperature;
+    // Followup date filter
+    let matchesFollowup = true;
+    if (followupFilter !== 'all') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const weekFromNow = new Date(today);
+      weekFromNow.setDate(weekFromNow.getDate() + 7);
+
+      if (followupFilter === 'none') {
+        matchesFollowup = !lead.next_followup_date;
+      } else if (followupFilter === 'overdue') {
+        matchesFollowup = lead.next_followup_date ? new Date(lead.next_followup_date) < today : false;
+      } else if (followupFilter === 'today') {
+        if (lead.next_followup_date) {
+          const followupDate = new Date(lead.next_followup_date);
+          followupDate.setHours(0, 0, 0, 0);
+          matchesFollowup = followupDate.getTime() === today.getTime();
+        } else {
+          matchesFollowup = false;
+        }
+      } else if (followupFilter === 'week') {
+        if (lead.next_followup_date) {
+          const followupDate = new Date(lead.next_followup_date);
+          matchesFollowup = followupDate >= today && followupDate <= weekFromNow;
+        } else {
+          matchesFollowup = false;
+        }
+      }
+    }
+
+    return matchesSearch && matchesStatus && matchesSource && matchesPriority && matchesService && matchesFollowup;
   });
 
-  // Stats
+  // Stats - updated for new structure
   const stats = {
     total: leads.length,
     new: leads.filter(l => l.status === 'new').length,
-    inProgress: leads.filter(l => ['contacted', 'qualified', 'proposal', 'negotiation'].includes(l.status)).length,
-    won: leads.filter(l => l.status === 'won').length,
-    lost: leads.filter(l => l.status === 'lost').length,
+    active: leads.filter(l => ['contacted', 'interested', 'qualified'].includes(l.status)).length,
+    inPipeline: leads.filter(l => l.pipeline_stage && l.pipeline_stage !== 'none' && !['won', 'lost'].includes(l.pipeline_stage)).length,
+    won: leads.filter(l => l.pipeline_stage === 'won').length,
+    dormant: leads.filter(l => l.status === 'dormant').length,
   };
 
   if (loading) {
@@ -448,12 +556,12 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t.leads.title}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t.leads.subtitle}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t.leads.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{t.leads.subtitle}</p>
         </div>
         <button
           onClick={() => { resetForm(); setShowModal('add'); }}
@@ -464,42 +572,19 @@ export default function LeadsPage() {
         </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t.leads.totalLeads}</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t.leads.newLeads}</p>
-          <p className="text-2xl font-bold text-blue-600">{stats.new}</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t.leads.inProgress}</p>
-          <p className="text-2xl font-bold text-yellow-600">{stats.inProgress}</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t.leads.wonLeads}</p>
-          <p className="text-2xl font-bold text-green-600">{stats.won}</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t.leads.lostLeads}</p>
-          <p className="text-2xl font-bold text-red-600">{stats.lost}</p>
-        </div>
-      </div>
 
       {/* Search and Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-6">
+      <div className="bg-syntalys-blue dark:bg-gray-800 rounded-lg border border-syntalys-blue dark:border-gray-700 p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 dark:text-gray-400" />
             <input
               type="text"
               placeholder={t.common.search + '...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 dark:placeholder-gray-400"
             />
           </div>
           {/* Filter Toggle */}
@@ -507,8 +592,8 @@ export default function LeadsPage() {
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
               showFilters
-                ? 'bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300'
-                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                ? 'bg-white/20 border-white/30 text-white dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300'
+                : 'border-white/20 dark:border-gray-600 text-white dark:text-gray-300 hover:bg-white/10 dark:hover:bg-gray-700'
             }`}
           >
             <FaFilter className="w-4 h-4" />
@@ -518,59 +603,76 @@ export default function LeadsPage() {
 
         {/* Expanded Filters */}
         {showFilters && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4 pt-4 border-t border-white/20 dark:border-gray-700">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as LeadStatus | 'all')}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
-              <option value="all">{t.leads.allStatuses}</option>
-              <option value="new">{t.leads.statusNew}</option>
-              <option value="contacted">{t.leads.statusContacted}</option>
-              <option value="qualified">{t.leads.statusQualified}</option>
-              <option value="proposal">{t.leads.statusProposal}</option>
-              <option value="negotiation">{t.leads.statusNegotiation}</option>
-              <option value="won">{t.leads.statusWon}</option>
-              <option value="lost">{t.leads.statusLost}</option>
-              <option value="no_answer">{t.leads.statusNoAnswer}</option>
-              <option value="callback">{t.leads.statusCallback}</option>
+              <option value="all" className="text-gray-900">{t.leads.allStatuses}</option>
+              <option value="new" className="text-gray-900">{t.leads.statusNew}</option>
+              <option value="contacted" className="text-gray-900">{t.leads.statusContacted}</option>
+              <option value="interested" className="text-gray-900">{t.leads.statusInterested}</option>
+              <option value="qualified" className="text-gray-900">{t.leads.statusQualified}</option>
+              <option value="not_qualified" className="text-gray-900">{t.leads.statusNotQualified}</option>
+              <option value="dormant" className="text-gray-900">{t.leads.statusDormant}</option>
             </select>
             <select
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value as LeadSource | 'all')}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
-              <option value="all">{t.leads.allSources}</option>
-              <option value="website">{t.leads.sourceWebsite}</option>
-              <option value="referral">{t.leads.sourceReferral}</option>
-              <option value="social_media">{t.leads.sourceSocialMedia}</option>
-              <option value="cold_call">{t.leads.sourceColdCall}</option>
-              <option value="linkedin">{t.leads.sourceLinkedin}</option>
-              <option value="instagram">{t.leads.sourceInstagram}</option>
-              <option value="facebook">{t.leads.sourceFacebook}</option>
-              <option value="google_ads">{t.leads.sourceGoogleAds}</option>
-              <option value="other">{t.leads.sourceOther}</option>
+              <option value="all" className="text-gray-900">{t.leads.allSources}</option>
+              <option value="website" className="text-gray-900">{t.leads.sourceWebsite}</option>
+              <option value="referral" className="text-gray-900">{t.leads.sourceReferral}</option>
+              <option value="cold_call" className="text-gray-900">{t.leads.sourceColdCall}</option>
+              <option value="cold_email" className="text-gray-900">{t.leads.sourceColdEmail}</option>
+              <option value="linkedin" className="text-gray-900">{t.leads.sourceLinkedin}</option>
+              <option value="instagram" className="text-gray-900">{t.leads.sourceInstagram}</option>
+              <option value="facebook" className="text-gray-900">{t.leads.sourceFacebook}</option>
+              <option value="google_ads" className="text-gray-900">{t.leads.sourceGoogleAds}</option>
+              <option value="reactivated" className="text-gray-900">{t.leads.sourceReactivated}</option>
+              <option value="other" className="text-gray-900">{t.leads.sourceOther}</option>
             </select>
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as LeadPriority | 'all')}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
-              <option value="all">{t.leads.allPriorities}</option>
-              <option value="low">{t.leads.priorityLow}</option>
-              <option value="medium">{t.leads.priorityMedium}</option>
-              <option value="high">{t.leads.priorityHigh}</option>
-              <option value="urgent">{t.leads.priorityUrgent}</option>
+              <option value="all" className="text-gray-900">{t.leads.allPriorities}</option>
+              <option value="low" className="text-gray-900">{t.leads.priorityLow}</option>
+              <option value="medium" className="text-gray-900">{t.leads.priorityMedium}</option>
+              <option value="high" className="text-gray-900">{t.leads.priorityHigh}</option>
+              <option value="urgent" className="text-gray-900">{t.leads.priorityUrgent}</option>
             </select>
             <select
-              value={temperatureFilter}
-              onChange={(e) => setTemperatureFilter(e.target.value as LeadTemperature | 'all')}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              value={followupFilter}
+              onChange={(e) => setFollowupFilter(e.target.value as 'all' | 'today' | 'week' | 'overdue' | 'none')}
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
-              <option value="all">{t.leads.allTemperatures}</option>
-              <option value="cold">{t.leads.tempCold}</option>
-              <option value="warm">{t.leads.tempWarm}</option>
-              <option value="hot">{t.leads.tempHot}</option>
+              <option value="all" className="text-gray-900">{t.leads.allFollowups}</option>
+              <option value="today" className="text-gray-900">{t.leads.followupToday}</option>
+              <option value="week" className="text-gray-900">{t.leads.followupWeek}</option>
+              <option value="overdue" className="text-gray-900">{t.leads.followupOverdue}</option>
+              <option value="none" className="text-gray-900">{t.leads.followupNone}</option>
+            </select>
+            <select
+              value={serviceFilter}
+              onChange={(e) => setServiceFilter(e.target.value)}
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+            >
+              <option value="" className="text-gray-900">{t.leads.serviceInterested}</option>
+              <option value="call_center" className="text-gray-900">{t.leads.serviceCallCenter}</option>
+              <option value="automations" className="text-gray-900">{t.leads.serviceAutomations}</option>
+              <option value="chatbot" className="text-gray-900">{t.leads.serviceChatbot}</option>
+              <option value="voicebot" className="text-gray-900">{t.leads.serviceVoicebot}</option>
+              <option value="web_development" className="text-gray-900">{t.leads.serviceWebDevelopment}</option>
+              <option value="app_development" className="text-gray-900">{t.leads.serviceAppDevelopment}</option>
+              <option value="ai" className="text-gray-900">{t.leads.serviceAI}</option>
+              <option value="crm" className="text-gray-900">{t.leads.serviceCRM}</option>
+              <option value="marketing" className="text-gray-900">{t.leads.serviceMarketing}</option>
+              <option value="seo" className="text-gray-900">{t.leads.serviceSEO}</option>
+              <option value="other" className="text-gray-900">{t.leads.serviceOther}</option>
             </select>
           </div>
         )}
@@ -580,16 +682,16 @@ export default function LeadsPage() {
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-visible">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-syntalys-blue dark:bg-gray-700">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">{t.leads.name}</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">{t.leads.status}</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">{t.leads.source}</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">{t.leads.temperature}</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">{t.leads.priority}</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">{t.leads.nextFollowup}</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">{t.leads.contactCount}</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase w-20"></th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-white dark:text-gray-300 uppercase">{t.leads.name}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-white dark:text-gray-300 uppercase">{t.leads.status}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-white dark:text-gray-300 uppercase">{t.leads.source}</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold text-white dark:text-gray-300 uppercase">{t.leads.temperature}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-white dark:text-gray-300 uppercase">{t.leads.priority}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-white dark:text-gray-300 uppercase">{t.leads.nextFollowup}</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold text-white dark:text-gray-300 uppercase">{t.leads.contactCount}</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold text-white dark:text-gray-300 uppercase w-20"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -734,7 +836,7 @@ export default function LeadsPage() {
           </button>
           {(() => {
             const lead = leads.find(l => l.id === openDropdown);
-            return lead && lead.status !== 'won' && lead.status !== 'lost' && (
+            return lead && lead.pipeline_stage !== 'won' && lead.pipeline_stage !== 'lost' && (
               <button
                 onClick={() => {
                   handleConvertToClient(lead);
@@ -838,8 +940,8 @@ export default function LeadsPage() {
                 </div>
               </div>
 
-              {/* Lead Details */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Lead Details - Row 1: Status, Pipeline Stage, Source */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.leads.status}</label>
                   <select
@@ -849,13 +951,26 @@ export default function LeadsPage() {
                   >
                     <option value="new">{t.leads.statusNew}</option>
                     <option value="contacted">{t.leads.statusContacted}</option>
+                    <option value="interested">{t.leads.statusInterested}</option>
                     <option value="qualified">{t.leads.statusQualified}</option>
-                    <option value="proposal">{t.leads.statusProposal}</option>
-                    <option value="negotiation">{t.leads.statusNegotiation}</option>
-                    <option value="won">{t.leads.statusWon}</option>
-                    <option value="lost">{t.leads.statusLost}</option>
-                    <option value="no_answer">{t.leads.statusNoAnswer}</option>
-                    <option value="callback">{t.leads.statusCallback}</option>
+                    <option value="not_qualified">{t.leads.statusNotQualified}</option>
+                    <option value="dormant">{t.leads.statusDormant}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.leads.pipelineStage}</label>
+                  <select
+                    value={formData.pipeline_stage}
+                    onChange={(e) => setFormData({ ...formData, pipeline_stage: e.target.value as PipelineStage })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="none">{t.leads.stageNone}</option>
+                    <option value="proposal">{t.leads.stageProposal}</option>
+                    <option value="demo">{t.leads.stageDemo}</option>
+                    <option value="negotiation">{t.leads.stageNegotiation}</option>
+                    <option value="closing">{t.leads.stageClosing}</option>
+                    <option value="won">{t.leads.stageWon}</option>
+                    <option value="lost">{t.leads.stageLost}</option>
                   </select>
                 </div>
                 <div>
@@ -867,19 +982,20 @@ export default function LeadsPage() {
                   >
                     <option value="website">{t.leads.sourceWebsite}</option>
                     <option value="referral">{t.leads.sourceReferral}</option>
-                    <option value="social_media">{t.leads.sourceSocialMedia}</option>
                     <option value="cold_call">{t.leads.sourceColdCall}</option>
-                    <option value="email_campaign">{t.leads.sourceEmailCampaign}</option>
-                    <option value="event">{t.leads.sourceEvent}</option>
-                    <option value="advertising">{t.leads.sourceAdvertising}</option>
+                    <option value="cold_email">{t.leads.sourceColdEmail}</option>
                     <option value="linkedin">{t.leads.sourceLinkedin}</option>
                     <option value="instagram">{t.leads.sourceInstagram}</option>
                     <option value="facebook">{t.leads.sourceFacebook}</option>
-                    <option value="tiktok">{t.leads.sourceTiktok}</option>
                     <option value="google_ads">{t.leads.sourceGoogleAds}</option>
+                    <option value="reactivated">{t.leads.sourceReactivated}</option>
                     <option value="other">{t.leads.sourceOther}</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Lead Details - Row 2: Priority, Temperature, Service */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.leads.priority}</label>
                   <select
@@ -905,10 +1021,31 @@ export default function LeadsPage() {
                     <option value="hot">{t.leads.tempHot}</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.leads.serviceInterested} *</label>
+                  <select
+                    value={formData.service_interested}
+                    onChange={(e) => setFormData({ ...formData, service_interested: e.target.value as ServiceInterested | '' })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="">-</option>
+                    <option value="call_center">{t.leads.serviceCallCenter}</option>
+                    <option value="automations">{t.leads.serviceAutomations}</option>
+                    <option value="chatbot">{t.leads.serviceChatbot}</option>
+                    <option value="voicebot">{t.leads.serviceVoicebot}</option>
+                    <option value="web_development">{t.leads.serviceWebDevelopment}</option>
+                    <option value="app_development">{t.leads.serviceAppDevelopment}</option>
+                    <option value="ai">{t.leads.serviceAI}</option>
+                    <option value="crm">{t.leads.serviceCRM}</option>
+                    <option value="marketing">{t.leads.serviceMarketing}</option>
+                    <option value="seo">{t.leads.serviceSEO}</option>
+                    <option value="other">{t.leads.serviceOther}</option>
+                  </select>
+                </div>
               </div>
 
               {/* Business Info */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.leads.estimatedValue}</label>
                   <div className="flex gap-2">
@@ -928,15 +1065,6 @@ export default function LeadsPage() {
                       <option value="USD">USD</option>
                     </select>
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.leads.serviceInterested}</label>
-                  <input
-                    type="text"
-                    value={formData.service_interested}
-                    onChange={(e) => setFormData({ ...formData, service_interested: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t.leads.nextFollowup}</label>
@@ -1006,7 +1134,7 @@ export default function LeadsPage() {
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.leads.status}</label>
                 <div className="flex flex-wrap gap-2">
-                  {(['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost', 'no_answer', 'callback'] as LeadStatus[]).map(status => (
+                  {(['new', 'contacted', 'interested', 'qualified', 'not_qualified', 'dormant'] as LeadStatus[]).map(status => (
                     <button
                       key={status}
                       onClick={() => handleStatusChange(selectedLead, status)}
@@ -1020,6 +1148,24 @@ export default function LeadsPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Pipeline Stage & Service */}
+              <div className="mb-6 grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.leads.pipelineStage}</label>
+                  <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${getPipelineStageColor(selectedLead.pipeline_stage || 'none')}`}>
+                    {getPipelineStageLabel(selectedLead.pipeline_stage || 'none')}
+                  </span>
+                </div>
+                {selectedLead.service_interested && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t.leads.serviceInterested}</label>
+                    <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                      {getServiceLabel(selectedLead.service_interested)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Contact Info */}
@@ -1079,12 +1225,6 @@ export default function LeadsPage() {
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">{t.leads.estimatedValue}</p>
                     <p className="font-medium text-green-600">{selectedLead.currency} {selectedLead.estimated_value.toLocaleString()}</p>
-                  </div>
-                )}
-                {selectedLead.service_interested && (
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{t.leads.serviceInterested}</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{selectedLead.service_interested}</p>
                   </div>
                 )}
                 <div>
@@ -1159,14 +1299,23 @@ export default function LeadsPage() {
 
               {/* Actions */}
               <div className="flex justify-between gap-3 pt-4 mt-6 border-t border-gray-200 dark:border-gray-700">
-                <button
-                  onClick={() => { openEditModal(selectedLead); }}
-                  className="px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
-                >
-                  {t.common.edit}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { openEditModal(selectedLead); }}
+                    className="px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                  >
+                    {t.common.edit}
+                  </button>
+                  <a
+                    href={`/dashboard/activities?lead=${selectedLead.id}&create=true`}
+                    className="px-4 py-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <FaCalendarAlt className="w-4 h-4" />
+                    {t.activities?.scheduleActivity || 'Programar actividad'}
+                  </a>
+                </div>
                 <div className="flex gap-3">
-                  {selectedLead.status !== 'won' && selectedLead.status !== 'lost' && (
+                  {selectedLead.pipeline_stage !== 'won' && selectedLead.pipeline_stage !== 'lost' && (
                     <button
                       onClick={() => handleConvertToClient(selectedLead)}
                       className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"

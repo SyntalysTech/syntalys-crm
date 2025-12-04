@@ -8,7 +8,9 @@ export interface Translations {
   nav: {
     dashboard: string;
     leads: string;
+    activities: string;
     pipeline: string;
+    companies: string;
     clients: string;
     projects: string;
     expenses: string;
@@ -72,21 +74,48 @@ export interface Translations {
     notes: string;
     rejectionReason: string;
     assignedTo: string;
-    // Status options
+    // Status options (estado del lead - qué tan vivo está)
     statusNew: string;
     statusContacted: string;
+    statusInterested: string;
     statusQualified: string;
-    statusProposal: string;
-    statusNegotiation: string;
-    statusWon: string;
-    statusLost: string;
-    statusNoAnswer: string;
-    statusCallback: string;
+    statusNotQualified: string;
+    statusDormant: string;
+    // Pipeline stage options (etapa comercial)
+    pipelineStage: string;
+    stageNone: string;
+    stageProposal: string;
+    stageNegotiation: string;
+    stageDemo: string;
+    stageClosing: string;
+    stageWon: string;
+    stageLost: string;
+    // Service interested options
+    serviceCallCenter: string;
+    serviceAutomations: string;
+    serviceChatbot: string;
+    serviceVoicebot: string;
+    serviceWebDevelopment: string;
+    serviceAppDevelopment: string;
+    serviceAI: string;
+    serviceCRM: string;
+    serviceMarketing: string;
+    serviceSEO: string;
+    serviceOther: string;
+    // Pipeline type
+    pipelineType: string;
+    pipelineCallCenter: string;
+    pipelineAutomations: string;
+    pipelineChatbot: string;
+    pipelineVoicebot: string;
+    pipelineGeneral: string;
+    allPipelines: string;
     // Source options
     sourceWebsite: string;
     sourceReferral: string;
     sourceSocialMedia: string;
     sourceColdCall: string;
+    sourceColdEmail: string;
     sourceEmailCampaign: string;
     sourceEvent: string;
     sourceAdvertising: string;
@@ -95,6 +124,7 @@ export interface Translations {
     sourceFacebook: string;
     sourceTiktok: string;
     sourceGoogleAds: string;
+    sourceReactivated: string;
     sourceOther: string;
     // Priority options
     priorityLow: string;
@@ -131,7 +161,12 @@ export interface Translations {
     allStatuses: string;
     allSources: string;
     allPriorities: string;
-    allTemperatures: string;
+    allFollowups: string;
+    followupToday: string;
+    followupWeek: string;
+    followupOverdue: string;
+    followupNone: string;
+    filterByService: string;
     // Quick actions
     call: string;
     sendWhatsapp: string;
@@ -143,6 +178,127 @@ export interface Translations {
     dragToMove: string;
     emptyColumn: string;
     leadsInColumn: string;
+    allServices: string;
+    inPipeline: string;
+  };
+
+  // Companies (Account View)
+  companies: {
+    title: string;
+    subtitle: string;
+    totalCompanies: string;
+    activeLeads: string;
+    totalValue: string;
+    lastActivity: string;
+    generalStatus: string;
+    viewDetails: string;
+    viewLeads: string;
+    addNote: string;
+    notes: string;
+    noNotes: string;
+    activitySummary: string;
+    noActivity: string;
+    leadsCount: string;
+    activeLeadsCount: string;
+    country: string;
+    mainContact: string;
+    potentialValue: string;
+    noCompanies: string;
+    searchPlaceholder: string;
+    // Status labels
+    statusNegotiation: string;
+    statusProposal: string;
+    statusInitialContact: string;
+    statusQualified: string;
+    statusClosed: string;
+    statusMixed: string;
+    // Filters
+    allCountries: string;
+    allStatuses: string;
+    filterByCountry: string;
+    filterByStatus: string;
+    // Detail panel
+    companyDetails: string;
+    leadsList: string;
+    recentActivities: string;
+    goToLead: string;
+    noLeadsInCompany: string;
+  };
+
+  // Activities (Setter Agenda)
+  activities: {
+    title: string;
+    subtitle: string;
+    newActivity: string;
+    editActivity: string;
+    // Stats
+    todayTasks: string;
+    overdueTasks: string;
+    thisWeek: string;
+    completed: string;
+    // Views
+    listView: string;
+    calendarView: string;
+    // Activity types
+    typeCall: string;
+    typeEmail: string;
+    typeMeeting: string;
+    typeFollowUp: string;
+    typeReminder: string;
+    typeDemo: string;
+    typeProposal: string;
+    typeOther: string;
+    allTypes: string;
+    // Status
+    statusPending: string;
+    statusCompleted: string;
+    statusOverdue: string;
+    statusCancelled: string;
+    statusRescheduled: string;
+    allStatuses: string;
+    // Priority
+    priorityLow: string;
+    priorityMedium: string;
+    priorityHigh: string;
+    priorityUrgent: string;
+    allPriorities: string;
+    // Filters
+    filterToday: string;
+    filterTomorrow: string;
+    filterWeek: string;
+    filterMonth: string;
+    filterOverdue: string;
+    filterAll: string;
+    // Form
+    activityType: string;
+    activityTitle: string;
+    titlePlaceholder: string;
+    associatedLead: string;
+    noLead: string;
+    date: string;
+    time: string;
+    priority: string;
+    description: string;
+    descriptionPlaceholder: string;
+    create: string;
+    // Actions
+    markComplete: string;
+    reschedule: string;
+    cancel: string;
+    openLead: string;
+    scheduleActivity: string;
+    // Completion
+    completeActivity: string;
+    completingTask: string;
+    outcome: string;
+    outcomePlaceholder: string;
+    // Other
+    today: string;
+    tomorrow: string;
+    noActivities: string;
+    createFirst: string;
+    reschedulePrompt: string;
+    deleteConfirm: string;
   };
 
   // Common
@@ -172,6 +328,7 @@ export interface Translations {
     saveChanges: string;
     type: string;
     client: string;
+    clearFilters: string;
   };
 
   // Dashboard
@@ -759,7 +916,9 @@ export const translations: Record<Language, Translations> = {
     nav: {
       dashboard: 'Dashboard',
       leads: 'Leads',
+      activities: 'Actividades',
       pipeline: 'Pipeline',
+      companies: 'Empresas',
       clients: 'Clientes',
       projects: 'Proyectos',
       expenses: 'Gastos',
@@ -816,19 +975,48 @@ export const translations: Record<Language, Translations> = {
       notes: 'Notas',
       rejectionReason: 'Motivo de Rechazo',
       assignedTo: 'Asignado a',
+      // Status (estado del lead)
       statusNew: 'Nuevo',
       statusContacted: 'Contactado',
+      statusInterested: 'Interesado',
       statusQualified: 'Cualificado',
-      statusProposal: 'Propuesta',
-      statusNegotiation: 'Negociación',
-      statusWon: 'Ganado',
-      statusLost: 'Perdido',
-      statusNoAnswer: 'Sin Respuesta',
-      statusCallback: 'Llamar Después',
+      statusNotQualified: 'No Cualificado',
+      statusDormant: 'Dormido',
+      // Pipeline stage (etapa comercial)
+      pipelineStage: 'Etapa Pipeline',
+      stageNone: 'Sin Pipeline',
+      stageProposal: 'Propuesta',
+      stageNegotiation: 'Negociación',
+      stageDemo: 'Demo',
+      stageClosing: 'Cierre',
+      stageWon: 'Ganado',
+      stageLost: 'Perdido',
+      // Service interested
+      serviceCallCenter: 'Call Center',
+      serviceAutomations: 'Automatizaciones',
+      serviceChatbot: 'Chatbot IA',
+      serviceVoicebot: 'Voicebot',
+      serviceWebDevelopment: 'Desarrollo Web',
+      serviceAppDevelopment: 'Desarrollo de Apps',
+      serviceAI: 'Inteligencia Artificial',
+      serviceCRM: 'CRM',
+      serviceMarketing: 'Marketing Digital',
+      serviceSEO: 'SEO / Posicionamiento',
+      serviceOther: 'Otro',
+      // Pipeline type
+      pipelineType: 'Tipo de Pipeline',
+      pipelineCallCenter: 'Call Center',
+      pipelineAutomations: 'Automatizaciones',
+      pipelineChatbot: 'Chatbot',
+      pipelineVoicebot: 'Voicebot',
+      pipelineGeneral: 'General',
+      allPipelines: 'Todos los pipelines',
+      // Source
       sourceWebsite: 'Sitio Web',
       sourceReferral: 'Referido',
       sourceSocialMedia: 'Redes Sociales',
       sourceColdCall: 'Llamada en Frío',
+      sourceColdEmail: 'Email en Frío',
       sourceEmailCampaign: 'Email Marketing',
       sourceEvent: 'Evento',
       sourceAdvertising: 'Publicidad',
@@ -837,6 +1025,7 @@ export const translations: Record<Language, Translations> = {
       sourceFacebook: 'Facebook',
       sourceTiktok: 'TikTok',
       sourceGoogleAds: 'Google Ads',
+      sourceReactivated: 'Reactivado',
       sourceOther: 'Otro',
       priorityLow: 'Baja',
       priorityMedium: 'Media',
@@ -868,7 +1057,12 @@ export const translations: Record<Language, Translations> = {
       allStatuses: 'Todos los estados',
       allSources: 'Todas las fuentes',
       allPriorities: 'Todas las prioridades',
-      allTemperatures: 'Todas las temperaturas',
+      allFollowups: 'Todos los seguimientos',
+      followupToday: 'Hoy',
+      followupWeek: 'Esta semana',
+      followupOverdue: 'Vencidos',
+      followupNone: 'Sin fecha',
+      filterByService: 'Filtrar por servicio...',
       call: 'Llamar',
       sendWhatsapp: 'Enviar WhatsApp',
       sendEmail: 'Enviar Email',
@@ -878,6 +1072,110 @@ export const translations: Record<Language, Translations> = {
       dragToMove: 'Arrastra para mover',
       emptyColumn: 'Sin leads',
       leadsInColumn: 'leads',
+      allServices: 'Todos los servicios',
+      inPipeline: 'En Pipeline',
+    },
+    companies: {
+      title: 'Empresas',
+      subtitle: 'Vista por empresa de todos tus leads y oportunidades',
+      totalCompanies: 'Total Empresas',
+      activeLeads: 'Leads Activos',
+      totalValue: 'Valor Total',
+      lastActivity: 'Última Actividad',
+      generalStatus: 'Estado General',
+      viewDetails: 'Ver Detalles',
+      viewLeads: 'Ver Leads',
+      addNote: 'Añadir Nota',
+      notes: 'Notas de Empresa',
+      noNotes: 'Sin notas de empresa',
+      activitySummary: 'Resumen de Actividad',
+      noActivity: 'Sin actividad registrada',
+      leadsCount: 'leads',
+      activeLeadsCount: 'activos',
+      country: 'País',
+      mainContact: 'Contacto Principal',
+      potentialValue: 'Valor Potencial',
+      noCompanies: 'No hay empresas con leads registrados',
+      searchPlaceholder: 'Buscar empresa...',
+      statusNegotiation: 'En Negociación',
+      statusProposal: 'Con Propuestas',
+      statusInitialContact: 'Contacto Inicial',
+      statusQualified: 'Cualificados',
+      statusClosed: 'Cerrados',
+      statusMixed: 'Varios Estados',
+      allCountries: 'Todos los países',
+      allStatuses: 'Todos los estados',
+      filterByCountry: 'País',
+      filterByStatus: 'Estado',
+      companyDetails: 'Detalles de Empresa',
+      leadsList: 'Leads de esta Empresa',
+      recentActivities: 'Actividades Recientes',
+      goToLead: 'Ir al Lead',
+      noLeadsInCompany: 'Esta empresa no tiene leads',
+    },
+    activities: {
+      title: 'Actividades',
+      subtitle: 'Gestiona tu agenda de setter',
+      newActivity: 'Nueva actividad',
+      editActivity: 'Editar actividad',
+      todayTasks: 'Hoy',
+      overdueTasks: 'Vencidas',
+      thisWeek: 'Esta semana',
+      completed: 'Completadas',
+      listView: 'Lista',
+      calendarView: 'Calendario',
+      typeCall: 'Llamada',
+      typeEmail: 'Email',
+      typeMeeting: 'Reunión',
+      typeFollowUp: 'Seguimiento',
+      typeReminder: 'Recordatorio',
+      typeDemo: 'Demo',
+      typeProposal: 'Propuesta',
+      typeOther: 'Otro',
+      allTypes: 'Todos los tipos',
+      statusPending: 'Pendiente',
+      statusCompleted: 'Completada',
+      statusOverdue: 'Vencida',
+      statusCancelled: 'Cancelada',
+      statusRescheduled: 'Reprogramada',
+      allStatuses: 'Todos los estados',
+      priorityLow: 'Baja',
+      priorityMedium: 'Media',
+      priorityHigh: 'Alta',
+      priorityUrgent: 'Urgente',
+      allPriorities: 'Todas las prioridades',
+      filterToday: 'Hoy',
+      filterTomorrow: 'Mañana',
+      filterWeek: 'Esta semana',
+      filterMonth: 'Este mes',
+      filterOverdue: 'Vencidas',
+      filterAll: 'Todas',
+      activityType: 'Tipo de actividad',
+      activityTitle: 'Título',
+      titlePlaceholder: 'Ej: Llamada de seguimiento',
+      associatedLead: 'Lead asociado',
+      noLead: 'Sin lead asociado',
+      date: 'Fecha',
+      time: 'Hora',
+      priority: 'Prioridad',
+      description: 'Descripción',
+      descriptionPlaceholder: 'Notas adicionales...',
+      create: 'Crear',
+      markComplete: 'Completar',
+      reschedule: 'Reprogramar',
+      cancel: 'Cancelar',
+      openLead: 'Ver lead',
+      scheduleActivity: 'Programar actividad',
+      completeActivity: 'Completar actividad',
+      completingTask: 'Completando',
+      outcome: 'Resultado / Notas',
+      outcomePlaceholder: '¿Qué resultado tuvo? ¿Próximos pasos?',
+      today: 'Hoy',
+      tomorrow: 'Mañana',
+      noActivities: 'No hay actividades programadas',
+      createFirst: 'Crear primera actividad',
+      reschedulePrompt: 'Nueva fecha (YYYY-MM-DD):',
+      deleteConfirm: '¿Eliminar esta actividad?',
     },
     common: {
       add: 'Agregar',
@@ -905,6 +1203,7 @@ export const translations: Record<Language, Translations> = {
       saveChanges: 'Guardar Cambios',
       type: 'Tipo',
       client: 'Cliente',
+      clearFilters: 'Limpiar filtros',
     },
     dashboard: {
       title: 'Dashboard',
@@ -1446,7 +1745,9 @@ export const translations: Record<Language, Translations> = {
     nav: {
       dashboard: 'Tableau de bord',
       leads: 'Leads',
+      activities: 'Activités',
       pipeline: 'Pipeline',
+      companies: 'Entreprises',
       clients: 'Clients',
       projects: 'Projets',
       expenses: 'Dépenses',
@@ -1505,17 +1806,46 @@ export const translations: Record<Language, Translations> = {
       assignedTo: 'Assigné à',
       statusNew: 'Nouveau',
       statusContacted: 'Contacté',
+      // Status (état du lead)
+      statusInterested: 'Intéressé',
       statusQualified: 'Qualifié',
-      statusProposal: 'Proposition',
-      statusNegotiation: 'Négociation',
-      statusWon: 'Gagné',
-      statusLost: 'Perdu',
-      statusNoAnswer: 'Sans Réponse',
-      statusCallback: 'Rappeler Plus Tard',
+      statusNotQualified: 'Non Qualifié',
+      statusDormant: 'Dormant',
+      // Pipeline stage (étape commerciale)
+      pipelineStage: 'Étape Pipeline',
+      stageNone: 'Sans Pipeline',
+      stageProposal: 'Proposition',
+      stageNegotiation: 'Négociation',
+      stageDemo: 'Démo',
+      stageClosing: 'Clôture',
+      stageWon: 'Gagné',
+      stageLost: 'Perdu',
+      // Service interested
+      serviceCallCenter: 'Centre d\'Appels',
+      serviceAutomations: 'Automatisations',
+      serviceChatbot: 'Chatbot IA',
+      serviceVoicebot: 'Voicebot',
+      serviceWebDevelopment: 'Développement Web',
+      serviceAppDevelopment: 'Développement d\'Apps',
+      serviceAI: 'Intelligence Artificielle',
+      serviceCRM: 'CRM',
+      serviceMarketing: 'Marketing Digital',
+      serviceSEO: 'SEO / Référencement',
+      serviceOther: 'Autre',
+      // Pipeline type
+      pipelineType: 'Type de Pipeline',
+      pipelineCallCenter: 'Centre d\'Appels',
+      pipelineAutomations: 'Automatisations',
+      pipelineChatbot: 'Chatbot',
+      pipelineVoicebot: 'Voicebot',
+      pipelineGeneral: 'Général',
+      allPipelines: 'Tous les pipelines',
+      // Source
       sourceWebsite: 'Site Web',
       sourceReferral: 'Référence',
       sourceSocialMedia: 'Réseaux Sociaux',
       sourceColdCall: 'Appel à Froid',
+      sourceColdEmail: 'Email à Froid',
       sourceEmailCampaign: 'Email Marketing',
       sourceEvent: 'Événement',
       sourceAdvertising: 'Publicité',
@@ -1524,6 +1854,7 @@ export const translations: Record<Language, Translations> = {
       sourceFacebook: 'Facebook',
       sourceTiktok: 'TikTok',
       sourceGoogleAds: 'Google Ads',
+      sourceReactivated: 'Réactivé',
       sourceOther: 'Autre',
       priorityLow: 'Basse',
       priorityMedium: 'Moyenne',
@@ -1555,7 +1886,12 @@ export const translations: Record<Language, Translations> = {
       allStatuses: 'Tous les statuts',
       allSources: 'Toutes les sources',
       allPriorities: 'Toutes les priorités',
-      allTemperatures: 'Toutes les températures',
+      allFollowups: 'Tous les suivis',
+      followupToday: "Aujourd'hui",
+      followupWeek: 'Cette semaine',
+      followupOverdue: 'En retard',
+      followupNone: 'Sans date',
+      filterByService: 'Filtrer par service...',
       call: 'Appeler',
       sendWhatsapp: 'Envoyer WhatsApp',
       sendEmail: 'Envoyer Email',
@@ -1565,6 +1901,110 @@ export const translations: Record<Language, Translations> = {
       dragToMove: 'Glissez pour déplacer',
       emptyColumn: 'Aucun lead',
       leadsInColumn: 'leads',
+      allServices: 'Tous les services',
+      inPipeline: 'En Pipeline',
+    },
+    companies: {
+      title: 'Entreprises',
+      subtitle: 'Vue par entreprise de tous vos leads et opportunités',
+      totalCompanies: 'Total Entreprises',
+      activeLeads: 'Leads Actifs',
+      totalValue: 'Valeur Totale',
+      lastActivity: 'Dernière Activité',
+      generalStatus: 'Statut Général',
+      viewDetails: 'Voir les Détails',
+      viewLeads: 'Voir les Leads',
+      addNote: 'Ajouter une Note',
+      notes: 'Notes d\'Entreprise',
+      noNotes: 'Aucune note d\'entreprise',
+      activitySummary: 'Résumé d\'Activité',
+      noActivity: 'Aucune activité enregistrée',
+      leadsCount: 'leads',
+      activeLeadsCount: 'actifs',
+      country: 'Pays',
+      mainContact: 'Contact Principal',
+      potentialValue: 'Valeur Potentielle',
+      noCompanies: 'Aucune entreprise avec des leads enregistrés',
+      searchPlaceholder: 'Rechercher une entreprise...',
+      statusNegotiation: 'En Négociation',
+      statusProposal: 'Avec Propositions',
+      statusInitialContact: 'Contact Initial',
+      statusQualified: 'Qualifiés',
+      statusClosed: 'Fermés',
+      statusMixed: 'Statuts Divers',
+      allCountries: 'Tous les pays',
+      allStatuses: 'Tous les statuts',
+      filterByCountry: 'Pays',
+      filterByStatus: 'Statut',
+      companyDetails: 'Détails de l\'Entreprise',
+      leadsList: 'Leads de cette Entreprise',
+      recentActivities: 'Activités Récentes',
+      goToLead: 'Aller au Lead',
+      noLeadsInCompany: 'Cette entreprise n\'a pas de leads',
+    },
+    activities: {
+      title: 'Activités',
+      subtitle: 'Gérez votre agenda de setter',
+      newActivity: 'Nouvelle activité',
+      editActivity: 'Modifier l\'activité',
+      todayTasks: 'Aujourd\'hui',
+      overdueTasks: 'En retard',
+      thisWeek: 'Cette semaine',
+      completed: 'Complétées',
+      listView: 'Liste',
+      calendarView: 'Calendrier',
+      typeCall: 'Appel',
+      typeEmail: 'Email',
+      typeMeeting: 'Réunion',
+      typeFollowUp: 'Suivi',
+      typeReminder: 'Rappel',
+      typeDemo: 'Démo',
+      typeProposal: 'Proposition',
+      typeOther: 'Autre',
+      allTypes: 'Tous les types',
+      statusPending: 'En attente',
+      statusCompleted: 'Complétée',
+      statusOverdue: 'En retard',
+      statusCancelled: 'Annulée',
+      statusRescheduled: 'Reprogrammée',
+      allStatuses: 'Tous les statuts',
+      priorityLow: 'Basse',
+      priorityMedium: 'Moyenne',
+      priorityHigh: 'Haute',
+      priorityUrgent: 'Urgente',
+      allPriorities: 'Toutes les priorités',
+      filterToday: 'Aujourd\'hui',
+      filterTomorrow: 'Demain',
+      filterWeek: 'Cette semaine',
+      filterMonth: 'Ce mois',
+      filterOverdue: 'En retard',
+      filterAll: 'Toutes',
+      activityType: 'Type d\'activité',
+      activityTitle: 'Titre',
+      titlePlaceholder: 'Ex: Appel de suivi',
+      associatedLead: 'Lead associé',
+      noLead: 'Aucun lead associé',
+      date: 'Date',
+      time: 'Heure',
+      priority: 'Priorité',
+      description: 'Description',
+      descriptionPlaceholder: 'Notes supplémentaires...',
+      create: 'Créer',
+      markComplete: 'Terminer',
+      reschedule: 'Reprogrammer',
+      cancel: 'Annuler',
+      openLead: 'Voir lead',
+      scheduleActivity: 'Programmer activité',
+      completeActivity: 'Terminer l\'activité',
+      completingTask: 'Terminer',
+      outcome: 'Résultat / Notes',
+      outcomePlaceholder: 'Quel résultat? Prochaines étapes?',
+      today: 'Aujourd\'hui',
+      tomorrow: 'Demain',
+      noActivities: 'Aucune activité programmée',
+      createFirst: 'Créer première activité',
+      reschedulePrompt: 'Nouvelle date (AAAA-MM-JJ):',
+      deleteConfirm: 'Supprimer cette activité?',
     },
     common: {
       add: 'Ajouter',
@@ -1592,6 +2032,7 @@ export const translations: Record<Language, Translations> = {
       saveChanges: 'Enregistrer les Modifications',
       type: 'Type',
       client: 'Client',
+      clearFilters: 'Effacer les filtres',
     },
     dashboard: {
       title: 'Tableau de bord',

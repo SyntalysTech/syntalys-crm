@@ -537,11 +537,11 @@ export default function GastosPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{t.expenses.title}</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t.expenses.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             {t.expenses.subtitle}
           </p>
         </div>
@@ -657,12 +657,12 @@ export default function GastosPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gray-100 dark:bg-gray-700">
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.status}</th>
-                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
+                  <tr className="bg-syntalys-blue dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.service}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.category}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.common.amount}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.common.status}</th>
+                    <th className="px-4 py-2 text-center text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600 w-16"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -741,12 +741,12 @@ export default function GastosPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gray-100 dark:bg-gray-700">
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.status}</th>
-                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
+                  <tr className="bg-syntalys-blue dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.service}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.category}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.common.amount}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.common.status}</th>
+                    <th className="px-4 py-2 text-center text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600 w-16"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -825,13 +825,13 @@ export default function GastosPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gray-100 dark:bg-gray-700">
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.service}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.category}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.amount}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.renewal}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.common.status}</th>
-                    <th className="px-4 py-2 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-16"></th>
+                  <tr className="bg-syntalys-blue dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.service}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.category}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.common.amount}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.renewal}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.common.status}</th>
+                    <th className="px-4 py-2 text-center text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600 w-16"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -917,12 +917,12 @@ export default function GastosPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gray-100 dark:bg-gray-700">
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 w-8"></th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.client}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.totalServices}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.monthlyTotal}</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">{t.expenses.annualTotal}</th>
+                  <tr className="bg-syntalys-blue dark:bg-gray-700">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600 w-8"></th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.client}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.totalServices}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.monthlyTotal}</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-white dark:text-gray-200 border border-syntalys-blue dark:border-gray-600">{t.expenses.annualTotal}</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { signOut } from '@/lib/auth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -67,6 +68,16 @@ const icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
     </svg>
   ),
+  companies: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+  ),
+  activities: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+    </svg>
+  ),
   users: (
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -80,6 +91,11 @@ const icons = {
   chevronRight: (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    </svg>
+  ),
+  chevronDown: (
+    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
     </svg>
   ),
   settings: (
@@ -105,6 +121,12 @@ const menuSections: MenuSection[] = [
         roles: ['super_admin', 'admin', 'gestor', 'empleado'],
         icon: icons.dashboard,
       },
+      {
+        key: 'stats',
+        path: '/dashboard/estadisticas',
+        roles: ['super_admin', 'admin', 'gestor'],
+        icon: icons.stats,
+      },
     ],
   },
   {
@@ -121,6 +143,18 @@ const menuSections: MenuSection[] = [
         path: '/dashboard/pipeline',
         roles: ['super_admin', 'admin', 'gestor', 'empleado'],
         icon: icons.pipeline,
+      },
+      {
+        key: 'activities',
+        path: '/dashboard/activities',
+        roles: ['super_admin', 'admin', 'gestor', 'empleado'],
+        icon: icons.activities,
+      },
+      {
+        key: 'companies',
+        path: '/dashboard/companies',
+        roles: ['super_admin', 'admin', 'gestor', 'empleado'],
+        icon: icons.companies,
       },
     ],
   },
@@ -145,22 +179,16 @@ const menuSections: MenuSection[] = [
     categoryKey: 'finance',
     items: [
       {
-        key: 'expenses',
-        path: '/dashboard/gastos',
-        roles: ['super_admin', 'admin', 'gestor'],
-        icon: icons.expenses,
-      },
-      {
         key: 'income',
         path: '/dashboard/ingresos',
         roles: ['super_admin', 'admin', 'gestor'],
         icon: icons.income,
       },
       {
-        key: 'stats',
-        path: '/dashboard/estadisticas',
+        key: 'expenses',
+        path: '/dashboard/gastos',
         roles: ['super_admin', 'admin', 'gestor'],
-        icon: icons.stats,
+        icon: icons.expenses,
       },
     ],
   },
@@ -179,12 +207,6 @@ const menuSections: MenuSection[] = [
         roles: ['super_admin', 'admin', 'gestor'],
         icon: icons.passwords,
       },
-      {
-        key: 'settings',
-        path: '/dashboard/settings',
-        roles: ['super_admin', 'admin', 'gestor', 'empleado'],
-        icon: icons.settings,
-      },
     ],
   },
   {
@@ -196,6 +218,12 @@ const menuSections: MenuSection[] = [
         roles: ['super_admin'],
         icon: icons.users,
       },
+      {
+        key: 'settings',
+        path: '/dashboard/settings',
+        roles: ['super_admin', 'admin', 'gestor', 'empleado'],
+        icon: icons.settings,
+      },
     ],
   },
 ];
@@ -206,6 +234,21 @@ export default function Sidebar() {
   const { profile, loading } = useAuth();
   const { t } = useLanguage();
   const { isCollapsed, toggleSidebar } = useSidebar();
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    general: true,
+    sales: true,
+    business: true,
+    finance: true,
+    tools: true,
+    admin: true,
+  });
+
+  const toggleCategory = (categoryKey: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryKey]: !prev[categoryKey],
+    }));
+  };
 
   const handleLogout = async () => {
     try {
@@ -236,7 +279,9 @@ export default function Sidebar() {
   const menuLabels: Record<string, string> = {
     dashboard: t.nav.dashboard,
     leads: t.nav.leads,
+    activities: t.nav.activities || 'Actividades',
     pipeline: t.nav.pipeline,
+    companies: t.nav.companies,
     clients: t.nav.clients,
     projects: t.nav.projects,
     expenses: t.nav.expenses,
@@ -336,44 +381,55 @@ export default function Sidebar() {
       </Link>
 
       {/* Navigation */}
-      <nav className="flex-1 py-1 overflow-hidden">
-        {visibleSections.map((section, sectionIndex) => (
-          <div key={section.categoryKey}>
-            {/* Divider */}
-            {sectionIndex > 0 && (
-              <div className={`my-1 border-t border-white/10 transition-all duration-300 ease-out ${isCollapsed ? 'mx-2' : 'mx-4'}`} />
-            )}
+      <nav className="flex-1 py-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30">
+        {visibleSections.map((section, sectionIndex) => {
+          const isExpanded = expandedCategories[section.categoryKey];
+          return (
+            <div key={section.categoryKey}>
+              {/* Divider */}
+              {sectionIndex > 0 && (
+                <div className={`my-1 border-t border-white/10 transition-all duration-300 ease-out ${isCollapsed ? 'mx-2' : 'mx-4'}`} />
+              )}
 
-            {/* Category label */}
-            <div className={`overflow-hidden transition-all duration-300 ease-out ${isCollapsed ? 'h-0 opacity-0 py-0' : 'h-auto opacity-100 py-1 px-4'}`}>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 whitespace-nowrap">
-                {categoryLabels[section.categoryKey]}
-              </span>
+              {/* Category label with toggle */}
+              <button
+                onClick={() => toggleCategory(section.categoryKey)}
+                className={`w-full flex items-center justify-between hover:bg-white/5 transition-all duration-300 ease-out ${isCollapsed ? 'h-0 opacity-0 py-0 px-0 overflow-hidden' : 'h-auto opacity-100 py-1.5 px-4'}`}
+              >
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 whitespace-nowrap">
+                  {categoryLabels[section.categoryKey]}
+                </span>
+                <span className={`text-white/50 transition-transform duration-200 ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
+                  {icons.chevronDown}
+                </span>
+              </button>
+
+              {/* Menu items */}
+              <div className={`overflow-hidden transition-all duration-200 ease-out ${isExpanded || isCollapsed ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                {section.items.map((item) => {
+                  const isActive = pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      href={item.path}
+                      className={`flex items-center py-2 transition-all duration-200 ease-out ${
+                        isActive
+                          ? 'bg-white/10 border-l-4 border-white'
+                          : 'hover:bg-white/5 border-l-4 border-transparent'
+                      } ${isCollapsed ? 'justify-center px-0' : 'justify-start px-4'}`}
+                      title={isCollapsed ? menuLabels[item.key] : undefined}
+                    >
+                      <span className="flex-shrink-0">{item.icon}</span>
+                      <span className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-out ${isCollapsed ? 'w-0 ml-0 opacity-0' : 'w-auto ml-3 opacity-100'}`}>
+                        {menuLabels[item.key]}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-
-            {/* Menu items */}
-            {section.items.map((item) => {
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className={`flex items-center py-2 transition-all duration-200 ease-out ${
-                    isActive
-                      ? 'bg-white/10 border-l-4 border-white'
-                      : 'hover:bg-white/5 border-l-4 border-transparent'
-                  } ${isCollapsed ? 'justify-center px-0' : 'justify-start px-4'}`}
-                  title={isCollapsed ? menuLabels[item.key] : undefined}
-                >
-                  <span className="flex-shrink-0">{item.icon}</span>
-                  <span className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-out ${isCollapsed ? 'w-0 ml-0 opacity-0' : 'w-auto ml-3 opacity-100'}`}>
-                    {menuLabels[item.key]}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Logout button */}

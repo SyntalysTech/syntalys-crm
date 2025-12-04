@@ -628,16 +628,16 @@ export default function ClientesPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="mb-6 flex flex-wrap gap-4 items-center">
+      <div className="mb-6 flex flex-wrap gap-4 items-center bg-syntalys-blue dark:bg-gray-800 rounded-lg p-4">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px] max-w-md">
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 dark:text-gray-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t.common.search + '...'}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 focus:ring-2 focus:ring-white/40 focus:border-transparent"
           />
         </div>
 
@@ -645,11 +645,11 @@ export default function ClientesPage() {
         <select
           value={countryFilter}
           onChange={(e) => setCountryFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+          className="px-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
         >
-          <option value="all">{t.forms.country}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
+          <option value="all" className="text-gray-900">{t.forms.country}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
           {availableCountries.map(code => (
-            <option key={code} value={code}>
+            <option key={code} value={code} className="text-gray-900">
               {getCountryFlag(code)} {getCountryName(code)}
             </option>
           ))}
@@ -659,16 +659,16 @@ export default function ClientesPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+          className="px-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
         >
-          <option value="all">{t.common.status}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
-          <option value="active">{t.clients.active}</option>
-          <option value="inactive">{t.clients.inactive}</option>
-          <option value="suspended">{t.clients.suspended}</option>
+          <option value="all" className="text-gray-900">{t.common.status}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
+          <option value="active" className="text-gray-900">{t.clients.active}</option>
+          <option value="inactive" className="text-gray-900">{t.clients.inactive}</option>
+          <option value="suspended" className="text-gray-900">{t.clients.suspended}</option>
         </select>
 
         {/* Results count */}
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-sm text-white/80 dark:text-gray-400">
           {filteredClients.length} {language === 'fr' ? 'clients' : 'clientes'}
         </span>
       </div>
@@ -688,30 +688,30 @@ export default function ClientesPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="bg-syntalys-blue dark:bg-gray-700">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.forms.name}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.forms.email}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.forms.phone}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.common.type}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.common.status}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.forms.country}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.nav.projects}
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
                     {t.common.actions}
                   </th>
                 </tr>

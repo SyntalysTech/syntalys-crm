@@ -1019,80 +1019,80 @@ export default function ProyectosPage() {
       {activeTab === 'clients' && (
         <>
           {/* Filters */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+          <div className="bg-syntalys-blue dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
             <div className="flex flex-wrap gap-4 items-center">
               {/* Search Bar */}
               <div className="flex items-center gap-2 flex-1 min-w-[200px] max-w-md">
                 <div className="relative w-full">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 dark:text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t.common.search}
-                    className="w-full pl-10 pr-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full pl-10 pr-3 py-1.5 border border-white/20 dark:border-gray-600 rounded-md text-sm bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 focus:ring-2 focus:ring-white/40"
                   />
                 </div>
               </div>
 
               {/* Client Filter */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.projects.client}:</label>
+                <label className="text-sm font-medium text-white dark:text-gray-300">{t.projects.client}:</label>
                 <select
                   value={clientFilter}
                   onChange={(e) => setClientFilter(e.target.value)}
-                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                  className="px-3 py-1.5 border border-white/20 dark:border-gray-600 rounded-md text-sm bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
                 >
-                  <option value="all">{t.projects.allProjects}</option>
+                  <option value="all" className="text-gray-900">{t.projects.allProjects}</option>
                   {clients.map(client => (
-                    <option key={client.id} value={client.id}>{client.name}</option>
+                    <option key={client.id} value={client.id} className="text-gray-900">{client.name}</option>
                   ))}
                 </select>
               </div>
 
               {/* Status Filter */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.common.status}:</label>
+                <label className="text-sm font-medium text-white dark:text-gray-300">{t.common.status}:</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as 'all' | ProjectStatus)}
-                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                  className="px-3 py-1.5 border border-white/20 dark:border-gray-600 rounded-md text-sm bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
                 >
-                  <option value="all">{t.projects.allProjects}</option>
-                  <option value="active">{t.projects.statusActive}</option>
-                  <option value="completed">{t.projects.statusCompleted}</option>
-                  <option value="paused">{t.projects.statusPaused}</option>
-                  <option value="cancelled">{t.projects.statusCancelled}</option>
+                  <option value="all" className="text-gray-900">{t.projects.allProjects}</option>
+                  <option value="active" className="text-gray-900">{t.projects.statusActive}</option>
+                  <option value="completed" className="text-gray-900">{t.projects.statusCompleted}</option>
+                  <option value="paused" className="text-gray-900">{t.projects.statusPaused}</option>
+                  <option value="cancelled" className="text-gray-900">{t.projects.statusCancelled}</option>
                 </select>
               </div>
 
               {/* Payment Filter */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.projects.filterBy}:</label>
+                <label className="text-sm font-medium text-white dark:text-gray-300">{t.projects.filterBy}:</label>
                 <select
                   value={paymentFilter}
                   onChange={(e) => setPaymentFilter(e.target.value as 'all' | 'paid' | 'unpaid' | 'partial')}
-                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                  className="px-3 py-1.5 border border-white/20 dark:border-gray-600 rounded-md text-sm bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
                 >
-                  <option value="all">{t.projects.allProjects}</option>
-                  <option value="paid">{t.projects.filterPaid}</option>
-                  <option value="unpaid">{t.projects.filterUnpaid}</option>
-                  <option value="partial">{t.projects.filterPartial}</option>
+                  <option value="all" className="text-gray-900">{t.projects.allProjects}</option>
+                  <option value="paid" className="text-gray-900">{t.projects.filterPaid}</option>
+                  <option value="unpaid" className="text-gray-900">{t.projects.filterUnpaid}</option>
+                  <option value="partial" className="text-gray-900">{t.projects.filterPartial}</option>
                 </select>
               </div>
 
               {/* Sort */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t.projects.sortBy}:</label>
+                <label className="text-sm font-medium text-white dark:text-gray-300">{t.projects.sortBy}:</label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'alphabetic' | 'amount')}
-                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                  className="px-3 py-1.5 border border-white/20 dark:border-gray-600 rounded-md text-sm bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
                 >
-                  <option value="newest">{t.projects.sortNewest}</option>
-                  <option value="oldest">{t.projects.sortOldest}</option>
-                  <option value="alphabetic">{t.projects.sortAlphabetic}</option>
-                  <option value="amount">{t.projects.sortAmount}</option>
+                  <option value="newest" className="text-gray-900">{t.projects.sortNewest}</option>
+                  <option value="oldest" className="text-gray-900">{t.projects.sortOldest}</option>
+                  <option value="alphabetic" className="text-gray-900">{t.projects.sortAlphabetic}</option>
+                  <option value="amount" className="text-gray-900">{t.projects.sortAmount}</option>
                 </select>
               </div>
             </div>

@@ -32,6 +32,7 @@ export interface Client {
   id: string;
   user_id: string;
   name: string;
+  company_name: string;
   email: string | null;
   phone: string | null;
   country: string | null;
@@ -199,8 +200,21 @@ export interface InternalProject {
 export type PasswordCategory = 'work' | 'personal' | 'social' | 'banking' | 'email' | 'hosting' | 'development' | 'other';
 
 // Lead Types for Sales/Setter
-export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost' | 'no_answer' | 'callback';
-export type LeadSource = 'website' | 'referral' | 'social_media' | 'cold_call' | 'email_campaign' | 'event' | 'advertising' | 'linkedin' | 'instagram' | 'facebook' | 'tiktok' | 'google_ads' | 'other';
+// LeadStatus: Estado real del lead (qué tan vivo está)
+export type LeadStatus = 'new' | 'contacted' | 'interested' | 'qualified' | 'not_qualified' | 'dormant';
+
+// PipelineStage: Etapa comercial (solo para leads que entran al pipeline)
+export type PipelineStage = 'none' | 'proposal' | 'negotiation' | 'demo' | 'closing' | 'won' | 'lost';
+
+// LeadSource: Origen del lead (añadidos cold_email y reactivated)
+export type LeadSource = 'website' | 'referral' | 'social_media' | 'cold_call' | 'cold_email' | 'email_campaign' | 'event' | 'advertising' | 'linkedin' | 'instagram' | 'facebook' | 'tiktok' | 'google_ads' | 'reactivated' | 'other';
+
+// ServiceInterested: Servicios de interés (enum en lugar de texto libre)
+export type ServiceInterested = 'call_center' | 'automations' | 'chatbot' | 'voicebot' | 'web_development' | 'app_development' | 'ai' | 'crm' | 'marketing' | 'seo' | 'other';
+
+// PipelineType: Tipo de pipeline para clasificación automática
+export type PipelineType = 'call_center' | 'automations' | 'chatbot' | 'voicebot' | 'general';
+
 export type LeadPriority = 'low' | 'medium' | 'high' | 'urgent';
 export type LeadTemperature = 'cold' | 'warm' | 'hot';
 
@@ -217,13 +231,15 @@ export interface Lead {
   country: string | null;
   // Lead Details
   status: LeadStatus;
+  pipeline_stage: PipelineStage;
   source: LeadSource;
   priority: LeadPriority;
   temperature: LeadTemperature;
   // Business Info
   estimated_value: number | null;
   currency: Currency;
-  service_interested: string | null;
+  service_interested: ServiceInterested | null;
+  pipeline_type: PipelineType;
   // Tracking
   first_contact_date: string | null;
   last_contact_date: string | null;
@@ -258,6 +274,58 @@ export interface Password {
   url: string | null;
   notes: string | null;
   category: PasswordCategory | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Activity Types for Setter Agenda
+export type ActivityType = 'call' | 'email' | 'meeting' | 'follow_up' | 'reminder' | 'demo' | 'proposal' | 'other';
+export type ActivityStatus = 'pending' | 'completed' | 'overdue' | 'cancelled' | 'rescheduled';
+export type ActivityPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+export interface Activity {
+  id: string;
+  user_id: string;
+  assigned_to: string | null;
+  // Relations
+  lead_id: string | null;
+  company_name: string | null;
+  // Details
+  title: string;
+  description: string | null;
+  activity_type: ActivityType;
+  // Schedule
+  scheduled_date: string;
+  scheduled_time: string | null;
+  duration_minutes: number;
+  // Status
+  status: ActivityStatus;
+  priority: ActivityPriority;
+  // Result
+  outcome: string | null;
+  completed_at: string | null;
+  // Automation
+  auto_created: boolean;
+  trigger_stage: PipelineStage | null;
+  // Timestamps
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ActivityWithLead extends Activity {
+  lead?: Lead | null;
+}
+
+export interface PipelineAutomation {
+  id: string;
+  trigger_stage: PipelineStage;
+  activity_type: ActivityType;
+  activity_title: string;
+  activity_description: string | null;
+  days_delay: number;
+  hours_delay: number;
+  default_priority: ActivityPriority;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
