@@ -597,7 +597,7 @@ export default function LeadsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredLeads.map((lead) => (
+                filteredLeads.map((lead, index) => (
                   <tr
                     key={lead.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
@@ -689,7 +689,7 @@ export default function LeadsPage() {
                             <FaEllipsisV className="w-4 h-4" />
                           </button>
                           {openDropdown === lead.id && (
-                            <div className="absolute right-0 bottom-full mb-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[100]">
+                            <div className={`absolute right-0 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 ${index < 2 ? 'top-full mt-2' : 'bottom-full mb-2'}`}>
                               <button
                                 onClick={() => { openEditModal(lead); setOpenDropdown(null); }}
                                 className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
