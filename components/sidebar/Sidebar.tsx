@@ -77,11 +77,6 @@ const icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
     </svg>
   ),
-  chevronLeft: (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-    </svg>
-  ),
   chevronRight: (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -223,13 +218,12 @@ export default function Sidebar() {
 
   if (loading) {
     return (
-      <div className={`${isCollapsed ? 'w-20' : 'w-64'} bg-syntalys-blue text-white h-screen flex items-center justify-center transition-all duration-300 ease-in-out`}>
+      <div className={`${isCollapsed ? 'w-20' : 'w-64'} bg-syntalys-blue text-white h-screen flex items-center justify-center transition-all duration-300`}>
         <p className={isCollapsed ? 'hidden' : ''}>{t.common.loading}...</p>
       </div>
     );
   }
 
-  // Filtrar secciones y items del menú según el rol del usuario
   const visibleSections = menuSections
     .map((section) => ({
       ...section,
@@ -265,49 +259,24 @@ export default function Sidebar() {
 
   return (
     <div
-      className="relative bg-syntalys-blue text-white h-screen flex flex-col"
-      style={{
-        width: isCollapsed ? '5rem' : '16rem',
-        transition: 'width 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-      }}
+      className={`relative bg-syntalys-blue text-white h-screen flex flex-col transition-[width] duration-300 ease-out ${isCollapsed ? 'w-20' : 'w-64'}`}
     >
-      {/* Toggle Button - positioned at the edge */}
+      {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-1/2 transform -translate-y-1/2 z-50 w-6 h-6 bg-white dark:bg-gray-700 rounded-full shadow-lg flex items-center justify-center text-syntalys-blue dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
-        style={{ transition: 'background-color 200ms ease, transform 200ms ease' }}
+        className="absolute -right-3 top-1/2 -translate-y-1/2 z-50 w-6 h-6 bg-white dark:bg-gray-700 rounded-full shadow-lg flex items-center justify-center text-syntalys-blue dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition-colors duration-200"
         title={isCollapsed ? 'Expand' : 'Collapse'}
       >
-        <span style={{ transition: 'transform 400ms cubic-bezier(0.4, 0, 0.2, 1)', transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)' }}>
+        <span className={`transition-transform duration-300 ease-out ${isCollapsed ? 'rotate-0' : 'rotate-180'}`}>
           {icons.chevronRight}
         </span>
       </button>
 
       {/* Logo */}
-      <div
-        className="border-b border-white/10 flex items-center justify-center"
-        style={{
-          padding: isCollapsed ? '1rem' : '1.5rem',
-          transition: 'padding 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-      >
-        <div
-          className="relative"
-          style={{
-            width: isCollapsed ? '3rem' : '100%',
-            height: '3rem',
-            transition: 'width 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          {/* Icon logo - always rendered but fades */}
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{
-              opacity: isCollapsed ? 1 : 0,
-              transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-              transitionDelay: isCollapsed ? '100ms' : '0ms',
-            }}
-          >
+      <div className={`border-b border-white/10 flex items-center justify-center transition-all duration-300 ease-out ${isCollapsed ? 'p-4' : 'p-6'}`}>
+        <div className={`relative h-12 transition-all duration-300 ease-out ${isCollapsed ? 'w-12' : 'w-full'}`}>
+          {/* Icon logo */}
+          <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isCollapsed ? 'opacity-100' : 'opacity-0'}`}>
             <Image
               src="/logos/logo-icono-solo-white.png"
               alt="Syntalys CRM"
@@ -317,15 +286,8 @@ export default function Sidebar() {
               priority
             />
           </div>
-          {/* Horizontal logo - always rendered but fades */}
-          <div
-            className="absolute inset-0"
-            style={{
-              opacity: isCollapsed ? 0 : 1,
-              transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-              transitionDelay: isCollapsed ? '0ms' : '100ms',
-            }}
-          >
+          {/* Horizontal logo */}
+          <div className={`absolute inset-0 transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
             <Image
               src="/logos/logo-horizontal-white.png"
               alt="Syntalys CRM"
@@ -337,24 +299,13 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Usuario info - clickable to go to profile */}
+      {/* User info */}
       <Link
         href="/dashboard/perfil"
-        className="block border-b border-white/10 hover:bg-white/5 transition-colors"
-        style={{
-          padding: isCollapsed ? '0.75rem 0' : '1rem',
-          transition: 'padding 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
+        className={`block border-b border-white/10 hover:bg-white/5 transition-all duration-300 ease-out ${isCollapsed ? 'py-3 px-0' : 'p-4'}`}
         title={isCollapsed ? (t.profile?.title || 'Perfil') : undefined}
       >
-        <div
-          className="flex items-center"
-          style={{
-            justifyContent: isCollapsed ? 'center' : 'flex-start',
-            paddingLeft: isCollapsed ? 0 : '0.5rem',
-            transition: 'padding-left 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
+        <div className={`flex items-center transition-all duration-300 ease-out ${isCollapsed ? 'justify-center' : 'justify-start px-2'}`}>
           {profile?.avatar_url ? (
             <Image
               src={profile.avatar_url}
@@ -370,15 +321,7 @@ export default function Sidebar() {
               </span>
             </div>
           )}
-          <div
-            className="min-w-0 overflow-hidden"
-            style={{
-              marginLeft: isCollapsed ? 0 : '0.75rem',
-              width: isCollapsed ? 0 : 'auto',
-              opacity: isCollapsed ? 0 : 1,
-              transition: 'margin-left 400ms cubic-bezier(0.4, 0, 0.2, 1), width 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-          >
+          <div className={`overflow-hidden transition-all duration-300 ease-out ${isCollapsed ? 'w-0 ml-0 opacity-0' : 'w-auto ml-3 opacity-100'}`}>
             <p className="text-sm font-medium truncate whitespace-nowrap">
               {profile?.full_name || profile?.email || 'Usuario'}
             </p>
@@ -392,64 +335,38 @@ export default function Sidebar() {
         </div>
       </Link>
 
-      {/* Menú de navegación - sin scroll */}
-      <nav className="flex-1 py-1">
+      {/* Navigation */}
+      <nav className="flex-1 py-1 overflow-hidden">
         {visibleSections.map((section, sectionIndex) => (
           <div key={section.categoryKey}>
-            {/* Divider (except for first section) */}
+            {/* Divider */}
             {sectionIndex > 0 && (
-              <div
-                className="my-1 border-t border-white/10"
-                style={{
-                  marginLeft: isCollapsed ? '0.5rem' : '1rem',
-                  marginRight: isCollapsed ? '0.5rem' : '1rem',
-                  transition: 'margin 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
-              />
+              <div className={`my-1 border-t border-white/10 transition-all duration-300 ease-out ${isCollapsed ? 'mx-2' : 'mx-4'}`} />
             )}
 
-            {/* Category label - más compacto */}
-            <div
-              className="px-4 overflow-hidden"
-              style={{
-                height: isCollapsed ? 0 : 'auto',
-                opacity: isCollapsed ? 0 : 1,
-                paddingTop: isCollapsed ? 0 : '0.25rem',
-                paddingBottom: isCollapsed ? 0 : '0.25rem',
-                transition: 'height 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), padding 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-              }}
-            >
+            {/* Category label */}
+            <div className={`overflow-hidden transition-all duration-300 ease-out ${isCollapsed ? 'h-0 opacity-0 py-0' : 'h-auto opacity-100 py-1 px-4'}`}>
               <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 whitespace-nowrap">
                 {categoryLabels[section.categoryKey]}
               </span>
             </div>
 
-            {/* Menu items - más compactos */}
+            {/* Menu items */}
             {section.items.map((item) => {
               const isActive = pathname === item.path;
               return (
                 <Link
                   key={item.path}
                   href={item.path}
-                  className={`flex items-center py-2 ${isActive ? 'bg-white/10 border-l-4 border-white' : 'hover:bg-white/5 border-l-4 border-transparent'}`}
-                  style={{
-                    paddingLeft: isCollapsed ? '0' : '1rem',
-                    paddingRight: isCollapsed ? '0' : '1rem',
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    transition: 'padding 400ms cubic-bezier(0.4, 0, 0.2, 1), background-color 200ms ease',
-                  }}
+                  className={`flex items-center py-2 transition-all duration-200 ease-out ${
+                    isActive
+                      ? 'bg-white/10 border-l-4 border-white'
+                      : 'hover:bg-white/5 border-l-4 border-transparent'
+                  } ${isCollapsed ? 'justify-center px-0' : 'justify-start px-4'}`}
                   title={isCollapsed ? menuLabels[item.key] : undefined}
                 >
                   <span className="flex-shrink-0">{item.icon}</span>
-                  <span
-                    className="font-medium text-sm whitespace-nowrap overflow-hidden"
-                    style={{
-                      marginLeft: isCollapsed ? 0 : '0.75rem',
-                      width: isCollapsed ? 0 : 'auto',
-                      opacity: isCollapsed ? 0 : 1,
-                      transition: 'margin-left 400ms cubic-bezier(0.4, 0, 0.2, 1), width 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-                    }}
-                  >
+                  <span className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-out ${isCollapsed ? 'w-0 ml-0 opacity-0' : 'w-auto ml-3 opacity-100'}`}>
                     {menuLabels[item.key]}
                   </span>
                 </Link>
@@ -459,34 +376,15 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Botón de cerrar sesión */}
-      <div
-        className="border-t border-white/10"
-        style={{
-          padding: isCollapsed ? '0.5rem' : '1rem',
-          transition: 'padding 400ms cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-      >
+      {/* Logout button */}
+      <div className={`border-t border-white/10 transition-all duration-300 ease-out ${isCollapsed ? 'p-2' : 'p-4'}`}>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center bg-white/10 hover:bg-white/20 rounded-md"
-          style={{
-            padding: isCollapsed ? '0.5rem' : '0.5rem 1rem',
-            justifyContent: isCollapsed ? 'center' : 'center',
-            transition: 'padding 400ms cubic-bezier(0.4, 0, 0.2, 1), background-color 200ms ease',
-          }}
+          className={`w-full flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-md transition-all duration-200 ease-out ${isCollapsed ? 'p-2' : 'py-2 px-4'}`}
           title={isCollapsed ? t.nav.logout : undefined}
         >
           {icons.logout}
-          <span
-            className="whitespace-nowrap overflow-hidden"
-            style={{
-              marginLeft: isCollapsed ? 0 : '0.5rem',
-              width: isCollapsed ? 0 : 'auto',
-              opacity: isCollapsed ? 0 : 1,
-              transition: 'margin-left 400ms cubic-bezier(0.4, 0, 0.2, 1), width 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-          >
+          <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-out ${isCollapsed ? 'w-0 ml-0 opacity-0' : 'w-auto ml-2 opacity-100'}`}>
             {t.nav.logout}
           </span>
         </button>
