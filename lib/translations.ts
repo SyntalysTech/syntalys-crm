@@ -23,6 +23,8 @@ export interface Translations {
     users: string;
     reports: string;
     logout: string;
+    services: string;
+    templates: string;
   };
 
   // Sidebar categories
@@ -79,6 +81,44 @@ export interface Translations {
     displayOrder: string;
     isFeatured: string;
     isVisible: string;
+    // Templates
+    templates: string;
+    templatesSubtitle: string;
+  };
+
+  // Email Templates
+  templates: {
+    title: string;
+    subtitle: string;
+    addTemplate: string;
+    editTemplate: string;
+    deleteTemplate: string;
+    deleteConfirm: string;
+    templateName: string;
+    subject: string;
+    body: string;
+    category: string;
+    variables: string;
+    variablesHint: string;
+    usageCount: string;
+    active: string;
+    inactive: string;
+    noTemplates: string;
+    createFirst: string;
+    copyTemplate: string;
+    copied: string;
+    preview: string;
+    useTemplate: string;
+    sales: string;
+    followUp: string;
+    onboarding: string;
+    support: string;
+    invoice: string;
+    reminder: string;
+    newsletter: string;
+    other: string;
+    allCategories: string;
+    searchTemplates: string;
   };
 
   // Leads
@@ -977,6 +1017,8 @@ export const translations: Record<Language, Translations> = {
       users: 'Usuarios',
       reports: 'Reportes',
       logout: 'Cerrar Sesión',
+      services: 'Servicios',
+      templates: 'Plantillas',
     },
     sidebar: {
       general: 'General',
@@ -1029,6 +1071,41 @@ export const translations: Record<Language, Translations> = {
       displayOrder: 'Orden de visualizacion',
       isFeatured: 'Destacado',
       isVisible: 'Visible',
+      templates: 'Plantillas',
+      templatesSubtitle: 'Plantillas de correo y documentos',
+    },
+    templates: {
+      title: 'Plantillas',
+      subtitle: 'Gestiona tus plantillas de correo electronico',
+      addTemplate: 'Nueva Plantilla',
+      editTemplate: 'Editar Plantilla',
+      deleteTemplate: 'Eliminar Plantilla',
+      deleteConfirm: 'Estas seguro de que quieres eliminar esta plantilla?',
+      templateName: 'Nombre de la plantilla',
+      subject: 'Asunto',
+      body: 'Cuerpo del mensaje',
+      category: 'Categoria',
+      variables: 'Variables',
+      variablesHint: 'Usa {nombre_variable} para insertar datos dinamicos',
+      usageCount: 'Veces usada',
+      active: 'Activa',
+      inactive: 'Inactiva',
+      noTemplates: 'No hay plantillas registradas',
+      createFirst: 'Crear primera plantilla',
+      copyTemplate: 'Copiar plantilla',
+      copied: 'Copiado al portapapeles',
+      preview: 'Vista previa',
+      useTemplate: 'Usar plantilla',
+      sales: 'Ventas',
+      followUp: 'Seguimiento',
+      onboarding: 'Onboarding',
+      support: 'Soporte',
+      invoice: 'Facturacion',
+      reminder: 'Recordatorios',
+      newsletter: 'Newsletter',
+      other: 'Otros',
+      allCategories: 'Todas las categorias',
+      searchTemplates: 'Buscar plantillas...',
     },
     leads: {
       title: 'Leads',
@@ -1850,6 +1927,8 @@ export const translations: Record<Language, Translations> = {
       users: 'Utilisateurs',
       reports: 'Rapports',
       logout: 'Déconnexion',
+      services: 'Services',
+      templates: 'Modeles',
     },
     sidebar: {
       general: 'Général',
@@ -1902,6 +1981,41 @@ export const translations: Record<Language, Translations> = {
       displayOrder: 'Ordre d\'affichage',
       isFeatured: 'En vedette',
       isVisible: 'Visible',
+      templates: 'Modeles',
+      templatesSubtitle: 'Modeles d\'email et documents',
+    },
+    templates: {
+      title: 'Modeles',
+      subtitle: 'Gerez vos modeles d\'emails',
+      addTemplate: 'Nouveau Modele',
+      editTemplate: 'Modifier Modele',
+      deleteTemplate: 'Supprimer Modele',
+      deleteConfirm: 'Etes-vous sur de vouloir supprimer ce modele?',
+      templateName: 'Nom du modele',
+      subject: 'Objet',
+      body: 'Corps du message',
+      category: 'Categorie',
+      variables: 'Variables',
+      variablesHint: 'Utilisez {nom_variable} pour inserer des donnees dynamiques',
+      usageCount: 'Fois utilise',
+      active: 'Actif',
+      inactive: 'Inactif',
+      noTemplates: 'Aucun modele enregistre',
+      createFirst: 'Creer le premier modele',
+      copyTemplate: 'Copier le modele',
+      copied: 'Copie dans le presse-papiers',
+      preview: 'Apercu',
+      useTemplate: 'Utiliser le modele',
+      sales: 'Ventes',
+      followUp: 'Suivi',
+      onboarding: 'Onboarding',
+      support: 'Support',
+      invoice: 'Facturation',
+      reminder: 'Rappels',
+      newsletter: 'Newsletter',
+      other: 'Autres',
+      allCategories: 'Toutes les categories',
+      searchTemplates: 'Rechercher des modeles...',
     },
     leads: {
       title: 'Leads',
