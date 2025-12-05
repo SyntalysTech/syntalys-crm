@@ -23,7 +23,7 @@ async function getCRMContext() {
       supabase.from('projects').select('*'),
       supabase.from('company_expenses').select('*'),
       supabase.from('client_expenses').select('*'),
-      supabase.from('income').select('*'),
+      supabase.from('client_income').select('*'),
       supabase.from('leads').select('*'),
       supabase.from('activities').select('*')
     ]);
