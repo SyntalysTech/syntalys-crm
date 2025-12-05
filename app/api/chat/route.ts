@@ -151,7 +151,7 @@ async function getCRMContext() {
     - Categoría: ${e.category || 'N/A'}`;
     }).join('\n\n') || 'Sin gastos registrados';
 
-    const leadsDetailedList = leads?.length > 0 ? leads.map(l => {
+    const leadsDetailedList = (leads?.length ?? 0) > 0 ? leads!.map(l => {
       const stageMap: Record<string, string> = {
         initial_contact: 'Contacto inicial',
         qualification: 'Calificación',
