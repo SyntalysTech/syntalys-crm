@@ -832,7 +832,7 @@ interface ServiceCardProps {
   isAdmin: boolean;
   openDropdown: string | null;
   setOpenDropdown: (id: string | null) => void;
-  dropdownRef: React.RefObject<HTMLDivElement>;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
   onEdit: (service: SyntalysService) => void;
   onDelete: (service: SyntalysService) => void;
   getLocalizedName: (service: SyntalysService) => string;
