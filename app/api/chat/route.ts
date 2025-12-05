@@ -11,13 +11,13 @@ async function getCRMContext() {
   try {
     // Load all CRM data in parallel
     const [
-      { data: clients },
-      { data: projects },
-      { data: companyExpenses },
-      { data: clientExpenses },
-      { data: income },
-      { data: leads },
-      { data: activities }
+      { data: clients, error: clientsError },
+      { data: projects, error: projectsError },
+      { data: companyExpenses, error: expensesError },
+      { data: clientExpenses, error: clientExpError },
+      { data: income, error: incomeError },
+      { data: leads, error: leadsError },
+      { data: activities, error: activitiesError }
     ] = await Promise.all([
       supabase.from('clients').select('*'),
       supabase.from('projects').select('*'),
@@ -27,6 +27,13 @@ async function getCRMContext() {
       supabase.from('leads').select('*'),
       supabase.from('activities').select('*')
     ]);
+
+    // Log any errors for debugging
+    if (clientsError) console.error('Clients error:', clientsError);
+    if (projectsError) console.error('Projects error:', projectsError);
+    if (expensesError) console.error('Expenses error:', expensesError);
+    if (incomeError) console.error('Income error:', incomeError);
+    if (leadsError) console.error('Leads error:', leadsError);
 
     // Calculate financial summaries
     const totalClients = clients?.length || 0;
@@ -38,36 +45,33 @@ async function getCRMContext() {
     const completedProjects = projects?.filter(p => p.status === 'completed').length || 0;
     const pausedProjects = projects?.filter(p => p.status === 'paused').length || 0;
 
-    // Company expenses
-    const monthlyCompanyExpenses = companyExpenses?.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + Number(e.amount), 0) || 0;
-    const annualCompanyExpenses = companyExpenses?.filter(e => e.frequency === 'annual').reduce((sum, e) => sum + Number(e.amount), 0) || 0;
-    const oneTimeCompanyExpenses = companyExpenses?.filter(e => e.frequency === 'one_time').reduce((sum, e) => sum + Number(e.amount), 0) || 0;
+    // Calculate project value
+    const totalProjectValue = projects?.reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
 
-    // Client expenses
-    const monthlyClientExpenses = clientExpenses?.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + Number(e.amount), 0) || 0;
-    const annualClientExpenses = clientExpenses?.filter(e => e.frequency === 'annual').reduce((sum, e) => sum + Number(e.amount), 0) || 0;
+    // Income by currency and type
+    const incomeEUR = income?.filter(i => i.currency === 'EUR') || [];
+    const incomeCHF = income?.filter(i => i.currency === 'CHF') || [];
 
-    // Income
-    const monthlyIncome = income?.filter(i => i.frequency === 'monthly').reduce((sum, i) => sum + Number(i.amount), 0) || 0;
-    const annualIncome = income?.filter(i => i.frequency === 'annual').reduce((sum, i) => sum + Number(i.amount), 0) || 0;
-    const oneTimeIncome = income?.filter(i => i.frequency === 'one_time').reduce((sum, i) => sum + Number(i.amount), 0) || 0;
+    const totalIncomeEUR = incomeEUR.reduce((sum, i) => sum + Number(i.amount), 0);
+    const totalIncomeCHF = incomeCHF.reduce((sum, i) => sum + Number(i.amount), 0);
 
-    // Projects income
-    const projectsMonthlyIncome = projects?.filter(p => p.status === 'active' && p.billing_type === 'monthly').reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
+    const oneTimeIncomeEUR = incomeEUR.filter(i => i.frequency === 'one_time').reduce((sum, i) => sum + Number(i.amount), 0);
+    const oneTimeIncomeCHF = incomeCHF.filter(i => i.frequency === 'one_time').reduce((sum, i) => sum + Number(i.amount), 0);
+    const monthlyIncomeEUR = incomeEUR.filter(i => i.frequency === 'monthly').reduce((sum, i) => sum + Number(i.amount), 0);
+    const monthlyIncomeCHF = incomeCHF.filter(i => i.frequency === 'monthly').reduce((sum, i) => sum + Number(i.amount), 0);
+    const annualIncomeEUR = incomeEUR.filter(i => i.frequency === 'annual').reduce((sum, i) => sum + Number(i.amount), 0);
+    const annualIncomeCHF = incomeCHF.filter(i => i.frequency === 'annual').reduce((sum, i) => sum + Number(i.amount), 0);
 
-    // Total monthly calculations
-    const totalMonthlyIncome = monthlyIncome + projectsMonthlyIncome;
-    const totalMonthlyExpenses = monthlyCompanyExpenses;
-    const monthlyProfit = totalMonthlyIncome - totalMonthlyExpenses;
+    // Company expenses by currency
+    const expensesEUR = companyExpenses?.filter(e => e.currency === 'EUR') || [];
+    const expensesCHF = companyExpenses?.filter(e => e.currency === 'CHF') || [];
 
-    // Client list with details
-    const clientsList = clients?.map(c => `- ${c.name}${c.is_potential ? ' (potencial)' : ''}: ${c.status === 'active' ? 'activo' : c.status}`).join('\n') || 'Sin clientes';
-
-    // Projects list
-    const projectsList = projects?.map(p => `- ${p.name}: ${p.status === 'active' ? 'activo' : p.status === 'completed' ? 'completado' : 'pausado'} - ${p.currency} ${p.amount || 0}${p.billing_type === 'monthly' ? '/mes' : ''}`).join('\n') || 'Sin proyectos';
-
-    // Expenses list
-    const expensesList = companyExpenses?.map(e => `- ${e.service_name}: ${e.currency} ${e.amount} (${e.frequency === 'monthly' ? 'mensual' : e.frequency === 'annual' ? 'anual' : 'único'})`).join('\n') || 'Sin gastos';
+    const monthlyExpensesCHF = expensesCHF.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + Number(e.amount), 0);
+    const monthlyExpensesEUR = expensesEUR.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + Number(e.amount), 0);
+    const annualExpensesCHF = expensesCHF.filter(e => e.frequency === 'annual').reduce((sum, e) => sum + Number(e.amount), 0);
+    const annualExpensesEUR = expensesEUR.filter(e => e.frequency === 'annual').reduce((sum, e) => sum + Number(e.amount), 0);
+    const totalExpensesCHF = expensesCHF.reduce((sum, e) => sum + Number(e.amount), 0);
+    const totalExpensesEUR = expensesEUR.reduce((sum, e) => sum + Number(e.amount), 0);
 
     // Leads statistics
     const totalLeads = leads?.length || 0;
@@ -94,10 +98,60 @@ async function getCRMContext() {
 
     // Potential value from leads
     const totalLeadValue = leads?.reduce((sum, l) => sum + Number(l.estimated_value || 0), 0) || 0;
-    const qualifiedLeadValue = leads?.filter(l => l.status === 'qualified' || l.status === 'interested').reduce((sum, l) => sum + Number(l.estimated_value || 0), 0) || 0;
 
-    // Leads list with details
-    const leadsList = leads?.map(l => {
+    // Activities statistics
+    const totalActivities = activities?.length || 0;
+    const pendingActivities = activities?.filter(a => a.status === 'pending').length || 0;
+    const completedActivities = activities?.filter(a => a.status === 'completed').length || 0;
+    const today = new Date().toISOString().split('T')[0];
+    const overdueActivities = activities?.filter(a => a.status === 'pending' && a.scheduled_date < today).length || 0;
+    const todayActivities = activities?.filter(a => a.scheduled_date === today && a.status === 'pending').length || 0;
+
+    // Build detailed lists
+    const clientsDetailedList = clients?.map(c => {
+      const clientProjects = projects?.filter(p => p.client_id === c.id) || [];
+      const clientIncomeItems = income?.filter(i => i.client_id === c.id) || [];
+      const clientTotalIncome = clientIncomeItems.reduce((sum, i) => sum + Number(i.amount), 0);
+      const projectNames = clientProjects.map(p => p.name).join(', ') || 'Ninguno';
+
+      return `  • ${c.name}
+    - Estado: ${c.status === 'active' ? 'Activo' : c.status === 'inactive' ? 'Inactivo' : 'Suspendido'}
+    - Tipo: ${c.client_type === 'individual' ? 'Persona' : 'Empresa'}${c.is_potential ? ' (POTENCIAL)' : ''}
+    - País: ${c.country || 'N/A'}
+    - Email: ${c.email || 'N/A'}
+    - Teléfono: ${c.phone || 'N/A'}
+    - Proyectos: ${projectNames}
+    - Ingresos totales: ${clientTotalIncome.toFixed(2)}`;
+    }).join('\n\n') || 'Sin clientes';
+
+    const projectsDetailedList = projects?.map(p => {
+      const client = clients?.find(c => c.id === p.client_id);
+      const statusText = p.status === 'active' ? '🟢 Activo' : p.status === 'completed' ? '✅ Completado' : '⏸️ Pausado';
+      return `  • ${p.name} (${statusText})
+    - Cliente: ${client?.name || 'N/A'}
+    - Valor: ${p.currency} ${Number(p.amount || 0).toFixed(2)}${p.billing_type === 'monthly' ? '/mes' : p.billing_type === 'one_time' ? ' (único)' : ''}
+    - Tipo de facturación: ${p.billing_type === 'monthly' ? 'Mensual' : p.billing_type === 'one_time' ? 'Pago único' : p.billing_type}
+    - Descripción: ${p.description || 'N/A'}`;
+    }).join('\n\n') || 'Sin proyectos';
+
+    const incomeDetailedList = income?.map(i => {
+      const client = clients?.find(c => c.id === i.client_id);
+      const freqText = i.frequency === 'monthly' ? 'Mensual' : i.frequency === 'annual' ? 'Anual' : 'Pago único';
+      const statusText = i.status === 'paid' ? '✅ Pagado' : i.status === 'active' ? '🟢 Activo' : '⏳ Pendiente';
+      return `  • ${i.service_name}: ${i.currency} ${Number(i.amount).toFixed(2)} (${freqText}) - ${statusText}
+    - Cliente: ${client?.name || 'N/A'}
+    - Categoría: ${i.category || 'N/A'}
+    - Fecha: ${i.payment_date || 'N/A'}`;
+    }).join('\n\n') || 'Sin ingresos registrados';
+
+    const expensesDetailedList = companyExpenses?.map(e => {
+      const freqText = e.frequency === 'monthly' ? 'Mensual' : e.frequency === 'annual' ? 'Anual' : 'Único';
+      const statusText = e.status === 'paid' ? '✅ Pagado' : '⏳ Pendiente';
+      return `  • ${e.service_name}: ${e.currency} ${Number(e.amount).toFixed(2)} (${freqText}) - ${statusText}
+    - Categoría: ${e.category || 'N/A'}`;
+    }).join('\n\n') || 'Sin gastos registrados';
+
+    const leadsDetailedList = leads?.length > 0 ? leads.map(l => {
       const stageMap: Record<string, string> = {
         initial_contact: 'Contacto inicial',
         qualification: 'Calificación',
@@ -108,128 +162,138 @@ async function getCRMContext() {
         lost: 'Perdido'
       };
       const statusMap: Record<string, string> = {
-        new: 'nuevo',
-        contacted: 'contactado',
-        interested: 'interesado',
-        qualified: 'calificado',
-        converted: 'convertido',
-        lost: 'perdido',
-        dormant: 'dormido',
-        not_qualified: 'no calificado'
+        new: '🆕 Nuevo',
+        contacted: '📞 Contactado',
+        interested: '⭐ Interesado',
+        qualified: '✅ Calificado',
+        converted: '🎉 Convertido',
+        lost: '❌ Perdido',
+        dormant: '😴 Dormido'
       };
-      return `- ${l.company_name || l.contact_name}: ${statusMap[l.status] || l.status} | Etapa: ${stageMap[l.pipeline_stage] || l.pipeline_stage} | Servicio: ${l.service_interested || 'N/A'} | Valor estimado: ${l.currency || 'EUR'} ${l.estimated_value || 0}`;
-    }).join('\n') || 'Sin leads';
+      return `  • ${l.company_name || l.contact_name}
+    - Estado: ${statusMap[l.status] || l.status}
+    - Etapa pipeline: ${stageMap[l.pipeline_stage] || l.pipeline_stage}
+    - Contacto: ${l.contact_name || 'N/A'} | Email: ${l.email || 'N/A'} | Tel: ${l.phone || 'N/A'}
+    - Servicio interesado: ${l.service_interested || 'N/A'}
+    - Valor estimado: ${l.currency || 'EUR'} ${Number(l.estimated_value || 0).toFixed(2)}
+    - País: ${l.country || 'N/A'}
+    - Notas: ${l.notes || 'Sin notas'}`;
+    }).join('\n\n') : 'No hay leads registrados en el sistema';
 
-    // Activities statistics
-    const totalActivities = activities?.length || 0;
-    const pendingActivities = activities?.filter(a => a.status === 'pending').length || 0;
-    const completedActivities = activities?.filter(a => a.status === 'completed').length || 0;
-    const overdueActivities = activities?.filter(a => {
-      if (a.status !== 'pending') return false;
-      const today = new Date().toISOString().split('T')[0];
-      return a.scheduled_date < today;
-    }).length || 0;
-
-    // Today's activities
-    const today = new Date().toISOString().split('T')[0];
-    const todayActivities = activities?.filter(a => a.scheduled_date === today && a.status === 'pending').length || 0;
-
-    // Activities by type
-    const activitiesByType = {
-      call: activities?.filter(a => a.type === 'call').length || 0,
-      email: activities?.filter(a => a.type === 'email').length || 0,
-      meeting: activities?.filter(a => a.type === 'meeting').length || 0,
-      follow_up: activities?.filter(a => a.type === 'follow_up').length || 0,
-      demo: activities?.filter(a => a.type === 'demo').length || 0,
-      proposal: activities?.filter(a => a.type === 'proposal').length || 0,
-    };
-
-    // Detailed client info with projects and income
-    const clientsWithDetails = clients?.map(c => {
-      const clientProjects = projects?.filter(p => p.client_id === c.id) || [];
-      const clientIncome = income?.filter(i => i.client_id === c.id) || [];
-      const clientMonthlyIncome = clientIncome.filter(i => i.frequency === 'monthly').reduce((sum, i) => sum + Number(i.amount), 0);
-      const activeProjectsCount = clientProjects.filter(p => p.status === 'active').length;
-
-      return `- ${c.name}${c.is_potential ? ' (POTENCIAL)' : ''}: ${c.status === 'active' ? '✅ Activo' : c.status === 'inactive' ? '⏸️ Inactivo' : '❌ Suspendido'} | País: ${c.country || 'N/A'} | Email: ${c.email || 'N/A'} | Teléfono: ${c.phone || 'N/A'} | Proyectos activos: ${activeProjectsCount} | Ingreso mensual: CHF ${clientMonthlyIncome.toFixed(2)}`;
-    }).join('\n') || 'Sin clientes';
-
-    // Income details
-    const incomeList = income?.map(i => {
-      const client = clients?.find(c => c.id === i.client_id);
-      return `- ${i.service_name}: ${i.currency} ${i.amount} (${i.frequency === 'monthly' ? 'mensual' : i.frequency === 'annual' ? 'anual' : 'único'}) | Cliente: ${client?.name || 'N/A'} | Estado: ${i.status === 'active' ? 'activo' : i.status}`;
-    }).join('\n') || 'Sin ingresos';
+    const activitiesList = activities?.filter(a => a.status === 'pending').slice(0, 10).map(a => {
+      const lead = leads?.find(l => l.id === a.lead_id);
+      const typeMap: Record<string, string> = {
+        call: '📞 Llamada',
+        email: '✉️ Email',
+        meeting: '🤝 Reunión',
+        follow_up: '🔄 Seguimiento',
+        demo: '🖥️ Demo',
+        proposal: '📄 Propuesta'
+      };
+      return `  • ${typeMap[a.type] || a.type}: ${a.title || 'Sin título'}
+    - Lead: ${lead?.company_name || lead?.contact_name || 'N/A'}
+    - Fecha: ${a.scheduled_date}
+    - Prioridad: ${a.priority || 'Normal'}
+    - Notas: ${a.notes || 'Sin notas'}`;
+    }).join('\n\n') || 'No hay actividades pendientes';
 
     return `
-=== DATOS ACTUALES DEL CRM DE SYNTALYS ===
-Fecha actual: ${new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+============================================
+DATOS COMPLETOS DEL CRM DE SYNTALYS
+Fecha: ${new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+============================================
 
-📊 RESUMEN GENERAL:
-- Total clientes: ${totalClients} (${activeClients} activos, ${potentialClients} potenciales)
-- Total proyectos: ${totalProjects} (${activeProjects} activos, ${completedProjects} completados, ${pausedProjects} pausados)
-- Total leads: ${totalLeads}
-- Total actividades: ${totalActivities} (${pendingActivities} pendientes, ${completedActivities} completadas)
+📊 RESUMEN EJECUTIVO:
+━━━━━━━━━━━━━━━━━━━━
+• Clientes: ${totalClients} total (${activeClients} activos, ${potentialClients} potenciales)
+• Proyectos: ${totalProjects} total (${activeProjects} activos, ${completedProjects} completados, ${pausedProjects} pausados)
+• Leads: ${totalLeads} total
+• Actividades: ${totalActivities} total (${pendingActivities} pendientes, ${overdueActivities} vencidas)
 
-💰 FINANZAS MENSUALES:
-- Ingresos mensuales recurrentes: CHF ${totalMonthlyIncome.toFixed(2)}
-  - De servicios: CHF ${monthlyIncome.toFixed(2)}
-  - De proyectos activos: CHF ${projectsMonthlyIncome.toFixed(2)}
-- Gastos mensuales de empresa: CHF ${monthlyCompanyExpenses.toFixed(2)}
-- Beneficio mensual estimado: CHF ${monthlyProfit.toFixed(2)}
+💰 FINANZAS - INGRESOS TOTALES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EN EUROS (EUR):
+• Total recibido: EUR ${totalIncomeEUR.toFixed(2)}
+  - Pagos únicos: EUR ${oneTimeIncomeEUR.toFixed(2)}
+  - Mensuales: EUR ${monthlyIncomeEUR.toFixed(2)}
+  - Anuales: EUR ${annualIncomeEUR.toFixed(2)}
 
-📈 INGRESOS TOTALES:
-- Mensuales recurrentes: CHF ${monthlyIncome.toFixed(2)}
-- Anuales: CHF ${annualIncome.toFixed(2)}
-- Pagos únicos: CHF ${oneTimeIncome.toFixed(2)}
+EN FRANCOS SUIZOS (CHF):
+• Total recibido: CHF ${totalIncomeCHF.toFixed(2)}
+  - Pagos únicos: CHF ${oneTimeIncomeCHF.toFixed(2)}
+  - Mensuales: CHF ${monthlyIncomeCHF.toFixed(2)}
+  - Anuales: CHF ${annualIncomeCHF.toFixed(2)}
 
-💸 GASTOS DE EMPRESA:
-- Mensuales: CHF ${monthlyCompanyExpenses.toFixed(2)}
-- Anuales: CHF ${annualCompanyExpenses.toFixed(2)}
-- Únicos: CHF ${oneTimeCompanyExpenses.toFixed(2)}
+VALOR TOTAL DE PROYECTOS: EUR/CHF ${totalProjectValue.toFixed(2)}
 
-💼 GASTOS DE CLIENTES (servicios que pagamos por ellos):
-- Mensuales: CHF ${monthlyClientExpenses.toFixed(2)}
-- Anuales: CHF ${annualClientExpenses.toFixed(2)}
+💸 FINANZAS - GASTOS:
+━━━━━━━━━━━━━━━━━━━━
+EN CHF:
+• Total gastos: CHF ${totalExpensesCHF.toFixed(2)}
+  - Mensuales: CHF ${monthlyExpensesCHF.toFixed(2)}
+  - Anuales: CHF ${annualExpensesCHF.toFixed(2)}
 
-🎯 LEADS Y VENTAS:
-- Total de leads: ${totalLeads}
-- Por estado: ${newLeads} nuevos, ${contactedLeads} contactados, ${interestedLeads} interesados, ${qualifiedLeads} calificados, ${convertedLeads} convertidos, ${lostLeads} perdidos
-- Tasa de conversión: ${conversionRate}%
-- Valor total potencial de leads: EUR ${totalLeadValue.toFixed(2)}
-- Valor de leads calificados/interesados: EUR ${qualifiedLeadValue.toFixed(2)}
+EN EUR:
+• Total gastos: EUR ${totalExpensesEUR.toFixed(2)}
+  - Mensuales: EUR ${monthlyExpensesEUR.toFixed(2)}
+  - Anuales: EUR ${annualExpensesEUR.toFixed(2)}
 
-🔄 PIPELINE DE VENTAS:
-- Contacto inicial: ${leadsByStage.initial_contact} leads
-- Calificación: ${leadsByStage.qualification} leads
-- Propuesta: ${leadsByStage.proposal} leads
-- Negociación: ${leadsByStage.negotiation} leads
-- Cierre: ${leadsByStage.closing} leads
-- Ganados: ${leadsByStage.won} leads
-- Perdidos: ${leadsByStage.lost} leads
+📈 BENEFICIO NETO ESTIMADO:
+• EUR: ${(totalIncomeEUR - totalExpensesEUR).toFixed(2)}
+• CHF: ${(totalIncomeCHF - totalExpensesCHF).toFixed(2)}
 
-📅 ACTIVIDADES:
-- Actividades para hoy: ${todayActivities}
-- Actividades vencidas: ${overdueActivities}
-- Pendientes totales: ${pendingActivities}
-- Completadas: ${completedActivities}
-- Por tipo: ${activitiesByType.call} llamadas, ${activitiesByType.email} emails, ${activitiesByType.meeting} reuniones, ${activitiesByType.follow_up} seguimientos, ${activitiesByType.demo} demos, ${activitiesByType.proposal} propuestas
+🎯 PIPELINE DE VENTAS (LEADS):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Total leads: ${totalLeads}
+• Nuevos: ${newLeads}
+• Contactados: ${contactedLeads}
+• Interesados: ${interestedLeads}
+• Calificados: ${qualifiedLeads}
+• Convertidos: ${convertedLeads}
+• Perdidos: ${lostLeads}
+• Tasa de conversión: ${conversionRate}%
+• Valor potencial total: EUR ${totalLeadValue.toFixed(2)}
 
-👥 LISTA DETALLADA DE CLIENTES:
-${clientsWithDetails}
+Por etapa del pipeline:
+• Contacto inicial: ${leadsByStage.initial_contact}
+• Calificación: ${leadsByStage.qualification}
+• Propuesta: ${leadsByStage.proposal}
+• Negociación: ${leadsByStage.negotiation}
+• Cierre: ${leadsByStage.closing}
+• Ganados: ${leadsByStage.won}
+• Perdidos: ${leadsByStage.lost}
 
-🎯 LISTA DE LEADS:
-${leadsList}
+📅 ACTIVIDADES PENDIENTES:
+━━━━━━━━━━━━━━━━━━━━━━━━
+• Para hoy: ${todayActivities}
+• Vencidas: ${overdueActivities}
+• Pendientes total: ${pendingActivities}
 
-🗂️ LISTA DE PROYECTOS:
-${projectsList}
+============================================
+DETALLE COMPLETO DE DATOS
+============================================
 
-💵 DETALLE DE INGRESOS:
-${incomeList}
+👥 CLIENTES (${totalClients}):
+${clientsDetailedList}
 
-📋 GASTOS DE EMPRESA:
-${expensesList}
+🗂️ PROYECTOS (${totalProjects}):
+${projectsDetailedList}
 
-=== FIN DE DATOS DEL CRM ===
+💵 INGRESOS REGISTRADOS (${income?.length || 0}):
+${incomeDetailedList}
+
+📋 GASTOS DE EMPRESA (${companyExpenses?.length || 0}):
+${expensesDetailedList}
+
+🎯 LEADS (${totalLeads}):
+${leadsDetailedList}
+
+📅 PRÓXIMAS ACTIVIDADES:
+${activitiesList}
+
+============================================
+FIN DE DATOS DEL CRM
+============================================
 `;
   } catch (error) {
     console.error('Error loading CRM context:', error);
