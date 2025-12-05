@@ -33,6 +33,52 @@ export interface Translations {
     finance: string;
     tools: string;
     admin: string;
+    syntalys: string;
+  };
+
+  // Syntalys internal section
+  syntalys: {
+    services: string;
+    servicesSubtitle: string;
+    comingSoon: string;
+    underConstruction: string;
+    ourServices: string;
+    enterpriseServices: string;
+    enterpriseSubtitle: string;
+    pmeServices: string;
+    pmeSubtitle: string;
+    addService: string;
+    editService: string;
+    deleteService: string;
+    price: string;
+    priceFrom: string;
+    commission: string;
+    deliveryTime: string;
+    available: string;
+    discontinued: string;
+    fixed: string;
+    hourly: string;
+    monthly: string;
+    custom: string;
+    noServices: string;
+    createFirst: string;
+    featured: string;
+    allServices: string;
+    filterByCategory: string;
+    filterByStatus: string;
+    serviceName: string;
+    serviceDescription: string;
+    icon: string;
+    category: string;
+    priceMin: string;
+    priceMax: string;
+    priceType: string;
+    priceNote: string;
+    commissionPercentage: string;
+    commissionNotes: string;
+    displayOrder: string;
+    isFeatured: string;
+    isVisible: string;
   };
 
   // Leads
@@ -939,6 +985,50 @@ export const translations: Record<Language, Translations> = {
       finance: 'Finanzas',
       tools: 'Herramientas',
       admin: 'Administración',
+      syntalys: 'Syntalys',
+    },
+    syntalys: {
+      services: 'Servicios',
+      servicesSubtitle: 'Catalogo de servicios de Syntalys',
+      comingSoon: 'Proximamente',
+      underConstruction: 'Esta seccion esta en construccion. Pronto podras gestionar los servicios de Syntalys.',
+      ourServices: 'Nuestros Servicios',
+      enterpriseServices: 'Empresas',
+      enterpriseSubtitle: 'Soluciones digitales completas para empresas y grandes cuentas',
+      pmeServices: 'PYME e Independientes',
+      pmeSubtitle: 'Soluciones disenadas para autonomos, freelances y pequenas empresas',
+      addService: 'Nuevo Servicio',
+      editService: 'Editar Servicio',
+      deleteService: 'Eliminar Servicio',
+      price: 'Precio',
+      priceFrom: 'Desde',
+      commission: 'Comision',
+      deliveryTime: 'Tiempo de entrega',
+      available: 'Disponible',
+      discontinued: 'Descontinuado',
+      fixed: 'Fijo',
+      hourly: 'Por hora',
+      monthly: 'Mensual',
+      custom: 'A medida',
+      noServices: 'No hay servicios registrados',
+      createFirst: 'Crear primer servicio',
+      featured: 'Destacado',
+      allServices: 'Todos',
+      filterByCategory: 'Filtrar por categoria',
+      filterByStatus: 'Filtrar por estado',
+      serviceName: 'Nombre del servicio',
+      serviceDescription: 'Descripcion',
+      icon: 'Icono',
+      category: 'Categoria',
+      priceMin: 'Precio minimo',
+      priceMax: 'Precio maximo',
+      priceType: 'Tipo de precio',
+      priceNote: 'Nota de precio',
+      commissionPercentage: 'Porcentaje de comision',
+      commissionNotes: 'Notas de comision',
+      displayOrder: 'Orden de visualizacion',
+      isFeatured: 'Destacado',
+      isVisible: 'Visible',
     },
     leads: {
       title: 'Leads',
@@ -1768,10 +1858,54 @@ export const translations: Record<Language, Translations> = {
       finance: 'Finances',
       tools: 'Outils',
       admin: 'Administration',
+      syntalys: 'Syntalys',
+    },
+    syntalys: {
+      services: 'Services',
+      servicesSubtitle: 'Catalogue des services Syntalys',
+      comingSoon: 'Prochainement',
+      underConstruction: 'Cette section est en construction. Bientot vous pourrez gerer les services de Syntalys.',
+      ourServices: 'Nos Services',
+      enterpriseServices: 'Entreprises',
+      enterpriseSubtitle: 'Solutions numeriques completes pour les entreprises et grands comptes',
+      pmeServices: 'PME et Independants',
+      pmeSubtitle: 'Solutions concues pour les independants, freelances et petites entreprises',
+      addService: 'Nouveau Service',
+      editService: 'Modifier Service',
+      deleteService: 'Supprimer Service',
+      price: 'Prix',
+      priceFrom: 'A partir de',
+      commission: 'Commission',
+      deliveryTime: 'Delai de livraison',
+      available: 'Disponible',
+      discontinued: 'Discontinue',
+      fixed: 'Fixe',
+      hourly: 'Horaire',
+      monthly: 'Mensuel',
+      custom: 'Sur mesure',
+      noServices: 'Aucun service enregistre',
+      createFirst: 'Creer le premier service',
+      featured: 'En vedette',
+      allServices: 'Tous',
+      filterByCategory: 'Filtrer par categorie',
+      filterByStatus: 'Filtrer par statut',
+      serviceName: 'Nom du service',
+      serviceDescription: 'Description',
+      icon: 'Icone',
+      category: 'Categorie',
+      priceMin: 'Prix minimum',
+      priceMax: 'Prix maximum',
+      priceType: 'Type de prix',
+      priceNote: 'Note de prix',
+      commissionPercentage: 'Pourcentage de commission',
+      commissionNotes: 'Notes de commission',
+      displayOrder: 'Ordre d\'affichage',
+      isFeatured: 'En vedette',
+      isVisible: 'Visible',
     },
     leads: {
       title: 'Leads',
-      subtitle: 'Gérez vos leads et opportunités de vente',
+      subtitle: 'Gerez vos leads et opportunites de vente',
       addLead: 'Ajouter Lead',
       editLead: 'Modifier Lead',
       deleteLead: 'Supprimer Lead',
