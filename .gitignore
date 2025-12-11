@@ -40,6 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# electron
-/dist/
-/release/
+# tauri
+/src-tauri/target/
