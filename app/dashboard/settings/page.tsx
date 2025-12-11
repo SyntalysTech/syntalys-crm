@@ -22,7 +22,7 @@ export default function SettingsPage() {
 
       <div className="space-y-6 max-w-2xl">
         {/* Tema */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             {t.settings.appearance}
           </h2>
@@ -34,7 +34,7 @@ export default function SettingsPage() {
             <div className="flex gap-4">
               <button
                 onClick={() => setTheme('light')}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg border-2 transition-all ${
+                className={`flex items-center gap-3 px-4 py-3 border-2 transition-all ${
                   theme === 'light'
                     ? 'border-syntalys-blue bg-blue-50 dark:bg-blue-900/20'
                     : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
@@ -53,7 +53,7 @@ export default function SettingsPage() {
 
               <button
                 onClick={() => setTheme('dark')}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg border-2 transition-all ${
+                className={`flex items-center gap-3 px-4 py-3 border-2 transition-all ${
                   theme === 'dark'
                     ? 'border-syntalys-blue bg-blue-50 dark:bg-blue-900/20'
                     : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
@@ -74,7 +74,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Idioma */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             {t.settings.language}
           </h2>
@@ -85,7 +85,7 @@ export default function SettingsPage() {
           <div className="flex gap-4">
             <button
               onClick={() => setLanguage('es')}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg border-2 transition-all ${
+              className={`flex items-center gap-3 px-4 py-3 border-2 transition-all ${
                 language === 'es'
                   ? 'border-syntalys-blue bg-blue-50 dark:bg-blue-900/20'
                   : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
@@ -105,7 +105,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setLanguage('fr')}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg border-2 transition-all ${
+              className={`flex items-center gap-3 px-4 py-3 border-2 transition-all ${
                 language === 'fr'
                   ? 'border-syntalys-blue bg-blue-50 dark:bg-blue-900/20'
                   : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'

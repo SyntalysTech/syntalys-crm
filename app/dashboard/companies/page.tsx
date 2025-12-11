@@ -387,7 +387,7 @@ export default function CompaniesPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-syntalys-blue dark:bg-gray-800 rounded-lg border border-syntalys-blue dark:border-gray-700 p-4 mb-6">
+      <div className="bg-syntalys-blue dark:bg-gray-800 border border-syntalys-blue dark:border-gray-700 p-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 dark:text-gray-400" />
@@ -396,12 +396,12 @@ export default function CompaniesPage() {
               placeholder={t.companies.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 dark:placeholder-gray-400 focus:ring-2 focus:ring-white/40"
+              className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 dark:placeholder-gray-400 focus:ring-2 focus:ring-white/40"
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${showFilters ? 'bg-white/20 border-white/40 text-white dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-400' : 'border-white/20 dark:border-gray-600 text-white dark:text-gray-300 hover:bg-white/10 dark:hover:bg-gray-700'}`}
+            className={`flex items-center gap-2 px-4 py-2 border transition-colors ${showFilters ? 'bg-white/20 border-white/40 text-white dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-400' : 'border-white/20 dark:border-gray-600 text-white dark:text-gray-300 hover:bg-white/10 dark:hover:bg-gray-700'}`}
           >
             <FaFilter className="w-4 h-4" />
             {t.common.filter}
@@ -413,7 +413,7 @@ export default function CompaniesPage() {
             <select
               value={countryFilter}
               onChange={(e) => setCountryFilter(e.target.value)}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
               <option value="all" className="text-gray-900">{t.companies.allCountries}</option>
               {uniqueCountries.map(code => (
@@ -423,7 +423,7 @@ export default function CompaniesPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
               <option value="all" className="text-gray-900">{t.companies.allStatuses}</option>
               <option value="negotiation" className="text-gray-900">{t.companies.statusNegotiation}</option>
@@ -439,7 +439,7 @@ export default function CompaniesPage() {
 
       {/* Companies Grid */}
       {filteredCompanies.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-12 text-center">
           <FaBuilding className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <p className="text-gray-500 dark:text-gray-400">{t.companies.noCompanies}</p>
         </div>
@@ -448,13 +448,13 @@ export default function CompaniesPage() {
           {filteredCompanies.map((company) => (
             <div
               key={company.name}
-              className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
               onClick={() => setSelectedCompany(company)}
             >
               {/* Company Header */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                     <FaBuilding className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
@@ -556,7 +556,7 @@ export default function CompaniesPage() {
             {/* Panel Header */}
             <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between z-10">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                   <FaBuilding className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -566,7 +566,7 @@ export default function CompaniesPage() {
               </div>
               <button
                 onClick={() => setSelectedCompany(null)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <FaTimes className="w-5 h-5 text-gray-500" />
               </button>
@@ -575,21 +575,21 @@ export default function CompaniesPage() {
             <div className="p-4 space-y-6">
               {/* Quick Stats */}
               <div className="grid grid-cols-4 gap-3">
-                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50">
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{selectedCompany.leads.length}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{t.companies.leadsCount}</p>
                 </div>
-                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50">
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">{selectedCompany.activeLeads}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{t.companies.activeLeadsCount}</p>
                 </div>
-                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50">
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {selectedCompany.totalValue.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">CHF</p>
                 </div>
-                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50">
                   <span className={`px-2 py-1 text-xs font-medium rounded ${getStatusColor(selectedCompany.generalStatus)}`}>
                     {getStatusLabel(selectedCompany.generalStatus)}
                   </span>
@@ -598,7 +598,7 @@ export default function CompaniesPage() {
 
               {/* Main Contact Info */}
               {selectedCompany.mainContact && (
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <div className="bg-gray-50 dark:bg-gray-700/50 p-4">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                     <FaUser className="w-4 h-4" />
                     {t.companies.mainContact}
@@ -609,7 +609,7 @@ export default function CompaniesPage() {
                       {selectedCompany.mainContact.phone && (
                         <a
                           href={`tel:${selectedCompany.mainContact.phone}`}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
                         >
                           <FaPhone className="w-3 h-3" />
                           {selectedCompany.mainContact.phone}
@@ -620,7 +620,7 @@ export default function CompaniesPage() {
                           href={`https://wa.me/${selectedCompany.mainContact.whatsapp.replace(/\D/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg text-sm hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
                         >
                           <FaWhatsapp className="w-3 h-3" />
                           WhatsApp
@@ -629,7 +629,7 @@ export default function CompaniesPage() {
                       {selectedCompany.mainContact.email && (
                         <a
                           href={`mailto:${selectedCompany.mainContact.email}`}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg text-sm hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-sm hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors"
                         >
                           <FaEnvelope className="w-3 h-3" />
                           {selectedCompany.mainContact.email}
@@ -646,7 +646,7 @@ export default function CompaniesPage() {
               )}
 
               {/* Company Notes */}
-              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
+              <div className="bg-amber-50 dark:bg-amber-900/20 p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     <FaStickyNote className="w-4 h-4 text-amber-600" />
@@ -674,7 +674,7 @@ export default function CompaniesPage() {
                     <Link
                       key={lead.id}
                       href={`/dashboard/leads?search=${encodeURIComponent(lead.name)}`}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
@@ -706,7 +706,7 @@ export default function CompaniesPage() {
                 ) : (
                   <div className="space-y-2">
                     {getCompanyActivities(selectedCompany).map(activity => (
-                      <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                      <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50">
                         <div className="flex-1">
                           <p className="text-sm text-gray-900 dark:text-white">{activity.description}</p>
                           {activity.outcome && (
@@ -732,7 +732,7 @@ export default function CompaniesPage() {
       {showNoteModal && selectedCompany && (
         <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4" onClick={() => setShowNoteModal(false)}>
           <div
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg"
+            className="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-lg"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -741,7 +741,7 @@ export default function CompaniesPage() {
               </h3>
               <button
                 onClick={() => setShowNoteModal(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <FaTimes className="w-4 h-4 text-gray-500" />
               </button>
@@ -752,20 +752,20 @@ export default function CompaniesPage() {
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder={t.forms.notesPlaceholder}
                 rows={6}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
             <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
               <button
                 onClick={() => setShowNoteModal(false)}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 {t.common.cancel}
               </button>
               <button
                 onClick={handleSaveNote}
                 disabled={savingNote}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 {savingNote ? t.common.loading + '...' : t.common.save}
               </button>

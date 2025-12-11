@@ -547,7 +547,7 @@ export default function ActivitiesPage() {
         </div>
         <button
           onClick={() => openCreateModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors"
         >
           <FaPlus className="w-4 h-4" />
           {t.activities?.newActivity || 'Nueva actividad'}
@@ -558,7 +558,7 @@ export default function ActivitiesPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <button
           onClick={() => setDateFilter('today')}
-          className={`p-4 rounded-lg border-2 transition-colors ${
+          className={`p-4 border-2 transition-colors ${
             dateFilter === 'today'
               ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
               : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300'
@@ -569,7 +569,7 @@ export default function ActivitiesPage() {
         </button>
         <button
           onClick={() => setDateFilter('overdue')}
-          className={`p-4 rounded-lg border-2 transition-colors ${
+          className={`p-4 border-2 transition-colors ${
             dateFilter === 'overdue'
               ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
               : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-red-300'
@@ -580,7 +580,7 @@ export default function ActivitiesPage() {
         </button>
         <button
           onClick={() => setDateFilter('week')}
-          className={`p-4 rounded-lg border-2 transition-colors ${
+          className={`p-4 border-2 transition-colors ${
             dateFilter === 'week'
               ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
               : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-300'
@@ -599,7 +599,7 @@ export default function ActivitiesPage() {
         </button>
         <button
           onClick={() => { setStatusFilter('completed'); setDateFilter('all'); }}
-          className={`p-4 rounded-lg border-2 transition-colors ${
+          className={`p-4 border-2 transition-colors ${
             statusFilter === 'completed'
               ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
               : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-purple-300'
@@ -613,10 +613,10 @@ export default function ActivitiesPage() {
       </div>
 
       {/* View Toggle and Filters */}
-      <div className="bg-syntalys-blue dark:bg-gray-800 rounded-lg border border-syntalys-blue dark:border-gray-700 p-4 mb-6">
+      <div className="bg-syntalys-blue dark:bg-gray-800 border border-syntalys-blue dark:border-gray-700 p-4 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           {/* View Toggle */}
-          <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700 rounded-lg p-1">
+          <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700 p-1">
             <button
               onClick={() => setViewMode('list')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${
@@ -644,7 +644,7 @@ export default function ActivitiesPage() {
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-3 py-2 border rounded-lg transition-colors ${
+            className={`flex items-center gap-2 px-3 py-2 border transition-colors ${
               showFilters
                 ? 'bg-white/20 border-white/40 text-white dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-400'
                 : 'border-white/20 dark:border-gray-600 text-white dark:text-gray-300 hover:bg-white/10 dark:hover:bg-gray-700'
@@ -661,7 +661,7 @@ export default function ActivitiesPage() {
             <select
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value as DateFilter)}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
             >
               <option value="today" className="text-gray-900">{t.activities?.filterToday || 'Hoy'}</option>
               <option value="tomorrow" className="text-gray-900">{t.activities?.filterTomorrow || 'Mañana'}</option>
@@ -673,7 +673,7 @@ export default function ActivitiesPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as ActivityType | 'all')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
             >
               <option value="all" className="text-gray-900">{t.activities?.allTypes || 'Todos los tipos'}</option>
               <option value="call" className="text-gray-900">{t.activities?.typeCall || 'Llamada'}</option>
@@ -687,7 +687,7 @@ export default function ActivitiesPage() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as ActivityPriority | 'all')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
             >
               <option value="all" className="text-gray-900">{t.activities?.allPriorities || 'Todas las prioridades'}</option>
               <option value="urgent" className="text-gray-900">{t.activities?.priorityUrgent || 'Urgente'}</option>
@@ -698,7 +698,7 @@ export default function ActivitiesPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as ActivityStatus | 'all')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
             >
               <option value="all" className="text-gray-900">{t.activities?.allStatuses || 'Todos los estados'}</option>
               <option value="pending" className="text-gray-900">{t.activities?.statusPending || 'Pendiente'}</option>
@@ -709,7 +709,7 @@ export default function ActivitiesPage() {
             <select
               value={serviceFilter}
               onChange={(e) => setServiceFilter(e.target.value as ServiceInterested | 'all')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
             >
               <option value="all" className="text-gray-900">{t.leads?.allServices || 'Todos los servicios'}</option>
               <option value="call_center" className="text-gray-900">{t.leads?.serviceCallCenter || 'Call Center'}</option>
@@ -727,14 +727,14 @@ export default function ActivitiesPage() {
         /* List View */
         <div className="space-y-3">
           {filteredActivities.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-12 text-center">
               <FaCalendarAlt className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <p className="text-gray-500 dark:text-gray-400">
                 {t.activities?.noActivities || 'No hay actividades programadas'}
               </p>
               <button
                 onClick={() => openCreateModal()}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="mt-4 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors"
               >
                 {t.activities?.createFirst || 'Crear primera actividad'}
               </button>
@@ -743,7 +743,7 @@ export default function ActivitiesPage() {
             filteredActivities.map(activity => (
               <div
                 key={activity.id}
-                className={`bg-white dark:bg-gray-800 rounded-lg border-l-4 border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow ${
+                className={`bg-white dark:bg-gray-800 border-l-4 border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow ${
                   activity.status === 'overdue'
                     ? 'border-l-red-500'
                     : activity.status === 'completed'
@@ -757,7 +757,7 @@ export default function ActivitiesPage() {
                   {/* Left side */}
                   <div className="flex items-start gap-4 flex-1 min-w-0">
                     {/* Icon */}
-                    <div className={`p-3 rounded-lg flex-shrink-0 ${getActivityTypeColor(activity.activity_type)}`}>
+                    <div className={`p-3 flex-shrink-0 ${getActivityTypeColor(activity.activity_type)}`}>
                       {getActivityTypeIcon(activity.activity_type)}
                     </div>
 
@@ -829,28 +829,28 @@ export default function ActivitiesPage() {
                       <>
                         <button
                           onClick={() => handleComplete(activity)}
-                          className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors"
+                          className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors"
                           title={t.activities?.markComplete || 'Completar'}
                         >
                           <FaCheck className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleReschedule(activity)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                          className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
                           title={t.activities?.reschedule || 'Reprogramar'}
                         >
                           <FaCalendarAlt className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => openEditModal(activity)}
-                          className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                           title={t.common.edit}
                         >
                           <FaEdit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleCancel(activity)}
-                          className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
+                          className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30 transition-colors"
                           title={t.activities?.cancel || 'Cancelar'}
                         >
                           <FaTimes className="w-4 h-4" />
@@ -859,7 +859,7 @@ export default function ActivitiesPage() {
                     ) : (
                       <button
                         onClick={() => handleDelete(activity)}
-                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                         title={t.common.delete}
                       >
                         <FaTrash className="w-4 h-4" />
@@ -868,7 +868,7 @@ export default function ActivitiesPage() {
                     {activity.lead && (
                       <Link
                         href={`/dashboard/leads?search=${encodeURIComponent(activity.lead.name)}`}
-                        className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                         title={t.activities?.openLead || 'Ver lead'}
                       >
                         <FaExternalLinkAlt className="w-4 h-4" />
@@ -882,12 +882,12 @@ export default function ActivitiesPage() {
         </div>
       ) : (
         /* Calendar View */
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
           {/* Calendar Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => navigateMonth(-1)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <FaChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
             </button>
@@ -896,7 +896,7 @@ export default function ActivitiesPage() {
             </h2>
             <button
               onClick={() => navigateMonth(1)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <FaChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
             </button>
@@ -963,7 +963,7 @@ export default function ActivitiesPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
           <div
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -972,7 +972,7 @@ export default function ActivitiesPage() {
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <FaTimes className="w-5 h-5 text-gray-500" />
               </button>
@@ -990,13 +990,13 @@ export default function ActivitiesPage() {
                       key={type}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, activity_type: type }))}
-                      className={`flex flex-col items-center gap-1 p-2 rounded-lg border-2 transition-colors ${
+                      className={`flex flex-col items-center gap-1 p-2 border-2 transition-colors ${
                         formData.activity_type === type
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                           : 'border-gray-200 dark:border-gray-600 hover:border-blue-300'
                       }`}
                     >
-                      <span className={getActivityTypeColor(type) + ' p-2 rounded-lg'}>
+                      <span className={getActivityTypeColor(type) + ' p-2'}>
                         {getActivityTypeIcon(type)}
                       </span>
                       <span className="text-xs text-gray-700 dark:text-gray-300">{getActivityTypeLabel(type)}</span>
@@ -1015,7 +1015,7 @@ export default function ActivitiesPage() {
                   required
                   value={formData.title}
                   onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                   placeholder={t.activities?.titlePlaceholder || 'Ej: Llamada de seguimiento'}
                 />
               </div>
@@ -1035,7 +1035,7 @@ export default function ActivitiesPage() {
                       company_name: lead?.company_name || prev.company_name,
                     }));
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">{t.activities?.noLead || 'Sin lead asociado'}</option>
                   {leads.map(lead => (
@@ -1057,7 +1057,7 @@ export default function ActivitiesPage() {
                     required
                     value={formData.scheduled_date}
                     onChange={e => setFormData(prev => ({ ...prev, scheduled_date: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -1068,7 +1068,7 @@ export default function ActivitiesPage() {
                     type="time"
                     value={formData.scheduled_time}
                     onChange={e => setFormData(prev => ({ ...prev, scheduled_time: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -1084,7 +1084,7 @@ export default function ActivitiesPage() {
                       key={priority}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, priority }))}
-                      className={`flex-1 py-2 px-3 rounded-lg border-2 text-sm font-medium transition-colors ${
+                      className={`flex-1 py-2 px-3 border-2 text-sm font-medium transition-colors ${
                         formData.priority === priority
                           ? 'border-blue-500 ' + getPriorityColor(priority)
                           : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
@@ -1105,7 +1105,7 @@ export default function ActivitiesPage() {
                   value={formData.description}
                   onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
                   placeholder={t.activities?.descriptionPlaceholder || 'Notas adicionales...'}
                 />
               </div>
@@ -1115,13 +1115,13 @@ export default function ActivitiesPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   {t.common.cancel}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                 >
                   {editingActivity ? t.common.save : (t.activities?.create || 'Crear')}
                 </button>
@@ -1135,7 +1135,7 @@ export default function ActivitiesPage() {
       {showCompleteModal && completingActivity && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowCompleteModal(false)}>
           <div
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md"
+            className="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-md"
             onClick={e => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
@@ -1155,20 +1155,20 @@ export default function ActivitiesPage() {
                   value={outcomeText}
                   onChange={e => setOutcomeText(e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
                   placeholder={t.activities?.outcomePlaceholder || '¿Qué resultado tuvo? ¿Próximos pasos?'}
                 />
               </div>
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowCompleteModal(false)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   {t.common.cancel}
                 </button>
                 <button
                   onClick={submitComplete}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-2"
                 >
                   <FaCheck className="w-4 h-4" />
                   {t.activities?.markComplete || 'Completar'}

@@ -312,7 +312,7 @@ export default function PlantillasPage() {
         {isAdmin && (
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 px-4 py-2 bg-syntalys-blue text-white rounded-lg hover:bg-syntalys-blue/90 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-syntalys-blue text-white hover:bg-syntalys-blue/90 transition-colors"
           >
             <FaPlus className="w-4 h-4" />
             {t.templates.addTemplate}
@@ -330,7 +330,7 @@ export default function PlantillasPage() {
             placeholder={t.templates.searchTemplates}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
           />
         </div>
 
@@ -338,7 +338,7 @@ export default function PlantillasPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setCategoryFilter('all')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
               categoryFilter === 'all'
                 ? 'bg-syntalys-blue text-white'
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -350,7 +350,7 @@ export default function PlantillasPage() {
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-3 py-1.5 text-sm font-medium transition-colors ${
                 categoryFilter === cat
                   ? 'bg-syntalys-blue text-white'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -381,11 +381,11 @@ export default function PlantillasPage() {
           {filteredTemplates.map((template) => (
             <div
               key={template.id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-5 hover:shadow-md transition-shadow"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${CATEGORY_COLORS[template.category]}`}>
+                <div className={`w-10 h-10 flex items-center justify-center ${CATEGORY_COLORS[template.category]}`}>
                   {CATEGORY_ICONS[template.category]}
                 </div>
                 <div className="flex items-center gap-2">
@@ -397,12 +397,12 @@ export default function PlantillasPage() {
                   <div className="relative" ref={openDropdown === template.id ? dropdownRef : null}>
                     <button
                       onClick={() => setOpenDropdown(openDropdown === template.id ? null : template.id)}
-                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
                     >
                       <FaEllipsisV className="w-4 h-4" />
                     </button>
                     {openDropdown === template.id && (
-                      <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-20">
+                      <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-20">
                         <button
                           onClick={() => { setOpenDropdown(null); openPreview(template); }}
                           className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
@@ -467,7 +467,7 @@ export default function PlantillasPage() {
                   ) : (
                     <button
                       onClick={() => copyToClipboard(template)}
-                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
                       title={t.templates.copyTemplate}
                     >
                       <FaCopy className="w-4 h-4" />
@@ -475,7 +475,7 @@ export default function PlantillasPage() {
                   )}
                   <button
                     onClick={() => openPreview(template)}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
                     title={t.templates.preview}
                   >
                     <FaEye className="w-4 h-4" />
@@ -490,14 +490,14 @@ export default function PlantillasPage() {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {editingTemplate ? t.templates.editTemplate : t.templates.addTemplate}
               </h2>
               <button
                 onClick={() => { setShowModal(false); resetForm(); }}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
               >
                 <FaTimes className="w-5 h-5" />
               </button>
@@ -514,7 +514,7 @@ export default function PlantillasPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="Nombre de la plantilla"
                   />
                 </div>
@@ -526,7 +526,7 @@ export default function PlantillasPage() {
                     type="text"
                     value={formData.name_fr}
                     onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="Nom du modele"
                   />
                 </div>
@@ -542,7 +542,7 @@ export default function PlantillasPage() {
                     type="text"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="Asunto del correo"
                   />
                 </div>
@@ -554,7 +554,7 @@ export default function PlantillasPage() {
                     type="text"
                     value={formData.subject_fr}
                     onChange={(e) => setFormData({ ...formData, subject_fr: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
                     placeholder="Objet de l'email"
                   />
                 </div>
@@ -568,7 +568,7 @@ export default function PlantillasPage() {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value as EmailTemplate['category'] })}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -587,7 +587,7 @@ export default function PlantillasPage() {
                   value={formData.body}
                   onChange={(e) => setFormData({ ...formData, body: e.target.value })}
                   rows={6}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue font-mono text-sm"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue font-mono text-sm"
                   placeholder="Cuerpo del correo..."
                 />
               </div>
@@ -601,7 +601,7 @@ export default function PlantillasPage() {
                   value={formData.body_fr}
                   onChange={(e) => setFormData({ ...formData, body_fr: e.target.value })}
                   rows={6}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue font-mono text-sm"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue font-mono text-sm"
                   placeholder="Corps de l'email..."
                 />
               </div>
@@ -615,7 +615,7 @@ export default function PlantillasPage() {
                   type="text"
                   value={formData.variables}
                   onChange={(e) => setFormData({ ...formData, variables: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue"
                   placeholder="client_name, company_name, sender_name"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -641,13 +641,13 @@ export default function PlantillasPage() {
             <div className="flex justify-end gap-3 p-4 border-t border-gray-100 dark:border-gray-700">
               <button
                 onClick={() => { setShowModal(false); resetForm(); }}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 {t.common.cancel}
               </button>
               <button
                 onClick={handleSaveTemplate}
-                className="px-4 py-2 bg-syntalys-blue text-white rounded-lg hover:bg-syntalys-blue/90 transition-colors"
+                className="px-4 py-2 bg-syntalys-blue text-white hover:bg-syntalys-blue/90 transition-colors"
               >
                 {t.common.save}
               </button>
@@ -659,14 +659,14 @@ export default function PlantillasPage() {
       {/* Preview Modal */}
       {showPreviewModal && previewTemplate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t.templates.preview}: {getLocalizedName(previewTemplate)}
               </h2>
               <button
                 onClick={() => { setShowPreviewModal(false); setPreviewTemplate(null); }}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
               >
                 <FaTimes className="w-5 h-5" />
               </button>
@@ -703,7 +703,7 @@ export default function PlantillasPage() {
               )}
 
               {/* Body */}
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <div className="bg-gray-50 dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-700">
                 <pre className="whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-200 font-sans">
                   {getLocalizedBody(previewTemplate)}
                 </pre>
@@ -713,13 +713,13 @@ export default function PlantillasPage() {
             <div className="flex justify-end gap-3 p-4 border-t border-gray-100 dark:border-gray-700">
               <button
                 onClick={() => { setShowPreviewModal(false); setPreviewTemplate(null); }}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 {t.common.close}
               </button>
               <button
                 onClick={() => copyToClipboard(previewTemplate)}
-                className="px-4 py-2 bg-syntalys-blue text-white rounded-lg hover:bg-syntalys-blue/90 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-syntalys-blue text-white hover:bg-syntalys-blue/90 transition-colors flex items-center gap-2"
               >
                 <FaCopy className="w-4 h-4" />
                 {t.templates.copyTemplate}

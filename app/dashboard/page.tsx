@@ -171,7 +171,7 @@ export default function DashboardPage() {
         {/* Left Column - Quotes */}
         <div className="lg:col-span-2 space-y-4">
           {/* Bible Proverb - First */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-2 mb-3">
               <Image
                 src="/images/sagrada-biblia-icon.png"
@@ -191,7 +191,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Daily Quote - Second */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-2 mb-3">
               <FaQuoteLeft className="w-4 h-4 text-gray-400" />
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t.dashboard.dailyMotivation}</span>
@@ -205,10 +205,10 @@ export default function DashboardPage() {
           </div>
 
           {/* AI Assistant */}
-          <div className="bg-syntalys-blue dark:bg-gray-950 rounded-lg p-5">
+          <div className="bg-syntalys-blue dark:bg-gray-950 p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-white/10 flex items-center justify-center">
                   <FaRobot className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -218,7 +218,7 @@ export default function DashboardPage() {
               </div>
               <Link
                 href="/dashboard/chat"
-                className="flex items-center gap-2 bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
+                className="flex items-center gap-2 bg-white text-gray-900 px-4 py-2 font-medium hover:bg-gray-100 transition-colors text-sm"
               >
                 {t.dashboard.openChat}
                 <FaArrowRight className="w-3 h-3" />
@@ -229,7 +229,7 @@ export default function DashboardPage() {
 
         {/* Right Column - Radio */}
         <div className="space-y-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-2 mb-4">
               <FaBroadcastTower className="w-4 h-4 text-gray-400" />
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t.dashboard.bibleRadio}</span>
@@ -239,7 +239,7 @@ export default function DashboardPage() {
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() => handleRadioLanguageChange('es')}
-                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 px-3 text-sm font-medium transition-colors ${
                   radioLanguage === 'es'
                     ? 'bg-syntalys-blue dark:bg-white text-white dark:text-gray-900'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -249,7 +249,7 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={() => handleRadioLanguageChange('fr')}
-                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 px-3 text-sm font-medium transition-colors ${
                   radioLanguage === 'fr'
                     ? 'bg-syntalys-blue dark:bg-white text-white dark:text-gray-900'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -263,7 +263,7 @@ export default function DashboardPage() {
             <button
               onClick={handlePlayRadio}
               disabled={isLoading}
-              className={`w-full py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+              className={`w-full py-3 font-medium transition-all flex items-center justify-center gap-2 ${
                 isPlaying
                   ? 'bg-red-500 hover:bg-red-600 text-white'
                   : 'bg-syntalys-blue dark:bg-white hover:opacity-90 dark:hover:bg-gray-100 text-white dark:text-gray-900'
@@ -312,7 +312,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick Links */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-2 mb-4">
               <FaCalendarAlt className="w-4 h-4 text-gray-400" />
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
@@ -322,28 +322,28 @@ export default function DashboardPage() {
             <div className="space-y-2">
               <Link
                 href="/dashboard/leads"
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <span className="text-sm text-gray-700 dark:text-gray-200">{t.nav.leads}</span>
                 <FaArrowRight className="w-3 h-3 text-gray-400" />
               </Link>
               <Link
                 href="/dashboard/pipeline"
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <span className="text-sm text-gray-700 dark:text-gray-200">{t.nav.pipeline}</span>
                 <FaArrowRight className="w-3 h-3 text-gray-400" />
               </Link>
               <Link
                 href="/dashboard/clientes"
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <span className="text-sm text-gray-700 dark:text-gray-200">{t.nav.clients}</span>
                 <FaArrowRight className="w-3 h-3 text-gray-400" />
               </Link>
               <Link
                 href="/dashboard/estadisticas"
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <span className="text-sm text-gray-700 dark:text-gray-200">{t.nav.stats}</span>
                 <FaArrowRight className="w-3 h-3 text-gray-400" />

@@ -549,14 +549,14 @@ export default function GastosPage() {
           {activeTab === 'empresa' ? (
             <button
               onClick={() => setShowModal('company')}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm"
+              className="bg-blue-600 text-white px-6 py-3 hover:bg-blue-700 transition-colors font-medium shadow-sm"
             >
               + {t.expenses.addCompanyExpense}
             </button>
           ) : (
             <button
               onClick={() => setShowModal('client-expense')}
-              className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-medium shadow-sm"
+              className="bg-orange-600 text-white px-6 py-3 hover:bg-orange-700 transition-colors font-medium shadow-sm"
             >
               + {t.expenses.addClientExpense}
             </button>
@@ -592,7 +592,7 @@ export default function GastosPage() {
 
       {/* Selector de Mes/Año para Empresa */}
       {activeTab === 'empresa' && (
-        <div className="mb-6 flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+        <div className="mb-6 flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 p-4 border border-blue-200 dark:border-blue-700">
           <div className="flex gap-4">
             <div>
               <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Año</label>
@@ -603,7 +603,7 @@ export default function GastosPage() {
                   newDate.setFullYear(parseInt(e.target.value));
                   setSelectedDate(newDate);
                 }}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium"
               >
                 {[2023, 2024, 2025, 2026, 2027].map(year => (
                   <option key={year} value={year}>{year}</option>
@@ -619,7 +619,7 @@ export default function GastosPage() {
                   newDate.setMonth(parseInt(e.target.value));
                   setSelectedDate(newDate);
                 }}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium"
               >
                 <option value="0">Enero</option>
                 <option value="1">Febrero</option>
@@ -638,7 +638,7 @@ export default function GastosPage() {
           </div>
           <button
             onClick={() => setSelectedDate(new Date())}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors"
           >
             Hoy
           </button>
@@ -649,7 +649,7 @@ export default function GastosPage() {
       {activeTab === 'empresa' ? (
         <div>
           {/* Gastos Mensuales */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 mb-6 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-300 dark:border-gray-600 mb-6 overflow-hidden">
             <div className="px-4 py-3 bg-blue-50 dark:bg-blue-900/30 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.monthlyExpenses}</h2>
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{selectedDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</span>
@@ -733,7 +733,7 @@ export default function GastosPage() {
           </div>
 
           {/* Gastos Únicos */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 mb-6 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-300 dark:border-gray-600 mb-6 overflow-hidden">
             <div className="px-4 py-3 bg-green-50 dark:bg-green-900/30 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.oneTimeExpenses}</h2>
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{selectedDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</span>
@@ -817,7 +817,7 @@ export default function GastosPage() {
           </div>
 
           {/* Gastos Anuales */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
             <div className="px-4 py-3 bg-purple-50 dark:bg-purple-900/30 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.annualExpenses}</h2>
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{selectedDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</span>
@@ -909,7 +909,7 @@ export default function GastosPage() {
       ) : (
         <div>
           {/* Gastos de Clientes - Vista por Cliente */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-300 dark:border-gray-600 overflow-hidden">
             <div className="px-4 py-3 bg-orange-50 dark:bg-orange-900/30 border-b border-gray-300 dark:border-gray-600">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.expenses.expensesByClient}</h2>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t.expenses.expensesByClientSubtitle}</p>
@@ -1147,7 +1147,7 @@ export default function GastosPage() {
       {/* Modal Agregar Gasto de Empresa */}
       {showModal === 'company' && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.addCompanyExpenseTitle}</h2>
               <p className="text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addCompanyExpenseSubtitle}</p>
@@ -1162,7 +1162,7 @@ export default function GastosPage() {
                     type="text"
                     value={companyFormData.service_name}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, service_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.forms.serviceNamePlaceholder}
                     required
                   />
@@ -1173,7 +1173,7 @@ export default function GastosPage() {
                     type="text"
                     value={companyFormData.description}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.expenses.optionalDescription}
                   />
                 </div>
@@ -1186,7 +1186,7 @@ export default function GastosPage() {
                     step="0.01"
                     value={companyFormData.amount}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0.00"
                     required
                     min="0"
@@ -1197,7 +1197,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.currency}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -1209,7 +1209,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.frequency}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as Frequency })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="one_time">{t.expenses.oneTime}</option>
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -1221,7 +1221,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.category}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, category: e.target.value as ExpenseCategory | '' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.expenses.noCategory}</option>
                     <option value="software">{t.expenses.software}</option>
@@ -1260,7 +1260,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.status}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="paid">{t.expenses.paid}</option>
                     <option value="pending">{t.expenses.pending}</option>
@@ -1273,7 +1273,7 @@ export default function GastosPage() {
                     type="date"
                     value={companyFormData.start_date}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, start_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Desde cuándo empezó este gasto</p>
                 </div>
@@ -1283,7 +1283,7 @@ export default function GastosPage() {
                     type="date"
                     value={companyFormData.end_date}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, end_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Si dejaron de pagar (opcional)</p>
                 </div>
@@ -1294,7 +1294,7 @@ export default function GastosPage() {
                       type="date"
                       value={companyFormData.renewal_date}
                       onChange={(e) => setCompanyFormData({ ...companyFormData, renewal_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                 )}
@@ -1302,14 +1302,14 @@ export default function GastosPage() {
               <div className="flex gap-4 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  className="flex-1 bg-blue-600 text-white py-3 hover:bg-blue-700 transition-colors font-medium"
                 >
                   {t.expenses.addExpense}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowModal(null)}
-                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}
                 </button>
@@ -1322,7 +1322,7 @@ export default function GastosPage() {
       {/* Modal Agregar Gasto de Cliente */}
       {showModal === 'client-expense' && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.addClientExpenseTitle}</h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addClientExpenseSubtitle}</p>
@@ -1338,7 +1338,7 @@ export default function GastosPage() {
                     onChange={(e) => {
                       setClientExpenseFormData({ ...clientExpenseFormData, client_id: e.target.value, project_id: null });
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   >
                     <option value="">{t.expenses.selectClient}</option>
@@ -1353,7 +1353,7 @@ export default function GastosPage() {
                     <select
                       value={clientExpenseFormData.project_id || ''}
                       onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, project_id: e.target.value || null })}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       <option value="">Gasto general</option>
                       {allProjects
@@ -1373,7 +1373,7 @@ export default function GastosPage() {
                     type="text"
                     value={clientExpenseFormData.service_name}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, service_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.forms.serviceNamePlaceholder}
                     required
                   />
@@ -1384,7 +1384,7 @@ export default function GastosPage() {
                     type="text"
                     value={clientExpenseFormData.description}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.expenses.optionalDescription}
                   />
                 </div>
@@ -1397,7 +1397,7 @@ export default function GastosPage() {
                     step="0.01"
                     value={clientExpenseFormData.amount}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0.00"
                     required
                     min="0"
@@ -1408,7 +1408,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.currency}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -1420,7 +1420,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.frequency}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as Frequency })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="one_time">{t.expenses.oneTime}</option>
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -1432,7 +1432,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.category}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, category: e.target.value as ClientExpenseCategory | '' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.expenses.noCategory}</option>
                     <option value="domain">{t.expenses.domain}</option>
@@ -1448,7 +1448,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.status}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="paid">{t.expenses.paid}</option>
                     <option value="pending">{t.expenses.pending}</option>
@@ -1461,7 +1461,7 @@ export default function GastosPage() {
                     type="date"
                     value={clientExpenseFormData.start_date}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, start_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Desde cuándo empezó este gasto</p>
                 </div>
@@ -1471,7 +1471,7 @@ export default function GastosPage() {
                     type="date"
                     value={clientExpenseFormData.end_date}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, end_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Si dejaron de pagar (opcional)</p>
                 </div>
@@ -1479,14 +1479,14 @@ export default function GastosPage() {
               <div className="flex gap-4 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+                  className="flex-1 bg-orange-600 text-white py-3 hover:bg-orange-700 transition-colors font-medium"
                 >
                   {t.expenses.addExpense}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowModal(null)}
-                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}
                 </button>
@@ -1499,7 +1499,7 @@ export default function GastosPage() {
       {/* Modal Editar Gasto de Empresa */}
       {showModal === 'edit-company' && editingCompanyExpense && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.editCompanyExpenseTitle}</h2>
               <p className="text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addCompanyExpenseSubtitle}</p>
@@ -1514,7 +1514,7 @@ export default function GastosPage() {
                     type="text"
                     value={companyFormData.service_name}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, service_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   />
                 </div>
@@ -1524,7 +1524,7 @@ export default function GastosPage() {
                     type="text"
                     value={companyFormData.description}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.expenses.optionalDescription}
                   />
                 </div>
@@ -1537,7 +1537,7 @@ export default function GastosPage() {
                     step="0.01"
                     value={companyFormData.amount}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                     min="0"
                   />
@@ -1547,7 +1547,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.currency}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -1559,7 +1559,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.frequency}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, frequency: e.target.value as Frequency })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="one_time">{t.expenses.oneTime}</option>
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -1571,7 +1571,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.category}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, category: e.target.value as ExpenseCategory | '' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.expenses.noCategory}</option>
                     <option value="software">{t.expenses.software}</option>
@@ -1610,7 +1610,7 @@ export default function GastosPage() {
                   <select
                     value={companyFormData.status}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="paid">{t.expenses.paid}</option>
                     <option value="pending">{t.expenses.pending}</option>
@@ -1623,7 +1623,7 @@ export default function GastosPage() {
                     type="date"
                     value={companyFormData.start_date}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, start_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Desde cuándo empezó este gasto</p>
                 </div>
@@ -1633,7 +1633,7 @@ export default function GastosPage() {
                     type="date"
                     value={companyFormData.end_date}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, end_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Si dejaron de pagar (opcional)</p>
                 </div>
@@ -1641,14 +1641,14 @@ export default function GastosPage() {
               <div className="flex gap-4 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  className="flex-1 bg-blue-600 text-white py-3 hover:bg-blue-700 transition-colors font-medium"
                 >
                   {t.common.saveChanges}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowModal(null); setEditingCompanyExpense(null); resetCompanyForm(); }}
-                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}
                 </button>
@@ -1661,7 +1661,7 @@ export default function GastosPage() {
       {/* Modal Editar Gasto de Cliente */}
       {showModal === 'edit-client-expense' && editingClientExpense && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.expenses.editClientExpenseTitle}</h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t.expenses.addClientExpenseSubtitle}</p>
@@ -1677,7 +1677,7 @@ export default function GastosPage() {
                     onChange={(e) => {
                       setClientExpenseFormData({ ...clientExpenseFormData, client_id: e.target.value, project_id: null });
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   >
                     <option value="">{t.expenses.selectClient}</option>
@@ -1692,7 +1692,7 @@ export default function GastosPage() {
                     <select
                       value={clientExpenseFormData.project_id || ''}
                       onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, project_id: e.target.value || null })}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       <option value="">Gasto general</option>
                       {allProjects
@@ -1712,7 +1712,7 @@ export default function GastosPage() {
                     type="text"
                     value={clientExpenseFormData.service_name}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, service_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   />
                 </div>
@@ -1722,7 +1722,7 @@ export default function GastosPage() {
                     type="text"
                     value={clientExpenseFormData.description}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder={t.expenses.optionalDescription}
                   />
                 </div>
@@ -1735,7 +1735,7 @@ export default function GastosPage() {
                     step="0.01"
                     value={clientExpenseFormData.amount}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                     min="0"
                   />
@@ -1745,7 +1745,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.currency}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, currency: e.target.value as 'CHF' | 'EUR' | 'USD' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="CHF">CHF</option>
                     <option value="EUR">EUR</option>
@@ -1757,7 +1757,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.frequency}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, frequency: e.target.value as Frequency })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="one_time">{t.expenses.oneTime}</option>
                     <option value="monthly">{t.expenses.monthly}</option>
@@ -1769,7 +1769,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.category}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, category: e.target.value as ClientExpenseCategory | '' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">{t.expenses.noCategory}</option>
                     <option value="domain">{t.expenses.domain}</option>
@@ -1785,7 +1785,7 @@ export default function GastosPage() {
                   <select
                     value={clientExpenseFormData.status}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, status: e.target.value as 'paid' | 'pending' | 'upcoming' })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="paid">{t.expenses.paid}</option>
                     <option value="pending">{t.expenses.pending}</option>
@@ -1798,7 +1798,7 @@ export default function GastosPage() {
                     type="date"
                     value={clientExpenseFormData.start_date}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, start_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Desde cuándo empezó este gasto</p>
                 </div>
@@ -1808,7 +1808,7 @@ export default function GastosPage() {
                     type="date"
                     value={clientExpenseFormData.end_date}
                     onChange={(e) => setClientExpenseFormData({ ...clientExpenseFormData, end_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Si dejaron de pagar (opcional)</p>
                 </div>
@@ -1816,14 +1816,14 @@ export default function GastosPage() {
               <div className="flex gap-4 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+                  className="flex-1 bg-orange-600 text-white py-3 hover:bg-orange-700 transition-colors font-medium"
                 >
                   {t.common.saveChanges}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowModal(null); setEditingClientExpense(null); resetClientExpenseForm(); }}
-                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   {t.common.cancel}
                 </button>
@@ -1836,7 +1836,7 @@ export default function GastosPage() {
       {/* Modal para ver texto completo */}
       {expandedText && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{expandedText.title}</h3>
               <button
@@ -1858,7 +1858,7 @@ export default function GastosPage() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => { setOpenDropdown(null); setDropdownPosition(null); setDropdownType(null); }} />
           <div
-            className="fixed w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            className="fixed w-36 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 z-50"
             style={{
               top: dropdownPosition.openUp ? 'auto' : dropdownPosition.top,
               bottom: dropdownPosition.openUp ? window.innerHeight - dropdownPosition.top : 'auto',

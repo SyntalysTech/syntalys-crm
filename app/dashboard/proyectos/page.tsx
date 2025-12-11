@@ -1019,7 +1019,7 @@ export default function ProyectosPage() {
       {activeTab === 'clients' && (
         <>
           {/* Filters */}
-          <div className="bg-syntalys-blue dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+          <div className="bg-syntalys-blue dark:bg-gray-800 shadow p-4 mb-4">
             <div className="flex flex-wrap gap-4 items-center">
               {/* Search Bar */}
               <div className="flex items-center gap-2 flex-1 min-w-[200px] max-w-md">
@@ -1099,7 +1099,7 @@ export default function ProyectosPage() {
           </div>
 
           {projects.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 shadow p-12 text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">{t.projects.noProjects}</p>
           <button
             onClick={openAddModal}
@@ -1109,7 +1109,7 @@ export default function ProyectosPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700">
@@ -1222,21 +1222,21 @@ export default function ProyectosPage() {
 
           {/* Mini Statistics */}
           {projects.length > 0 && (
-            <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <div className="mt-6 bg-white dark:bg-gray-800 shadow p-4">
               {/* Project counts */}
               <div className="grid grid-cols-3 gap-4 mb-4">
                 {/* Total Projects */}
-                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700">
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectStats.total}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{t.nav.projects}</p>
                 </div>
                 {/* Active */}
-                <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <div className="text-center p-3 bg-green-50 dark:bg-green-900/20">
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">{projectStats.active}</p>
                   <p className="text-xs text-green-600 dark:text-green-400">{t.projects.active}</p>
                 </div>
                 {/* Completed */}
-                <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20">
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{projectStats.completed}</p>
                   <p className="text-xs text-blue-600 dark:text-blue-400">{t.projects.completed}</p>
                 </div>
@@ -1246,18 +1246,18 @@ export default function ProyectosPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* CHF Section */}
                 {(projectStats.chf.totalWithAdditions > 0 || projectStats.chf.totalPaid > 0) && (
-                  <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                  <div className="border border-gray-200 dark:border-gray-600 p-3">
                     <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">🇨🇭 CHF</h4>
                     <div className="grid grid-cols-3 gap-2">
-                      <div className="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="text-center p-2 bg-gray-50 dark:bg-gray-700">
                         <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(projectStats.chf.totalWithAdditions, 'CHF')}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
                       </div>
-                      <div className="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <div className="text-center p-2 bg-green-50 dark:bg-green-900/20">
                         <p className="text-lg font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.chf.totalPaid, 'CHF')}</p>
                         <p className="text-xs text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
                       </div>
-                      <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                      <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20">
                         <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(projectStats.chf.totalPending, 'CHF')}</p>
                         <p className="text-xs text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
                       </div>
@@ -1267,18 +1267,18 @@ export default function ProyectosPage() {
 
                 {/* EUR Section */}
                 {(projectStats.eur.totalWithAdditions > 0 || projectStats.eur.totalPaid > 0) && (
-                  <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                  <div className="border border-gray-200 dark:border-gray-600 p-3">
                     <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">🇪🇺 EUR</h4>
                     <div className="grid grid-cols-3 gap-2">
-                      <div className="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="text-center p-2 bg-gray-50 dark:bg-gray-700">
                         <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(projectStats.eur.totalWithAdditions, 'EUR')}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
                       </div>
-                      <div className="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <div className="text-center p-2 bg-green-50 dark:bg-green-900/20">
                         <p className="text-lg font-bold text-green-600 dark:text-green-400">{formatCurrency(projectStats.eur.totalPaid, 'EUR')}</p>
                         <p className="text-xs text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
                       </div>
-                      <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                      <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20">
                         <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(projectStats.eur.totalPending, 'EUR')}</p>
                         <p className="text-xs text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
                       </div>
@@ -1295,7 +1295,7 @@ export default function ProyectosPage() {
       {activeTab === 'lab' && (
         <>
           {internalProjects.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 shadow p-12 text-center">
               <FaLightbulb className="w-16 h-16 mx-auto mb-4 text-blue-300" />
               <p className="text-gray-500 dark:text-gray-400 mb-4">{t.projects.noInternalProjects}</p>
               <button
@@ -1310,7 +1310,7 @@ export default function ProyectosPage() {
               {internalProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow"
+                  className="bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow"
                 >
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -1397,7 +1397,7 @@ export default function ProyectosPage() {
       {/* Modal Agregar/Editar Proyecto */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {editingProject ? t.projects.editProject : t.projects.addProject}
@@ -1690,7 +1690,7 @@ export default function ProyectosPage() {
       {/* Modal Agregar/Editar Proyecto Interno */}
       {showInternalModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-syntalys-blue to-blue-700">
               <div className="flex items-center gap-3">
                 <Image
@@ -1857,7 +1857,7 @@ export default function ProyectosPage() {
       {/* Modal para ver texto completo */}
       {expandedText && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{expandedText.title}</h3>
               <button
@@ -1877,7 +1877,7 @@ export default function ProyectosPage() {
       {/* Modal de Hitos/Milestones */}
       {showMilestonesModal && selectedProjectForMilestones && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.projects.milestones}</h2>
@@ -1899,19 +1899,19 @@ export default function ProyectosPage() {
             <div className="p-6">
               {/* Summary - using project total, not milestones sum */}
               <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div className="bg-gray-50 dark:bg-gray-700 p-4">
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t.projects.totalAmount}</p>
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
                     {formatCurrency(selectedProjectForMilestones.total_amount || 0, selectedProjectForMilestones.currency)} {selectedProjectForMilestones.currency}
                   </p>
                 </div>
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                <div className="bg-green-50 dark:bg-green-900/20 p-4">
                   <p className="text-sm text-green-600 dark:text-green-400">{t.projects.milestonePaid}</p>
                   <p className="text-xl font-bold text-green-700 dark:text-green-300">
                     {formatCurrency(milestones.reduce((sum, m) => sum + m.paid_amount, 0), selectedProjectForMilestones.currency)} {selectedProjectForMilestones.currency}
                   </p>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4">
                   <p className="text-sm text-yellow-600 dark:text-yellow-400">{t.projects.milestonePending}</p>
                   <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
                     {formatCurrency((selectedProjectForMilestones.total_amount || 0) - milestones.reduce((sum, m) => sum + m.paid_amount, 0), selectedProjectForMilestones.currency)} {selectedProjectForMilestones.currency}
@@ -1932,7 +1932,7 @@ export default function ProyectosPage() {
 
               {/* Milestone Form */}
               {showMilestoneForm && (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     {editingMilestone ? t.common.edit : t.projects.addMilestone}
                   </h3>
@@ -2072,7 +2072,7 @@ export default function ProyectosPage() {
                   {milestones.map((milestone) => (
                     <div
                       key={milestone.id}
-                      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-center justify-between"
+                      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
@@ -2147,7 +2147,7 @@ export default function ProyectosPage() {
       {/* Project Detail Modal */}
       {showDetailModal && selectedProjectForDetail && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.projects.projectDetails}</h2>
@@ -2210,7 +2210,7 @@ export default function ProyectosPage() {
 
               {/* Amount */}
               {(selectedProjectForDetail.total_amount || (selectedProjectForDetail.additions_paid || 0) > 0) && (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div className="bg-gray-50 dark:bg-gray-700 p-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t.projects.totalAmount}</h3>
@@ -2357,7 +2357,7 @@ export default function ProyectosPage() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => { setOpenDropdown(null); setDropdownPosition(null); }} />
           <div
-            className="fixed w-44 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            className="fixed w-44 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 z-50"
             style={{
               top: dropdownPosition.openUp ? 'auto' : dropdownPosition.top,
               bottom: dropdownPosition.openUp ? window.innerHeight - dropdownPosition.top : 'auto',
@@ -2429,7 +2429,7 @@ export default function ProyectosPage() {
       {/* Additions Modal */}
       {showAdditionsModal && selectedProjectForAdditions && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <div>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.projects.additions}</h2>
@@ -2465,7 +2465,7 @@ export default function ProyectosPage() {
                       {additions.map((addition) => (
                         <div
                           key={addition.id}
-                          className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                          className="border border-gray-200 dark:border-gray-700 p-4"
                         >
                           <div className="flex justify-between items-start">
                             <div className="flex-1">

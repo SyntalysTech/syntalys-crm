@@ -232,15 +232,15 @@ export default function UsuariosPage() {
 
       {/* Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t.users.totalUsers}</h3>
           <p className="text-3xl font-bold text-syntalys-blue dark:text-blue-400">{users.length}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t.users.activeUsers}</h3>
           <p className="text-3xl font-bold text-green-600 dark:text-green-400">{activeUsers}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t.users.inactiveUsers}</h3>
           <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">{inactiveUsers}</p>
         </div>
@@ -248,7 +248,7 @@ export default function UsuariosPage() {
 
       {/* Lista de usuarios */}
       {users.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 shadow p-12 text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">{t.users.noUsers}</p>
           <button
             onClick={openAddModal}
@@ -258,7 +258,7 @@ export default function UsuariosPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
@@ -341,7 +341,7 @@ export default function UsuariosPage() {
       {/* Modal Agregar/Editar Usuario */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {editingUser ? t.users.editUserTitle : t.users.addUserTitle}

@@ -275,12 +275,12 @@ export default function PipelinePage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-wrap gap-3 items-center bg-syntalys-blue dark:bg-gray-800 rounded-lg p-4">
+      <div className="mb-6 flex flex-wrap gap-3 items-center bg-syntalys-blue dark:bg-gray-800 p-4">
         <FaFilter className="text-white dark:text-gray-400" />
         <select
           value={serviceFilter}
           onChange={(e) => setServiceFilter(e.target.value as ServiceInterested | 'all')}
-          className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+          className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
         >
           <option value="all" className="text-gray-900">{t.leads.allServices}</option>
           <option value="call_center" className="text-gray-900">{t.leads.serviceCallCenter}</option>
@@ -298,7 +298,7 @@ export default function PipelinePage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as LeadStatus | 'all')}
-          className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
+          className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white text-sm"
         >
           <option value="all" className="text-gray-900">{t.leads.allStatuses}</option>
           <option value="new" className="text-gray-900">{t.leads.statusNew}</option>
@@ -330,7 +330,7 @@ export default function PipelinePage() {
           return (
             <div
               key={stage}
-              className={`bg-white dark:bg-gray-800 rounded-xl border-2 transition-all duration-200 ${
+              className={`bg-white dark:bg-gray-800 border-2 transition-all duration-200 ${
                 isDropTarget
                   ? 'border-blue-500 shadow-lg shadow-blue-500/20'
                   : 'border-gray-200 dark:border-gray-700'
@@ -371,7 +371,7 @@ export default function PipelinePage() {
               {!isCollapsed && (
                 <div className={`p-3 space-y-2 max-h-96 overflow-y-auto ${isDropTarget ? colors.light : ''}`}>
                   {columnLeads.length === 0 ? (
-                    <div className={`flex items-center justify-center h-20 border-2 border-dashed rounded-lg transition-colors ${
+                    <div className={`flex items-center justify-center h-20 border-2 border-dashed transition-colors ${
                       isDropTarget
                         ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20'
                         : 'border-gray-200 dark:border-gray-600'
@@ -385,7 +385,7 @@ export default function PipelinePage() {
                         draggable
                         onDragStart={(e) => handleDragStart(e, lead)}
                         onDragEnd={handleDragEnd}
-                        className={`bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 cursor-grab active:cursor-grabbing hover:bg-gray-100 dark:hover:bg-gray-700 transition-all border border-transparent hover:border-gray-300 dark:hover:border-gray-600 ${
+                        className={`bg-gray-50 dark:bg-gray-700/50 p-3 cursor-grab active:cursor-grabbing hover:bg-gray-100 dark:hover:bg-gray-700 transition-all border border-transparent hover:border-gray-300 dark:hover:border-gray-600 ${
                           draggedLead?.id === lead.id ? 'opacity-50 scale-95' : ''
                         }`}
                       >

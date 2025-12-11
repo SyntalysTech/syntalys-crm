@@ -348,23 +348,23 @@ export default function PasswordsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t.passwords.totalPasswords}</div>
           <div className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{passwords.length}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t.passwords.workAccounts}</div>
           <div className="mt-2 text-3xl font-bold text-blue-600 dark:text-blue-400">
             {passwords.filter(p => p.category === 'work').length}
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t.passwords.personalAccounts}</div>
           <div className="mt-2 text-3xl font-bold text-purple-600 dark:text-purple-400">
             {passwords.filter(p => p.category === 'personal').length}
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t.passwords.bankingAccounts}</div>
           <div className="mt-2 text-3xl font-bold text-green-600 dark:text-green-400">
             {passwords.filter(p => p.category === 'banking').length}
@@ -373,7 +373,7 @@ export default function PasswordsPage() {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
+      <div className="bg-white dark:bg-gray-800 shadow p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <input
@@ -401,7 +401,7 @@ export default function PasswordsPage() {
 
       {/* Passwords List */}
       {filteredPasswords.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 shadow p-12 text-center">
           <FaLock className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">{t.passwords.noPasswords}</p>
           <button
@@ -414,7 +414,7 @@ export default function PasswordsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPasswords.map((password) => (
-            <div key={password.id} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow">
+            <div key={password.id} className="bg-white dark:bg-gray-800 shadow hover:shadow-md transition-shadow">
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -515,7 +515,7 @@ export default function PasswordsPage() {
       {/* Add Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.passwords.addPassword}</h2>
               <p className="text-gray-600 dark:text-gray-400 mt-1">{t.passwords.addPasswordSubtitle}</p>
@@ -652,7 +652,7 @@ export default function PasswordsPage() {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.passwords.editPassword}</h2>
             </div>
@@ -785,7 +785,7 @@ export default function PasswordsPage() {
       {/* View Modal */}
       {showViewModal && selectedPassword && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-lg w-full mx-4">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedPassword.service_name}</h2>
               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full mt-2 ${getCategoryColor(selectedPassword.category)}`}>

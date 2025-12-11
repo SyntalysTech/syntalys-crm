@@ -363,9 +363,9 @@ export default function EstadisticasPage() {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-wrap gap-3 bg-syntalys-blue dark:bg-gray-800 rounded-lg p-3">
+        <div className="flex flex-wrap gap-3 bg-syntalys-blue dark:bg-gray-800 p-3">
           {/* Currency Selector */}
-          <div className="flex items-center bg-white/10 dark:bg-gray-700 rounded-lg p-1">
+          <div className="flex items-center bg-white/10 dark:bg-gray-700 p-1">
             <button
               onClick={() => setCurrency('EUR')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -392,7 +392,7 @@ export default function EstadisticasPage() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-            className="px-4 py-2 bg-white/10 dark:bg-gray-700 border border-white/20 dark:border-gray-600 rounded-lg text-sm font-medium text-white dark:text-gray-300 focus:ring-2 focus:ring-white/40 focus:border-transparent"
+            className="px-4 py-2 bg-white/10 dark:bg-gray-700 border border-white/20 dark:border-gray-600 text-sm font-medium text-white dark:text-gray-300 focus:ring-2 focus:ring-white/40 focus:border-transparent"
           >
             {Object.entries(timeRangeLabels).map(([key, label]) => (
               <option key={key} value={key} className="text-gray-900">{label}</option>
@@ -404,9 +404,9 @@ export default function EstadisticasPage() {
       {/* Main Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Total Income */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
               <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -420,9 +420,9 @@ export default function EstadisticasPage() {
         </div>
 
         {/* Total Expenses */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
               <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
@@ -433,9 +433,9 @@ export default function EstadisticasPage() {
         </div>
 
         {/* Net Profit */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className={`w-12 h-12 ${totals.profit >= 0 ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-orange-100 dark:bg-orange-900/30'} rounded-lg flex items-center justify-center`}>
+            <div className={`w-12 h-12 ${totals.profit >= 0 ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-orange-100 dark:bg-orange-900/30'} flex items-center justify-center`}>
               <svg className={`w-6 h-6 ${totals.profit >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
@@ -448,9 +448,9 @@ export default function EstadisticasPage() {
         </div>
 
         {/* Pipeline Value */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
               <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
@@ -464,13 +464,13 @@ export default function EstadisticasPage() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Income vs Expenses Chart */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Ingresos vs Gastos</h3>
           <IncomeExpenseChart data={monthlyData} currency={currency} />
         </div>
 
         {/* Profit Chart */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Evolución del Beneficio</h3>
           <ProfitChart data={monthlyData} currency={currency} />
         </div>
@@ -479,7 +479,7 @@ export default function EstadisticasPage() {
       {/* Secondary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Leads Stats */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Leads</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -512,7 +512,7 @@ export default function EstadisticasPage() {
         </div>
 
         {/* Projects Stats */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Proyectos</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -537,7 +537,7 @@ export default function EstadisticasPage() {
         </div>
 
         {/* Clients Stats */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Clientes</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -570,13 +570,13 @@ export default function EstadisticasPage() {
       {/* Category Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Income by Category */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Ingresos por Categoría</h3>
           <CategoryChart data={incomeByCategory} color="green" formatCurrency={formatCurrency} />
         </div>
 
         {/* Expenses by Category */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Gastos por Categoría</h3>
           <CategoryChart data={expenseByCategory} color="red" formatCurrency={formatCurrency} />
         </div>

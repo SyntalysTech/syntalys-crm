@@ -565,7 +565,7 @@ export default function LeadsPage() {
         </div>
         <button
           onClick={() => { resetForm(); setShowModal('add'); }}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium transition-colors"
         >
           <FaPlus className="w-4 h-4" />
           {t.leads.addLead}
@@ -574,7 +574,7 @@ export default function LeadsPage() {
 
 
       {/* Search and Filters */}
-      <div className="bg-syntalys-blue dark:bg-gray-800 rounded-lg border border-syntalys-blue dark:border-gray-700 p-4 mb-6">
+      <div className="bg-syntalys-blue dark:bg-gray-800 border border-syntalys-blue dark:border-gray-700 p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
@@ -584,13 +584,13 @@ export default function LeadsPage() {
               placeholder={t.common.search + '...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 dark:placeholder-gray-400"
+              className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 dark:placeholder-gray-400"
             />
           </div>
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 border transition-colors ${
               showFilters
                 ? 'bg-white/20 border-white/30 text-white dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300'
                 : 'border-white/20 dark:border-gray-600 text-white dark:text-gray-300 hover:bg-white/10 dark:hover:bg-gray-700'
@@ -607,7 +607,7 @@ export default function LeadsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as LeadStatus | 'all')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
               <option value="all" className="text-gray-900">{t.leads.allStatuses}</option>
               <option value="new" className="text-gray-900">{t.leads.statusNew}</option>
@@ -620,7 +620,7 @@ export default function LeadsPage() {
             <select
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value as LeadSource | 'all')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
               <option value="all" className="text-gray-900">{t.leads.allSources}</option>
               <option value="website" className="text-gray-900">{t.leads.sourceWebsite}</option>
@@ -637,7 +637,7 @@ export default function LeadsPage() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as LeadPriority | 'all')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
               <option value="all" className="text-gray-900">{t.leads.allPriorities}</option>
               <option value="low" className="text-gray-900">{t.leads.priorityLow}</option>
@@ -648,7 +648,7 @@ export default function LeadsPage() {
             <select
               value={followupFilter}
               onChange={(e) => setFollowupFilter(e.target.value as 'all' | 'today' | 'week' | 'overdue' | 'none')}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
               <option value="all" className="text-gray-900">{t.leads.allFollowups}</option>
               <option value="today" className="text-gray-900">{t.leads.followupToday}</option>
@@ -659,7 +659,7 @@ export default function LeadsPage() {
             <select
               value={serviceFilter}
               onChange={(e) => setServiceFilter(e.target.value)}
-              className="px-3 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white"
+              className="px-3 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white"
             >
               <option value="" className="text-gray-900">{t.leads.serviceInterested}</option>
               <option value="call_center" className="text-gray-900">{t.leads.serviceCallCenter}</option>
@@ -679,7 +679,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Leads Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-visible">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-visible">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-syntalys-blue dark:bg-gray-700">
@@ -820,7 +820,7 @@ export default function LeadsPage() {
       {openDropdown && dropdownPosition && typeof document !== 'undefined' && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-[9999]"
+          className="fixed w-48 bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 z-[9999]"
           style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
         >
           <button
@@ -866,7 +866,7 @@ export default function LeadsPage() {
       {/* Add/Edit Modal */}
       {(showModal === 'add' || showModal === 'edit') && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 {showModal === 'add' ? t.leads.addLead : t.leads.editLead}
@@ -884,7 +884,7 @@ export default function LeadsPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   />
                 </div>
@@ -894,7 +894,7 @@ export default function LeadsPage() {
                     type="text"
                     value={formData.company_name}
                     onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -903,7 +903,7 @@ export default function LeadsPage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -912,7 +912,7 @@ export default function LeadsPage() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -922,7 +922,7 @@ export default function LeadsPage() {
                     value={formData.whatsapp}
                     onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
                     placeholder="+41 79 123 45 67"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -930,7 +930,7 @@ export default function LeadsPage() {
                   <select
                     value={formData.country}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">-</option>
                     {Object.entries(COUNTRIES_DATA).map(([code, data]) => (
@@ -947,7 +947,7 @@ export default function LeadsPage() {
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as LeadStatus })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="new">{t.leads.statusNew}</option>
                     <option value="contacted">{t.leads.statusContacted}</option>
@@ -962,7 +962,7 @@ export default function LeadsPage() {
                   <select
                     value={formData.pipeline_stage}
                     onChange={(e) => setFormData({ ...formData, pipeline_stage: e.target.value as PipelineStage })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="none">{t.leads.stageNone}</option>
                     <option value="proposal">{t.leads.stageProposal}</option>
@@ -978,7 +978,7 @@ export default function LeadsPage() {
                   <select
                     value={formData.source}
                     onChange={(e) => setFormData({ ...formData, source: e.target.value as LeadSource })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="website">{t.leads.sourceWebsite}</option>
                     <option value="referral">{t.leads.sourceReferral}</option>
@@ -1001,7 +1001,7 @@ export default function LeadsPage() {
                   <select
                     value={formData.priority}
                     onChange={(e) => setFormData({ ...formData, priority: e.target.value as LeadPriority })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="low">{t.leads.priorityLow}</option>
                     <option value="medium">{t.leads.priorityMedium}</option>
@@ -1014,7 +1014,7 @@ export default function LeadsPage() {
                   <select
                     value={formData.temperature}
                     onChange={(e) => setFormData({ ...formData, temperature: e.target.value as LeadTemperature })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="cold">{t.leads.tempCold}</option>
                     <option value="warm">{t.leads.tempWarm}</option>
@@ -1026,7 +1026,7 @@ export default function LeadsPage() {
                   <select
                     value={formData.service_interested}
                     onChange={(e) => setFormData({ ...formData, service_interested: e.target.value as ServiceInterested | '' })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">-</option>
                     <option value="call_center">{t.leads.serviceCallCenter}</option>
@@ -1053,12 +1053,12 @@ export default function LeadsPage() {
                       type="number"
                       value={formData.estimated_value}
                       onChange={(e) => setFormData({ ...formData, estimated_value: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                     <select
                       value={formData.currency}
                       onChange={(e) => setFormData({ ...formData, currency: e.target.value as Currency })}
-                      className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       <option value="CHF">CHF</option>
                       <option value="EUR">EUR</option>
@@ -1072,7 +1072,7 @@ export default function LeadsPage() {
                     type="date"
                     value={formData.next_followup_date}
                     onChange={(e) => setFormData({ ...formData, next_followup_date: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -1084,7 +1084,7 @@ export default function LeadsPage() {
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
@@ -1092,13 +1092,13 @@ export default function LeadsPage() {
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => setShowModal(null)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   {t.common.cancel}
                 </button>
                 <button
                   onClick={showModal === 'add' ? handleAddLead : handleEditLead}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
                 >
                   {t.common.save}
                 </button>
@@ -1111,7 +1111,7 @@ export default function LeadsPage() {
       {/* Detail Modal */}
       {showModal === 'detail' && selectedLead && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
@@ -1171,25 +1171,25 @@ export default function LeadsPage() {
               {/* Contact Info */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {selectedLead.phone && (
-                  <a href={`tel:${selectedLead.phone}`} className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
+                  <a href={`tel:${selectedLead.phone}`} className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
                     <FaPhone className="w-4 h-4" />
                     <span className="text-sm truncate">{selectedLead.phone}</span>
                   </a>
                 )}
                 {selectedLead.whatsapp && (
-                  <a href={`https://wa.me/${selectedLead.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
+                  <a href={`https://wa.me/${selectedLead.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
                     <FaWhatsapp className="w-4 h-4" />
                     <span className="text-sm truncate">{selectedLead.whatsapp}</span>
                   </a>
                 )}
                 {selectedLead.email && (
-                  <a href={`mailto:${selectedLead.email}`} className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-colors">
+                  <a href={`mailto:${selectedLead.email}`} className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-colors">
                     <FaEnvelope className="w-4 h-4" />
                     <span className="text-sm truncate">{selectedLead.email}</span>
                   </a>
                 )}
                 {selectedLead.country && COUNTRIES_DATA[selectedLead.country] && (
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300">
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                     <FaGlobe className="w-4 h-4" />
                     <span className="text-sm">{COUNTRIES_DATA[selectedLead.country].flag} {language === 'es' ? COUNTRIES_DATA[selectedLead.country].es : COUNTRIES_DATA[selectedLead.country].fr}</span>
                   </div>
@@ -1197,7 +1197,7 @@ export default function LeadsPage() {
               </div>
 
               {/* Details Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-700/50">
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{t.leads.source}</p>
                   <p className="font-medium text-gray-900 dark:text-white">{getSourceLabel(selectedLead.source)}</p>
@@ -1245,7 +1245,7 @@ export default function LeadsPage() {
               {selectedLead.notes && (
                 <div className="mb-6">
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{t.leads.notes}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg whitespace-pre-wrap">{selectedLead.notes}</p>
+                  <p className="text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 p-3 whitespace-pre-wrap">{selectedLead.notes}</p>
                 </div>
               )}
 
@@ -1255,7 +1255,7 @@ export default function LeadsPage() {
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t.leads.activities}</h3>
                   <button
                     onClick={() => setShowModal('activity')}
-                    className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white transition-colors"
                   >
                     <FaPlus className="w-3 h-3" />
                     {t.leads.addActivity}
@@ -1266,7 +1266,7 @@ export default function LeadsPage() {
                     <p className="text-center text-gray-400 py-4">No hay actividades registradas</p>
                   ) : (
                     (activities[selectedLead.id] || []).map(activity => (
-                      <div key={activity.id} className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                      <div key={activity.id} className="p-3 bg-gray-50 dark:bg-gray-700/50">
                         <div className="flex justify-between items-start mb-1">
                           <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase">
                             {activity.activity_type === 'call' ? t.leads.activityCall :
@@ -1302,13 +1302,13 @@ export default function LeadsPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => { openEditModal(selectedLead); }}
-                    className="px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                    className="px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
                   >
                     {t.common.edit}
                   </button>
                   <a
                     href={`/dashboard/activities?lead=${selectedLead.id}&create=true`}
-                    className="px-4 py-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg transition-colors flex items-center gap-2"
+                    className="px-4 py-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-colors flex items-center gap-2"
                   >
                     <FaCalendarAlt className="w-4 h-4" />
                     {t.activities?.scheduleActivity || 'Programar actividad'}
@@ -1318,14 +1318,14 @@ export default function LeadsPage() {
                   {selectedLead.pipeline_stage !== 'won' && selectedLead.pipeline_stage !== 'lost' && (
                     <button
                       onClick={() => handleConvertToClient(selectedLead)}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium transition-colors"
                     >
                       {t.leads.convertToClient}
                     </button>
                   )}
                   <button
                     onClick={() => setShowModal(null)}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
                   >
                     {t.common.close}
                   </button>
@@ -1339,7 +1339,7 @@ export default function LeadsPage() {
       {/* Activity Modal */}
       {showModal === 'activity' && selectedLead && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-md">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t.leads.addActivity}</h2>
               <button onClick={() => { setShowModal('detail'); }} className="text-gray-400 hover:text-gray-600">
@@ -1352,7 +1352,7 @@ export default function LeadsPage() {
                 <select
                   value={activityForm.activity_type}
                   onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value as LeadActivity['activity_type'] })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="call">{t.leads.activityCall}</option>
                   <option value="email">{t.leads.activityEmail}</option>
@@ -1367,7 +1367,7 @@ export default function LeadsPage() {
                   value={activityForm.description}
                   onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   required
                 />
               </div>
@@ -1377,7 +1377,7 @@ export default function LeadsPage() {
                   type="text"
                   value={activityForm.outcome}
                   onChange={(e) => setActivityForm({ ...activityForm, outcome: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -1386,19 +1386,19 @@ export default function LeadsPage() {
                   type="text"
                   value={activityForm.next_action}
                   onChange={(e) => setActivityForm({ ...activityForm, next_action: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   onClick={() => setShowModal('detail')}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   {t.common.cancel}
                 </button>
                 <button
                   onClick={handleAddActivity}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
                 >
                   {t.common.save}
                 </button>

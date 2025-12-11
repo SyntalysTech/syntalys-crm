@@ -137,7 +137,7 @@ export default function ChatAIPage() {
         {messages.length > 0 && (
           <button
             onClick={clearChat}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             <FaTrash className="w-4 h-4" />
             <span className="hidden md:inline">{t.chatAI.clearChat}</span>
@@ -146,7 +146,7 @@ export default function ChatAIPage() {
       </div>
 
       {/* Chat Container */}
-      <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
+      <div className="flex-1 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
           {messages.length === 0 ? (
@@ -173,7 +173,7 @@ export default function ChatAIPage() {
                     <button
                       key={index}
                       onClick={() => sendMessage(suggestion)}
-                      className="p-4 text-left bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 transition-all hover:shadow-md hover:scale-[1.02] text-gray-700 dark:text-gray-300"
+                      className="p-4 text-left bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 transition-all hover:shadow-md hover:scale-[1.02] text-gray-700 dark:text-gray-300"
                     >
                       {suggestion}
                     </button>
@@ -190,7 +190,7 @@ export default function ChatAIPage() {
                   className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.role === 'assistant' && (
-                    <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-syntalys-blue to-blue-600 rounded-lg flex items-center justify-center">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-syntalys-blue to-blue-600 flex items-center justify-center">
                       <FaRobot className="w-4 h-4 text-white" />
                     </div>
                   )}
@@ -232,7 +232,7 @@ export default function ChatAIPage() {
                   </div>
 
                   {message.role === 'user' && (
-                    <div className="flex-shrink-0 w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center order-2">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-200 dark:bg-gray-600 flex items-center justify-center order-2">
                       <FaUser className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                     </div>
                   )}
@@ -242,7 +242,7 @@ export default function ChatAIPage() {
               {/* Loading indicator */}
               {isLoading && (
                 <div className="flex gap-3 justify-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-syntalys-blue to-blue-600 rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-syntalys-blue to-blue-600 flex items-center justify-center">
                     <FaRobot className="w-4 h-4 text-white" />
                   </div>
                   <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 rounded-2xl rounded-bl-md">
@@ -274,14 +274,14 @@ export default function ChatAIPage() {
                 onKeyDown={handleKeyDown}
                 placeholder={t.chatAI.placeholder}
                 rows={1}
-                className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-syntalys-blue focus:border-transparent resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-syntalys-blue focus:border-transparent resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 disabled={isLoading}
               />
             </div>
             <button
               onClick={() => sendMessage()}
               disabled={!input.trim() || isLoading}
-              className="flex-shrink-0 w-12 h-12 bg-syntalys-blue text-white rounded-xl hover:bg-blue-700 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed flex items-center justify-center shadow-lg hover:shadow-xl"
+              className="flex-shrink-0 w-12 h-12 bg-syntalys-blue text-white hover:bg-blue-700 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed flex items-center justify-center shadow-lg hover:shadow-xl"
             >
               <FaPaperPlane className="w-5 h-5" />
             </button>

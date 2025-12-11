@@ -199,7 +199,7 @@ export default function ProfilePage() {
 
       <div className="space-y-6">
         {/* Profile Picture Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             {t.profile.profilePicture}
           </h2>
@@ -245,14 +245,14 @@ export default function ProfilePage() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="px-4 py-2 bg-syntalys-blue text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-syntalys-blue text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 {t.profile.uploadPhoto}
               </button>
               {avatarUrl && (
                 <button
                   onClick={handleRemoveAvatar}
-                  className="px-4 py-2 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                  className="px-4 py-2 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
                 >
                   {t.profile.removePhoto}
                 </button>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Personal Info Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             {t.profile.personalInfo}
           </h2>
@@ -278,7 +278,7 @@ export default function ProfilePage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder={t.profile.fullNamePlaceholder}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
               />
             </div>
 
@@ -291,7 +291,7 @@ export default function ProfilePage() {
                 type="email"
                 value={user?.email || ''}
                 disabled
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {t.profile.emailNote}
@@ -307,13 +307,13 @@ export default function ProfilePage() {
                 type="text"
                 value={getRoleLabel(profile?.role || '')}
                 disabled
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
               />
             </div>
 
             {/* Success/Error Message */}
             {profileMessage && (
-              <div className={`p-3 rounded-lg ${
+              <div className={`p-3 ${
                 profileMessage.type === 'success'
                   ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                   : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
@@ -326,7 +326,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={profileLoading}
-              className="px-6 py-2 bg-syntalys-blue text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="px-6 py-2 bg-syntalys-blue text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
               {profileLoading ? t.common.loading + '...' : t.profile.saveProfile}
             </button>
@@ -334,7 +334,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Security Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             {t.profile.security}
           </h2>
@@ -352,7 +352,7 @@ export default function ProfilePage() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
               />
             </div>
 
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
               />
             </div>
 
@@ -378,7 +378,7 @@ export default function ProfilePage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-syntalys-blue focus:border-transparent"
               />
             </div>
 
@@ -392,7 +392,7 @@ export default function ProfilePage() {
 
             {/* Success/Error Message */}
             {passwordMessage && (
-              <div className={`p-3 rounded-lg ${
+              <div className={`p-3 ${
                 passwordMessage.type === 'success'
                   ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                   : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
@@ -405,7 +405,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={passwordLoading}
-              className="px-6 py-2 bg-syntalys-blue text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="px-6 py-2 bg-syntalys-blue text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
               {passwordLoading ? t.common.loading + '...' : t.profile.savePassword}
             </button>

@@ -628,7 +628,7 @@ export default function ClientesPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="mb-6 flex flex-wrap gap-4 items-center bg-syntalys-blue dark:bg-gray-800 rounded-lg p-4">
+      <div className="mb-6 flex flex-wrap gap-4 items-center bg-syntalys-blue dark:bg-gray-800 p-4">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px] max-w-md">
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 dark:text-gray-400" />
@@ -637,7 +637,7 @@ export default function ClientesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t.common.search + '...'}
-            className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 focus:ring-2 focus:ring-white/40 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white placeholder-white/60 focus:ring-2 focus:ring-white/40 focus:border-transparent"
           />
         </div>
 
@@ -645,7 +645,7 @@ export default function ClientesPage() {
         <select
           value={countryFilter}
           onChange={(e) => setCountryFilter(e.target.value)}
-          className="px-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
+          className="px-4 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
         >
           <option value="all" className="text-gray-900">{t.forms.country}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
           {availableCountries.map(code => (
@@ -659,7 +659,7 @@ export default function ClientesPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-white/20 dark:border-gray-600 rounded-lg bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
+          className="px-4 py-2 border border-white/20 dark:border-gray-600 bg-white/10 dark:bg-gray-700 text-white dark:text-white focus:ring-2 focus:ring-white/40"
         >
           <option value="all" className="text-gray-900">{t.common.status}: {language === 'fr' ? 'Tous' : 'Todos'}</option>
           <option value="active" className="text-gray-900">{t.clients.active}</option>
@@ -675,7 +675,7 @@ export default function ClientesPage() {
 
       {/* Lista de clientes */}
       {clients.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 shadow p-12 text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">{t.clients.noClients}</p>
           <button
             onClick={openAddModal}
@@ -685,7 +685,7 @@ export default function ClientesPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-syntalys-blue dark:bg-gray-700">
@@ -780,7 +780,7 @@ export default function ClientesPage() {
                           <FaEllipsisV className="w-4 h-4" />
                         </button>
                         {openDropdownId === client.id && (
-                          <div className={`absolute right-0 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 ${index < 2 ? 'top-full mt-2' : 'bottom-full mb-2'}`}>
+                          <div className={`absolute right-0 w-48 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 z-50 ${index < 2 ? 'top-full mt-2' : 'bottom-full mb-2'}`}>
                             <button
                               onClick={() => openClientDetail(client)}
                               className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 rounded-t-lg"
@@ -817,7 +817,7 @@ export default function ClientesPage() {
       {/* Modal Agregar Cliente */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.clients.addClient}</h2>
             </div>
@@ -940,7 +940,7 @@ export default function ClientesPage() {
       {/* Modal Editar Cliente */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.clients.editClient}</h2>
             </div>
@@ -1066,7 +1066,7 @@ export default function ClientesPage() {
       {/* Modal Ficha de Cliente */}
       {showClientDetailModal && selectedClient && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
             {/* Header */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -1140,15 +1140,15 @@ export default function ClientesPage() {
               {activeTab === 'info' && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4">
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.forms.email}</p>
                       <p className="text-gray-900 dark:text-white font-medium">{selectedClient.email || '-'}</p>
                     </div>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4">
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.forms.phone}</p>
                       <p className="text-gray-900 dark:text-white font-medium">{selectedClient.phone || '-'}</p>
                     </div>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4">
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.forms.country}</p>
                       <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
                         {selectedClient.country ? (
@@ -1159,7 +1159,7 @@ export default function ClientesPage() {
                         ) : '-'}
                       </p>
                     </div>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4">
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.common.status}</p>
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         selectedClient.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
@@ -1171,7 +1171,7 @@ export default function ClientesPage() {
                     </div>
                   </div>
                   {selectedClient.notes && (
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4">
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t.common.notes}</p>
                       <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{selectedClient.notes}</p>
                     </div>
@@ -1190,7 +1190,7 @@ export default function ClientesPage() {
                   ) : (
                     <div className="space-y-4">
                       {clientProjects.map((project) => (
-                        <div key={project.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div key={project.id} className="bg-gray-50 dark:bg-gray-700 p-4">
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-semibold text-gray-900 dark:text-white">{project.project_name}</h4>
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -1246,7 +1246,7 @@ export default function ClientesPage() {
                   ) : (
                     <div className="space-y-4">
                       {clientInvoices.map((invoice) => (
-                        <div key={invoice.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div key={invoice.id} className="bg-gray-50 dark:bg-gray-700 p-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                               <FaFilePdf className="w-8 h-8 text-red-500" />
@@ -1299,7 +1299,7 @@ export default function ClientesPage() {
       {/* Modal Añadir Factura */}
       {showAddInvoiceModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4">
+          <div className="bg-white dark:bg-gray-800 shadow-xl max-w-lg w-full mx-4">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 {language === 'fr' ? 'Ajouter une facture' : 'Añadir factura'}
@@ -1425,7 +1425,7 @@ export default function ClientesPage() {
                 </label>
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-syntalys-blue transition-colors"
+                  className="border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 text-center cursor-pointer hover:border-syntalys-blue transition-colors"
                 >
                   <input
                     ref={fileInputRef}
